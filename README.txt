@@ -15,3 +15,5 @@ $ mvn -version
 Firebase setup
 To set up Firebase, follow these steps:
 Go to Firebase Console > Settings > Service Accounts > Generate New Private Key
+Download the JSON file and save it in the project's resources folder, 
+renaming it to firebase_config.json.
