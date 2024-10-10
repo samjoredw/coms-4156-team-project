@@ -116,4 +116,19 @@ public class FirebaseService {
         return future;
     }
 
+  // **NEW**: Method to update a document in Firestore
+  public CompletableFuture<Void> updateDocument(String collection, String documentId, Map<String, Object> data) {
+    CompletableFuture<Void> future = new CompletableFuture<>();
+    ApiFuture<WriteResult> result = firestore.collection(collection).document(documentId).update(data);
+    result.addListener(() -> {
+      try {
+        result.get();
+        future.complete(null);
+      } catch (Exception e) {
+        future.completeExceptionally(e);
+      }
+    }, Runnable::run);
+    return future;
+  }
+
 }
