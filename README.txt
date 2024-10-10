@@ -11,3 +11,9 @@ $ java -version
 # Output should indicate JDK 17
 $ mvn -version
 # Output should indicate Maven 3.9.9 (older versions might work)
+
+Firebase setup
+To set up Firebase, follow these steps:
+Go to Firebase Console > Settings > Service Accounts > Generate New Private Key
+Download the JSON file and save it in the project's resources folder, 
+renaming it to firebase_config.json.
