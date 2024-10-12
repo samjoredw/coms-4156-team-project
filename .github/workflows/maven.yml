@@ -29,14 +29,9 @@ jobs:
         cache: maven
     
 
-<<<<<<< HEAD
-    - name: Set Firebase config as environment variable
-        run: echo '${{ secrets.FIREBASE_CONFIG }}' > ./firebase_config.json
-=======
     - name: Set Firebase config
       run: |
         echo '${{ secrets.FIREBASE_CONFIG }}' > ./firebase_config.json
->>>>>>> f371cfc (echo secrets during workflow)
   
     - name: Build with Maven
         run: mvn -B package --file pom.xml
