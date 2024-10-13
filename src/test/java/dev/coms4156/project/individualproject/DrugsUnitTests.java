@@ -1,38 +1,35 @@
 package dev.coms4156.project.individualproject;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Timestamp;
+//import java.util.Map;
+//import java.util.HashMap;
+//import java.util.concurrent.CompletableFuture;
 import java.text.SimpleDateFormat;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DrugsUnitTests {
-  private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  //private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   @Autowired
   private Drugs testDrugs;
 
-  @Autowired
-//  private Interaction testInteraction;
+  // @Autowired
+  //  private Interaction testInteraction;
 
   @BeforeEach
   public void setupTesting() {
+    System.out.println("Running Drug.java unit test...\n");
 //    testInteraction.addInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
 //    testInteraction.addInteraction("Aspirin", "Ibuprofen", "Increased risk of gastrointestinal " +
 //        "bleeding.");
