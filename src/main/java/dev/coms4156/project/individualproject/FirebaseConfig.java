@@ -57,7 +57,7 @@ public class FirebaseConfig {
 //                    // .setDatabaseUrl("https://drug-interaction-api-default-rtdb.firebaseio.com")
 //                    .build();
 
-            return FirebaseApp.initializeApp(options);
+        return FirebaseApp.initializeApp(options);
     }
 
     @Bean
