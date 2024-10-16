@@ -32,7 +32,7 @@ public class FirebaseConfig {
     public FirebaseApp firebaseApp() throws IOException {
 
         FirebaseOptions options;
-        String firebaseConfig = System.getenv("FB_SECRET_KEY");
+        String firebaseConfig = System.getenv("FIREBASE_CONFIG");
 
         if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
 
