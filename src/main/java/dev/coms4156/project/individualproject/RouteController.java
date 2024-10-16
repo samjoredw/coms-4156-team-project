@@ -85,40 +85,25 @@ public class RouteController {
       if (drugD != null) drugs.add(drugD);
       if (drugE != null) drugs.add(drugE);
 
-      List<String> interactionEffects = interactionService.getInteraction(drugs);
+      List<Map<String, Object>> interactionEffects = interactionService.getInteraction(drugs);
 
       Map<String, List<Map<String, Object>>> response = new HashMap<>();
       List<Map<String, Object>> interactions = new ArrayList<>();
       List<Map<String, Object>> noInteractions = new ArrayList<>();
 
-      System.out.println(interactionEffects);
-
-      for (String effect : interactionEffects) {
-        Map<String, Object> interactionData = new HashMap<>();
-
-        String[] parts = effect.split(": ", 2);
-
-        if (parts.length < 2) {
-          interactionData.put("drugPair", parts[0]);
-          interactionData.put("interactionEffect", "Unknown interaction");
-          interactionData.put("interactionBool", false);
+      for (Map<String, Object> effect : interactionEffects) {
+        if ((boolean) effect.get("interactionBool")) {
+          interactions.add(effect);
         } else {
-          interactionData.put("drugPair", parts[0]);
-          interactionData.put("interactionEffect", parts[1]);
-          interactionData.put("interactionBool", !parts[1].startsWith("No known interaction"));
-        }
-        if ((boolean) interactionData.get("interactionBool")) {
-          interactions.add(interactionData);
-        } else {
-          noInteractions.add(interactionData);
+          noInteractions.add(effect);
         }
       }
 
-      if (!interactions.isEmpty()) {
-        response.put("interactions", interactions);
-      }
       if (!noInteractions.isEmpty()) {
         response.put("noInteractions", noInteractions);
+      }
+      if (!interactions.isEmpty()) {
+        response.put("interactions", interactions);
       }
 
       return new ResponseEntity<>(response, HttpStatus.OK);
