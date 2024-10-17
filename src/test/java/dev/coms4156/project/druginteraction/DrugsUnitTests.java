@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 //import java.util.Map;
 //import java.util.HashMap;
 //import java.util.concurrent.CompletableFuture;
-import java.text.SimpleDateFormat;
 import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 // import dev.coms4156.project.druginteraction.Drugs;
 
-@SpringBootTest()
+@SpringBootTest(classes = DrugInteraction.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DrugsUnitTests {
   // private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd

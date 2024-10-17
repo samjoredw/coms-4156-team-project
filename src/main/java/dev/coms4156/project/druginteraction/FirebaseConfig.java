@@ -31,26 +31,13 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
 
-        FirebaseOptions options;
-        String firebaseConfig = System.getenv("FB_SECRET_KEY");
+        try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
 
-        if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
-
-            byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
-            InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
-
-            options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-        } else {
-            try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
-                options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .build();
-            }
+            return FirebaseApp.initializeApp(options);
         }
-
-        return FirebaseApp.initializeApp(options);
     }
 
     /**

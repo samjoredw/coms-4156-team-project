@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 // import dev.coms4156.project.druginteraction.Interaction;
 
-@SpringBootTest()
+@SpringBootTest(classes = DrugInteraction.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InteractionUnitTests {
   private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
