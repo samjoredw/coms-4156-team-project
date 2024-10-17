@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1cfeb23-00a6-4eaa-a595-81d8029cf8b4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/individualproject/FirebaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/individualproject/FirebaseConfig.java" afterDir="false" />
     </list>
@@ -146,7 +145,7 @@
       <workItem from="1729039412294" duration="138000" />
       <workItem from="1729039554950" duration="1708000" />
       <workItem from="1729090251457" duration="1258000" />
-      <workItem from="1729189844785" duration="195000" />
+      <workItem from="1729189844785" duration="787000" />
     </task>
     <servers />
   </component>

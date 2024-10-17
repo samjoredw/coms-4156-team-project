@@ -36,8 +36,7 @@ public class FirebaseConfig {
 
         if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
 
-            byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
-            InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
+            InputStream serviceAccount = new ByteArrayInputStream(firebaseConfig.getBytes());
 
             options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
