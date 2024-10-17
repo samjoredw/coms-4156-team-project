@@ -31,33 +31,13 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
 
-        FirebaseOptions options;
-        String firebaseConfig = System.getenv("FB_SECRET_KEY");
-
-        if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
-
-            byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
-            InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
-
-            options = FirebaseOptions.builder()
+        try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
+            FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
-        } else {
-            try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
-                options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-            }
+
+            return FirebaseApp.initializeApp(options);
         }
-
-//        FirebaseOptions.Builder builder = FirebaseOptions.builder();
-//        try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
-//            FirebaseOptions options = builder
-//                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//                    // .setDatabaseUrl("https://drug-interaction-api-default-rtdb.firebaseio.com")
-//                    .build();
-
-        return FirebaseApp.initializeApp(options);
     }
 
     @Bean
