@@ -16,13 +16,83 @@ import java.util.HashMap;
 public class RouteController {
 
   private final Interaction interactionService;
-
-  // This one needs endpoints first but im putting it here anyway.
-  //private final Drugs drugService;
+  private final Drugs drugService;
 
   @Autowired
-  public RouteController(Interaction interactionService) {
+  public RouteController(Interaction interactionService, Drugs drugService) {
     this.interactionService = interactionService;
+    this.drugService = drugService;
+  }
+
+  /**
+   * Adds a new drug to the database.
+   *
+   * @param drugName The name of the drug to be added.
+   * @return A ResponseEntity indicating success or failure of the operation.
+   */
+  @PostMapping(value = "/drugs/add", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> addDrug(@RequestParam("drugName") String drugName) {
+    try {
+      boolean added = drugService.addDrug(drugName);
+      if (added) {
+        return new ResponseEntity<>("Drug added successfully", HttpStatus.CREATED);
+      } else {
+        return new ResponseEntity<>("Failed to add drug", HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Removes a drug from the database.
+   *
+   * @param drugName The name of the drug to be removed.
+   * @return A ResponseEntity indicating success or failure of the operation.
+   */
+  @DeleteMapping(value = "/drugs/remove", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> removeDrug(@RequestParam("drugName") String drugName) {
+    try {
+      boolean removed = drugService.removeDrug(drugName);
+      if (removed) {
+        return new ResponseEntity<>("Drug removed successfully", HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Failed to remove drug", HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Retrieves all drugs from the database.
+   *
+   * @return A ResponseEntity containing a list of all drugs or an error message.
+   */
+  @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getAllDrugs() {
+    try {
+      List<String> drugs = drugService.getAllDrugs();
+      return new ResponseEntity<>(drugs, HttpStatus.OK);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Retrieves all interactions for a specific drug.
+   *
+   * @param drugName The name of the drug to check interactions for.
+   * @return A ResponseEntity containing a list of interactions or an error message.
+   */
+  @GetMapping(value = "/drugs/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName) {
+    try {
+      List<String> interactions = drugService.getInteraction(drugName);
+      return new ResponseEntity<>(interactions, HttpStatus.OK);
+    } catch (Exception e) {
+      return handleException(e);
+    }
   }
 
   /**
@@ -85,40 +155,25 @@ public class RouteController {
       if (drugD != null) drugs.add(drugD);
       if (drugE != null) drugs.add(drugE);
 
-      List<String> interactionEffects = interactionService.getInteraction(drugs);
+      List<Map<String, Object>> interactionEffects = interactionService.getInteraction(drugs);
 
       Map<String, List<Map<String, Object>>> response = new HashMap<>();
       List<Map<String, Object>> interactions = new ArrayList<>();
       List<Map<String, Object>> noInteractions = new ArrayList<>();
 
-      System.out.println(interactionEffects);
-
-      for (String effect : interactionEffects) {
-        Map<String, Object> interactionData = new HashMap<>();
-
-        String[] parts = effect.split(": ", 2);
-
-        if (parts.length < 2) {
-          interactionData.put("drugPair", parts[0]);
-          interactionData.put("interactionEffect", "Unknown interaction");
-          interactionData.put("interactionBool", false);
+      for (Map<String, Object> effect : interactionEffects) {
+        if ((boolean) effect.get("interactionBool")) {
+          interactions.add(effect);
         } else {
-          interactionData.put("drugPair", parts[0]);
-          interactionData.put("interactionEffect", parts[1]);
-          interactionData.put("interactionBool", !parts[1].startsWith("No known interaction"));
-        }
-        if ((boolean) interactionData.get("interactionBool")) {
-          interactions.add(interactionData);
-        } else {
-          noInteractions.add(interactionData);
+          noInteractions.add(effect);
         }
       }
 
-      if (!interactions.isEmpty()) {
-        response.put("interactions", interactions);
-      }
       if (!noInteractions.isEmpty()) {
         response.put("noInteractions", noInteractions);
+      }
+      if (!interactions.isEmpty()) {
+        response.put("interactions", interactions);
       }
 
       return new ResponseEntity<>(response, HttpStatus.OK);

@@ -23,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 /**
  * Unit tests for the FirebaseService and FirebaseConfig classes.
  */
-@SpringBootTest()
+@SpringBootTest(classes = MainApplication.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FirebaseServiceUnitTests {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
