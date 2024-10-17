@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,49 +20,14 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Check for firebase_config.json
-        run: |
-          if [ -f "./firebase_config.json" ]; then
-            echo "firebase_config.json exists"
-          else
-            echo "firebase_config.json does not exist"
-          fi
-
-      - name: Print debug info
-        run: |
-          echo "FIREBASE_CONFIG is set: ${{ secrets.FB_SECRET_KEY != '' }}"
-          echo "Length of FIREBASE_CONFIG: ${#FIREBASE_CONFIG}"
-          echo "First 10 characters of FIREBASE_CONFIG: ${FIREBASE_CONFIG:0:10}..."
-        env:
-          ACTIONS_STEP_DEBUG: true
-          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
-
-      - name: Check FIREBASE_CONFIG
-        run: |
-          if [ -z "$FIREBASE_CONFIG" ]; then
-            echo "FIREBASE_CONFIG is not set"
-          else
-            echo "FIREBASE_CONFIG is set"
-            echo "FIREBASE_CONFIG length: ${#FIREBASE_CONFIG}"
-            echo "First 50 characters of FIREBASE_CONFIG: ${FIREBASE_CONFIG:0:50}..."
-            echo "Is FIREBASE_CONFIG valid JSON?"
-            echo "$FIREBASE_CONFIG" | jq . > /dev/null 2>&1 && echo "Yes" || echo "No"
-          fi
-        env:
-          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
-
       - name: Build with Maven
         run: mvn -B package --file pom.xml
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
 
       - name: Run Tests with Maven
         run: mvn test
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
-
-      - name: Print Environment Variables
-        run: printenv
-
-      - name: List files for debugging
-        run: ls -la ./firebase_config.json
+          CI: true
