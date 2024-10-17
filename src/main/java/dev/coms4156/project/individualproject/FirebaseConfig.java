@@ -39,7 +39,7 @@ public class FirebaseConfig {
 
         if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
             logger.info("FIREBASE_CONFIG environment variable found. Using it for configuration.");
-
+            logger.info("CONFIGCONFIG: "+firebaseConfig);
             byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
             InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
 
