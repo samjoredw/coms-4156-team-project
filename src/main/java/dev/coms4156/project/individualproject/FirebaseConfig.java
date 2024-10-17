@@ -11,6 +11,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +32,13 @@ public class FirebaseConfig {
      */
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
+        Logger logger = LoggerFactory.getLogger(getClass());
 
         FirebaseOptions options;
         String firebaseConfig = System.getenv("FIREBASE_CONFIG");
 
         if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
+            logger.info("FIREBASE_CONFIG environment variable found. Using it for configuration.");
 
             byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
             InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
@@ -43,14 +47,22 @@ public class FirebaseConfig {
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
         } else {
+            logger.info("FIREBASE_CONFIG environment variable not found. Attempting to use firebase_config.json file.");
+
             try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
                 options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .build();
+                logger.info("Successfully loaded configuration from firebase_config.json file.");
+            } catch (IOException e) {
+                logger.error("Failed to load Firebase configuration from file.", e);
+                throw e;
             }
         }
 
-        return FirebaseApp.initializeApp(options);
+        FirebaseApp app = FirebaseApp.initializeApp(options);
+        logger.info("Firebase application initialized successfully.");
+        return app;
     }
 
     /**
