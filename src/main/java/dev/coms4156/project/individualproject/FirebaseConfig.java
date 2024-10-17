@@ -74,6 +74,14 @@ public class FirebaseConfig {
      */
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {
-        return FirestoreOptions.getDefaultInstance().getService();
+        Logger logger = LoggerFactory.getLogger(getClass());
+        try {
+            Firestore db = com.google.firebase.cloud.FirestoreClient.getFirestore(firebaseApp);
+            logger.info("Firestore instance created successfully");
+            return db;
+        } catch (Exception e) {
+            logger.error("Failed to create Firestore instance", e);
+            throw new RuntimeException("Could not initialize Firestore", e);
+        }
     }
 }

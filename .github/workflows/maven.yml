@@ -44,6 +44,10 @@ jobs:
             echo "FIREBASE_CONFIG is not set"
           else
             echo "FIREBASE_CONFIG is set"
+            echo "FIREBASE_CONFIG length: ${#FIREBASE_CONFIG}"
+            echo "First 50 characters of FIREBASE_CONFIG: ${FIREBASE_CONFIG:0:50}..."
+            echo "Is FIREBASE_CONFIG valid JSON?"
+            echo "$FIREBASE_CONFIG" | jq . > /dev/null 2>&1 && echo "Yes" || echo "No"
           fi
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
