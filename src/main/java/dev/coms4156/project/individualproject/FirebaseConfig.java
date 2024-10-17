@@ -40,6 +40,13 @@ public class FirebaseConfig {
         }
     }
 
+    /**
+     * Creates a firestore instance.
+     * 
+     * @param firebaseApp a FirebaseApp object
+     *
+     * @return a Firestore object
+     */
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {
         return FirestoreOptions.getDefaultInstance().getService();
