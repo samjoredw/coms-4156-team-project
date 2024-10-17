@@ -27,8 +27,11 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: List files for debugging
-        run: ls -la ./firebase_config.json
-
       - name: Run Tests with Maven
         run: mvn test
+
+      - name: Print Environment Variables
+        run: printenv
+
+      - name: List files for debugging
+        run: ls -la ./firebase_config.json
