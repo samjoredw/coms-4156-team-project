@@ -24,6 +24,13 @@ jobs:
       - name: List files in the workspace (for debugging)
         run: ls -la
 
+      - name: Print debug info
+        env:
+          ACTIONS_STEP_DEBUG: true
+        run: |
+          echo "FIREBASE_CONFIG is set: ${{ secrets.FIREBASE_CONFIG != '' }}"
+          echo "Length of FIREBASE_CONFIG: ${#FIREBASE_CONFIG}"
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
         env:

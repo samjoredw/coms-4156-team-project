@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1cfeb23-00a6-4eaa-a595-81d8029cf8b4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/maven.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/maven.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/individualproject/FirebaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/individualproject/FirebaseConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
