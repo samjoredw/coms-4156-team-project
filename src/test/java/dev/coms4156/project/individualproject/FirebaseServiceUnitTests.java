@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -18,7 +20,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest()
+/**
+ * Unit tests for the FirebaseService and FirebaseConfig classes.
+ */
+@SpringBootTest(classes = MainApplication.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FirebaseServiceUnitTests {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -43,29 +48,77 @@ public class FirebaseServiceUnitTests {
 
     @Test
     @Order(1)
-    // test adding to database
+    // test adding and pulling to database
     public void testAddDocument() {
-        CompletableFuture<Void> future = firebaseService.addDocument("interactions", "testDocument",
-                testInteraction);
+        // Add the document to Firestore
+        CompletableFuture<Void> future = firebaseService.addDocument("interactions", "testDocument", testInteraction);
         future.join();
-    }
 
-    @Test
-    @Order(2)
-    // Test pulling document from database
-    public void testGetDocument() {
-        CompletableFuture<Map<String, Object>> future = firebaseService.getDocument("interactions",
-                "testDocument");
-        Map<String, Object> result = future.join();
+        // Retrieve the document to verify it was added
+        CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> result = futureGet.join();
+
+        // Assert that the document was added successfully
         assertEquals(testInteraction, result);
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     // test adding to database
     public void testRemoveDocument() {
+        // Remove the document from Firestore
         CompletableFuture<Void> future = firebaseService.removeDocument("interactions", "testDocument");
         future.join();
+
+        // Attempt to retrieve the document to verify it was removed
+        CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> result = futureGet.join();
+
+        // Assert that the document was removed successfully
+        assertTrue(result == null || result.isEmpty());
     }
 
+    @Test
+    @Order(3)
+    // Test updating a document in the database
+    public void testUpdateDocument() {
+        // Modify the interaction effect
+        testInteraction.put("interactionEffect", "Moderate risk of bleeding.");
+
+        // Update the document in Firestore
+        CompletableFuture<Void> futureUpdate = firebaseService.addDocument("interactions", "testDocument",
+                testInteraction);
+        futureUpdate.join();
+
+        // Retrieve the updated document
+        CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> updatedResult = futureGet.join();
+
+        // Verify that the document was updated
+        assertEquals(testInteraction, updatedResult);
+    }
+
+    @Test
+    @Order(4)
+    // Test checking if a document exists in the database
+    public void testDocumentExists() {
+        // Check if the document exists
+        CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> result = futureGet.join();
+
+        // Verify that the document exists
+        assertFalse(result.isEmpty());
+
+        // Remove the document
+        CompletableFuture<Void> futureRemove = firebaseService.removeDocument("interactions", "testDocument");
+        futureRemove.join();
+
+        // Check if the document still exists
+        CompletableFuture<Map<String, Object>> futureGetAfterRemove = firebaseService.getDocument("interactions",
+                "testDocument");
+        Map<String, Object> resultAfterRemove = futureGetAfterRemove.join();
+
+        // Verify that the document no longer exists
+        assertTrue(resultAfterRemove == null || resultAfterRemove.isEmpty());
+    }
 }

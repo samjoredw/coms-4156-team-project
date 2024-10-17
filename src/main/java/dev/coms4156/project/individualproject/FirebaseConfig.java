@@ -42,24 +42,18 @@ public class FirebaseConfig {
             options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
-        } else {
-            try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
-                options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-            }
+
+            return FirebaseApp.initializeApp(options);
         }
-
-//        FirebaseOptions.Builder builder = FirebaseOptions.builder();
-//        try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
-//            FirebaseOptions options = builder
-//                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//                    // .setDatabaseUrl("https://drug-interaction-api-default-rtdb.firebaseio.com")
-//                    .build();
-
-        return FirebaseApp.initializeApp(options);
     }
 
+    /**
+     * Creates a firestore instance.
+     * 
+     * @param firebaseApp a FirebaseApp object
+     *
+     * @return a Firestore object
+     */
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {
         return FirestoreOptions.getDefaultInstance().getService();

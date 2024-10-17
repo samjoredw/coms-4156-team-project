@@ -49,6 +49,15 @@ public class FirebaseService {
         return database.getReference();
     }
 
+    /**
+     * Adds a document to the specified collection in the Firestore database.
+     *
+     * @param collection The name of the collection to add the document to.
+     * @param documentId The ID of the document to add.
+     * @param data       The data to add to the document.
+     *
+     * @return A CompletableFuture that completes when the document is added
+     */
     public CompletableFuture<Void> addDocument(String collection, String documentId, Map<String, Object> data) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         DocumentReference docRef = firestore.collection(collection).document(documentId);
@@ -64,6 +73,14 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Removes a document from the specified collection in the Firestore database.
+     * 
+     * @param collection The name of the collection to remove the document
+     * @param documentId The ID of the document to remove.
+     *
+     * @return A CompletableFuture that completes when the document is removed
+     */
     public CompletableFuture<Void> removeDocument(String collection, String documentId) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         DocumentReference docRef = firestore.collection(collection).document(documentId);
@@ -79,6 +96,14 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Retrieves a document from the specified collection in the Firestore database.
+     * 
+     * @param collection The name of the collection to retrieve the document from.
+     * @param documentId The ID of the document to retrieve.
+     *
+     * @return A CompletableFuture that completes with the document data when the
+     */
     public CompletableFuture<Map<String, Object>> getDocument(String collection, String documentId) {
         CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
         DocumentReference docRef = firestore.collection(collection).document(documentId);
@@ -98,6 +123,15 @@ public class FirebaseService {
         return future;
     }
 
+    /**
+     * Retrieves all documents from the specified collection in the Firestore
+     * database.
+     * 
+     * @param collection The name of the collection to retrieve documents from.
+     * 
+     * @return A CompletableFuture that completes with a list of document data when
+     *         the documents are retrieved.
+     */
     public CompletableFuture<List<Map<String, Object>>> getAllDocuments(String collection) {
         CompletableFuture<List<Map<String, Object>>> future = new CompletableFuture<>();
         ApiFuture<com.google.cloud.firestore.QuerySnapshot> result = firestore.collection(collection).get();
@@ -116,19 +150,27 @@ public class FirebaseService {
         return future;
     }
 
-  // **NEW**: Method to update a document in Firestore
-  public CompletableFuture<Void> updateDocument(String collection, String documentId, Map<String, Object> data) {
-    CompletableFuture<Void> future = new CompletableFuture<>();
-    ApiFuture<WriteResult> result = firestore.collection(collection).document(documentId).update(data);
-    result.addListener(() -> {
-      try {
-        result.get();
-        future.complete(null);
-      } catch (Exception e) {
-        future.completeExceptionally(e);
-      }
-    }, Runnable::run);
-    return future;
-  }
+    /**
+     * Updates a document in the specified collection in the Firestore database.
+     *
+     * @param collection The name of the collection to update the document in.
+     * @param documentId The ID of the document to update.
+     * @param data       The data to update in the document.
+     *
+     * @return A CompletableFuture that completes when the document is updated
+     */
+    public CompletableFuture<Void> updateDocument(String collection, String documentId, Map<String, Object> data) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        ApiFuture<WriteResult> result = firestore.collection(collection).document(documentId).update(data);
+        result.addListener(() -> {
+            try {
+                result.get();
+                future.complete(null);
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+            }
+        }, Runnable::run);
+        return future;
+    }
 
 }
