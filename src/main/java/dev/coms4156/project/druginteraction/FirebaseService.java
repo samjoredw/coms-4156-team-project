@@ -1,4 +1,4 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;

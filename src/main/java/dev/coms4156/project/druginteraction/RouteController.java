@@ -1,4 +1,4 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
