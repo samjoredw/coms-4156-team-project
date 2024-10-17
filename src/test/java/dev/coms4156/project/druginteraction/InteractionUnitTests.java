@@ -1,4 +1,4 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -18,6 +18,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+// import dev.coms4156.project.druginteraction.Interaction;
 
 @SpringBootTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

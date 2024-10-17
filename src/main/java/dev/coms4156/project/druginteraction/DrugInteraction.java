@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @SpringBootApplication
 @RestController
-public class IndividualProjectApplication implements CommandLineRunner {
+public class DrugInteraction implements CommandLineRunner {
     /**
      * The main launcher for the service all it does
      * is make a call to the overridden run method.
@@ -24,7 +24,7 @@ public class IndividualProjectApplication implements CommandLineRunner {
      *             runtime arguments
      */
     public static void main(String[] args) {
-        ApplicationContext context = SpringApplication.run(IndividualProjectApplication.class, args);
+        ApplicationContext context = SpringApplication.run(DrugInteraction.class, args);
         // FIREBASE DATABASE
         context.getBean(FirebaseService.class);
     }
