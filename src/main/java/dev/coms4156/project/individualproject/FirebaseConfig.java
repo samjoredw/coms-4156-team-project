@@ -40,11 +40,17 @@ public class FirebaseConfig {
             InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
 
             options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
-
-            return FirebaseApp.initializeApp(options);
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+        } else {
+            try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
+                options = FirebaseOptions.builder()
+                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                        .build();
+            }
         }
+
+        return FirebaseApp.initializeApp(options);
     }
 
     /**
