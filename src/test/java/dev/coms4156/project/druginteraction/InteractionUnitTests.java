@@ -1,26 +1,19 @@
 package dev.coms4156.project.druginteraction;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-// import dev.coms4156.project.druginteraction.Interaction;
-
+/**
+ * Unit tests for the Interaction class.
+ */
 @SpringBootTest(classes = DrugInteraction.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InteractionUnitTests {

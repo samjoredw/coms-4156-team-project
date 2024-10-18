@@ -1,20 +1,21 @@
 package dev.coms4156.project.druginteraction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import org.springframework.stereotype.Service;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+/**
+ * This class represents interactions between drugs.
+ */
 @Service
 public class Interaction {
 
@@ -29,11 +30,11 @@ public class Interaction {
   }
 
   /**
-   * Add a new document (drug interaction) to a specific Firestore collection.
+   * Add a new interaction document to the Firestore collection.
    *
-   * @param collection The Firestore collection name.
-   * @param documentId The ID for the new document.
-   * @param data       The interaction data to be added.
+   * @param drugA The name of the first drug.
+   * @param drugB The name of the second drug.
+   * @param interactionEffect The effect of the interaction.
    * @return A CompletableFuture indicating completion of the addition.
    */
   public boolean addInteraction(String drugA, String drugB, String interactionEffect) {
@@ -56,8 +57,8 @@ public class Interaction {
       String documentId = generateRandomId(5);
 
       // Add the new document to Firestore with the generated document ID
-      CompletableFuture<Void> future = firebaseService.addDocument("interactions", documentId,
-          newInteraction);
+      CompletableFuture<Void> future =
+          firebaseService.addDocument("interactions", documentId, newInteraction);
       future.join();
 
       return true; // Successfully added
@@ -67,8 +68,13 @@ public class Interaction {
     }
   }
 
-  // Helper method to generate a random alphanumeric string of the specified
-  // length
+  /**
+   * Generate a random alphanumeric ID of the specified length.
+   *
+   * @param length The length of the generated ID.
+   *
+   * @return A random alphanumeric ID.
+   */
   private String generateRandomId(int length) {
     String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     Random random = new Random();
@@ -83,20 +89,17 @@ public class Interaction {
   /**
    * Remove a specific document (drug interaction) from the Firestore collection.
    *
-   * @param drugA             The name of the first drug.
-   * @param drugB             The name of the Second drug.
+   * @param drugA The name of the first drug.
+   * @param drugB The name of the Second drug.
    * @param interactionEffect The interaction effect between drugA and drugB.
-   * @return boolean values indicating whether the interaction pair is removed or
-   *         not.
+   * @return boolean values indicating whether the interaction pair is removed or not.
    */
   public boolean removeInteraction(String drugA, String drugB, String interactionEffect) {
     try {
       // Query where drugA = drugA and drugB = drugB
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore.collection("interactions")
-          .whereEqualTo("drugA", drugA)
-          .whereEqualTo("drugB", drugB)
-          .whereEqualTo("interactionEffect", interactionEffect)
-          .get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
+          .collection("interactions").whereEqualTo("drugA", drugA).whereEqualTo("drugB", drugB)
+          .whereEqualTo("interactionEffect", interactionEffect).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
 
@@ -107,17 +110,16 @@ public class Interaction {
         return true;
       } else {
         // Try reverse: drugA = drugB and drugB = drugA
-        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore.collection("interactions")
-            .whereEqualTo("drugA", drugB)
-            .whereEqualTo("drugB", drugA)
-            .whereEqualTo("interactionEffect", interactionEffect)
-            .get();
+        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
+            .collection("interactions").whereEqualTo("drugA", drugB).whereEqualTo("drugB", drugA)
+            .whereEqualTo("interactionEffect", interactionEffect).get();
 
         com.google.cloud.firestore.QuerySnapshot reverseQuerySnapshot = reverseQuery.get();
 
         if (!reverseQuerySnapshot.isEmpty()) {
           // Interaction found with reverse order, delete the interaction
-          com.google.cloud.firestore.DocumentSnapshot reverseDocument = reverseQuerySnapshot.getDocuments().get(0);
+          com.google.cloud.firestore.DocumentSnapshot reverseDocument =
+              reverseQuerySnapshot.getDocuments().get(0);
           reverseDocument.getReference().delete();
           return true;
         } else {
@@ -141,11 +143,9 @@ public class Interaction {
   public String getInteraction(String drugA, String drugB) {
     try {
       // Query where drugA = drugA and drugB = drugB
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
-          .collection("interactions")
-          .whereEqualTo("drugA", drugA)
-          .whereEqualTo("drugB", drugB)
-          .get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query =
+          firestore.collection("interactions").whereEqualTo("drugA", drugA)
+              .whereEqualTo("drugB", drugB).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
 
@@ -155,18 +155,16 @@ public class Interaction {
         return (String) document.get("interactionEffect");
       } else {
         // Try the reverse (drugA = drugB and drugB = drugA)
-        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
-            .collection("interactions")
-            .whereEqualTo("drugA", drugB)
-            .whereEqualTo("drugB", drugA)
-            .get();
+        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery =
+            firestore.collection("interactions").whereEqualTo("drugA", drugB)
+                .whereEqualTo("drugB", drugA).get();
 
         com.google.cloud.firestore.QuerySnapshot reverseQuerySnapshot = reverseQuery.get();
 
         if (!reverseQuerySnapshot.isEmpty()) {
           // Interaction found with reverse order
-          com.google.cloud.firestore.DocumentSnapshot reverseDocument = reverseQuerySnapshot
-              .getDocuments().get(0);
+          com.google.cloud.firestore.DocumentSnapshot reverseDocument =
+              reverseQuerySnapshot.getDocuments().get(0);
           return (String) reverseDocument.get("interactionEffect");
         } else {
           // No interaction found in either order
@@ -209,13 +207,14 @@ public class Interaction {
   /**
    * Update a drug interaction document based on interaction ID.
    *
-   * @param documentId        The interaction id to update.
-   * @param drugA             The new first drug used to update.
-   * @param drugB             The new second drug used to update.
+   * @param documentId The interaction id to update.
+   * @param drugA The new first drug used to update.
+   * @param drugB The new second drug used to update.
    * @param interactionEffect The new interaction used to update.
    * @return A CompletableFuture containing a list of document data.
    */
-  public boolean updateInteraction(String documentId, String drugA, String drugB, String interactionEffect) {
+  public boolean updateInteraction(String documentId, String drugA, String drugB,
+      String interactionEffect) {
     try {
       // Prepare a timestamp for updatedAt field
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -230,7 +229,8 @@ public class Interaction {
       updatedInteraction.put("updatedAt", sdf.format(timestamp));
 
       // Use FirebaseService to update the document with the specified ID
-      CompletableFuture<Void> future = firebaseService.updateDocument("interactions", documentId, updatedInteraction);
+      CompletableFuture<Void> future =
+          firebaseService.updateDocument("interactions", documentId, updatedInteraction);
       future.join();
 
       return true;
