@@ -42,21 +42,6 @@ public class RouteController {
         return new ResponseEntity<>(drugInfo, HttpStatus.OK);
       } else {
         return new ResponseEntity<>("Drug not found", HttpStatus.NOT_FOUND);
-=======
-  /**
-   * Adds a new drug to the database.
-   *
-   * @param drugName The name of the drug to be added.
-   * @return A ResponseEntity indicating success or failure of the operation.
-   */
-  @PostMapping(value = "/drugs/add", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> addDrug(@RequestParam("drugName") String drugName) {
-    try {
-      boolean added = drugService.addDrug(drugName);
-      if (added) {
-        return new ResponseEntity<>("Drug added successfully", HttpStatus.CREATED);
-      } else {
-        return new ResponseEntity<>("Failed to add drug", HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       return handleException(e);
@@ -86,20 +71,6 @@ public class RouteController {
         return new ResponseEntity<>("Drug added successfully", HttpStatus.CREATED);
       } else {
         return new ResponseEntity<>("Failed to add drug", HttpStatus.BAD_REQUEST);
-
-   * Removes a drug from the database.
-   *
-   * @param drugName The name of the drug to be removed.
-   * @return A ResponseEntity indicating success or failure of the operation.
-   */
-  @DeleteMapping(value = "/drugs/remove", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> removeDrug(@RequestParam("drugName") String drugName) {
-    try {
-      boolean removed = drugService.removeDrug(drugName);
-      if (removed) {
-        return new ResponseEntity<>("Drug removed successfully", HttpStatus.OK);
-      } else {
-        return new ResponseEntity<>("Failed to remove drug", HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       return handleException(e);
@@ -130,20 +101,6 @@ public class RouteController {
       return handleException(e);
     }
   }
-        
-   * Retrieves all drugs from the database.
-   *
-   * @return A ResponseEntity containing a list of all drugs or an error message.
-   */
-  @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getAllDrugs() {
-    try {
-      List<String> drugs = drugService.getAllDrugs();
-      return new ResponseEntity<>(drugs, HttpStatus.OK);
-    } catch (Exception e) {
-      return handleException(e);
-    }
-  }
 
   /**
    * Removes a specific drug from the database.
@@ -164,7 +121,27 @@ public class RouteController {
       } else {
         return new ResponseEntity<>("Failed to remove drug", HttpStatus.NOT_FOUND);
       }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
 
+  /*
+   * Retrieves all drugs from the database.
+   *
+   * @return A ResponseEntity containing a list of all drugs or an error message.
+   */
+  @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getAllDrugs() {
+    try {
+      List<String> drugs = drugService.getAllDrugs();
+      return new ResponseEntity<>(drugs, HttpStatus.OK);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /*
    * Retrieves all interactions for a specific drug.
    *
    * @param drugName The name of the drug to check interactions for.

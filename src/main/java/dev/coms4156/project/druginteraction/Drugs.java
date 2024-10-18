@@ -168,7 +168,7 @@ public class Drugs {
    * @param drugName The name of the drug to check interactions for.
    * @return A list of strings, each representing an interaction involving the drug.
    */
-  public List<String> getInteractions(String drugName) {
+  public List<String> getInteraction(String drugName) {
     List<String> interactions = new ArrayList<>();
 
     try {
@@ -202,7 +202,6 @@ public class Drugs {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     return interactions;
   }
 }
