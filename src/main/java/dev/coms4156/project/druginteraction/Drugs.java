@@ -1,19 +1,20 @@
 package dev.coms4156.project.druginteraction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import org.springframework.stereotype.Service;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+/**
+ * This class represents drugs and their properties.
+ */
 @Service
 public class Drugs {
 
@@ -66,9 +67,8 @@ public class Drugs {
   public boolean removeDrug(String drugName) {
     try {
       // Query where drugName = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore.collection("drugs")
-          .whereEqualTo("drugName", drugName)
-          .get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query =
+          firestore.collection("drugs").whereEqualTo("drugName", drugName).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
 
@@ -95,9 +95,8 @@ public class Drugs {
     List<String> drugs = new ArrayList<>();
 
     try {
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
-          .collection("drugs")
-          .get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query =
+          firestore.collection("drugs").get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
 
@@ -120,39 +119,36 @@ public class Drugs {
    * Get all interactions for a specific drug.
    *
    * @param drugName The name of the drug to check interactions for.
-   * @return A list of strings, each representing an interaction involving the
-   *         drug.
+   * @return A list of strings, each representing an interaction involving the drug.
    */
   public List<String> getInteraction(String drugName) {
     List<String> interactions = new ArrayList<>();
 
     try {
       // Query where drugA = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA = firestore
-          .collection("interactions")
-          .whereEqualTo("drugA", drugName)
-          .get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA =
+          firestore.collection("interactions").whereEqualTo("drugA", drugName).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshotA = queryA.get();
 
       for (com.google.cloud.firestore.DocumentSnapshot document : querySnapshotA.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugB");
-        interactions.add("Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add(
+            "Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
       }
 
       // Query where drugB = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB = firestore
-          .collection("interactions")
-          .whereEqualTo("drugB", drugName)
-          .get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB =
+          firestore.collection("interactions").whereEqualTo("drugB", drugName).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshotB = queryB.get();
 
       for (com.google.cloud.firestore.DocumentSnapshot document : querySnapshotB.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugA");
-        interactions.add("Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add(
+            "Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
       }
 
       if (interactions.isEmpty()) {

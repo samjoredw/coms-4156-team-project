@@ -1,22 +1,18 @@
 package dev.coms4156.project.druginteraction;
 
-//import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//import java.util.Map;
-//import java.util.HashMap;
-//import java.util.concurrent.CompletableFuture;
-import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-// import dev.coms4156.project.druginteraction.Drugs;
-
+/**
+ * Unit tests for the Drugs class.
+ */
 @SpringBootTest(classes = DrugInteraction.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DrugsUnitTests {
@@ -29,6 +25,9 @@ public class DrugsUnitTests {
   // @Autowired
   // private Interaction testInteraction;
 
+  /**
+   * Setup testing by adding interactions to the testInteraction object.
+   */
   @BeforeEach
   public void setupTesting() {
     System.out.println("Running Drug.java unit test...\n");
