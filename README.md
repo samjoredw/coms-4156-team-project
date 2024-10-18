@@ -65,12 +65,91 @@ mvn test
 
 # Drug Interaction API Documentation
 
+
 ## Base URL
 ```
 /api/v1
 ```
 
 ---
+
+## Drug Endpoints
+
+### 1. Get Drug Information
+Retrieve information about a specific drug.
+
+- **Endpoint:** `/drug`
+- **Method:** `GET`
+- **Parameters:**
+  - `name` (String) – Required. Name of the drug.
+- **Response:**
+  - **200 OK:** Drug information retrieved successfully.
+  - **400 Bad Request:** Invalid input or missing drug name.
+  - **404 Not Found:** Drug not found.
+  - **500 Internal Server Error:** Unexpected error occurred.
+
+### 2. Add New Drug
+Add a new drug to the database.
+
+- **Endpoint:** `/drug/add`
+- **Method:** `POST`
+- **Request Body:** Map<String, Object> containing drug information.
+- **Response:**
+  - **201 Created:** Drug added successfully.
+  - **400 Bad Request:** Invalid input or failed to add drug.
+  - **409 Conflict:** Drug already exists.
+  - **500 Internal Server Error:** Unexpected error occurred.
+
+### 3. Update Existing Drug
+Update an existing drug in the database.
+
+- **Endpoint:** `/drug/update/{name}`
+- **Method:** `PATCH`
+- **Path Parameter:**
+  - `name` (String) – Required. Name of the drug to update.
+- **Request Body:** Map<String, Object> containing fields to update.
+- **Response:**
+  - **200 OK:** Drug updated successfully.
+  - **400 Bad Request:** Failed to update drug.
+  - **404 Not Found:** Drug not found.
+  - **500 Internal Server Error:** Unexpected error occurred.
+
+### 4. Remove Drug
+Remove a specific drug from the database.
+
+- **Endpoint:** `/drug/remove`
+- **Method:** `DELETE`
+- **Parameters:**
+  - `name` (String) – Required. Name of the drug to be removed.
+- **Response:**
+  - **200 OK:** Drug removed successfully.
+  - **400 Bad Request:** Invalid input or missing drug name.
+  - **404 Not Found:** Failed to remove drug (drug not found).
+  - **500 Internal Server Error:** Unexpected error occurred.
+
+### 5. Get All Drugs
+Retrieve all drugs from the database.
+
+- **Endpoint:** `/drugs`
+- **Method:** `GET`
+- **Response:**
+  - **200 OK:** List of all drugs retrieved successfully.
+  - **500 Internal Server Error:** Unexpected error occurred.
+
+### 6. Get Drug Interactions
+Retrieve all interactions for a specific drug.
+
+- **Endpoint:** `/drugs/interactions`
+- **Method:** `GET`
+- **Parameters:**
+  - `drugName` (String) – Required. Name of the drug to check interactions for.
+- **Response:**
+  - **200 OK:** List of interactions retrieved successfully.
+  - **500 Internal Server Error:** Unexpected error occurred.
+
+---
+
+## Drug Interaction Endpoints
 
 ## 1. **Get Interaction Between Two Drugs**
 Retrieve the interaction effect between two specific drugs.
@@ -203,3 +282,4 @@ Handles exceptions that occur during any endpoint execution.
     }
     ```
 ---
+
