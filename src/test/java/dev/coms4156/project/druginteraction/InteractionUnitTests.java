@@ -1,4 +1,4 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -19,7 +19,9 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = MainApplication.class)
+// import dev.coms4156.project.druginteraction.Interaction;
+
+@SpringBootTest(classes = DrugInteraction.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InteractionUnitTests {
   private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

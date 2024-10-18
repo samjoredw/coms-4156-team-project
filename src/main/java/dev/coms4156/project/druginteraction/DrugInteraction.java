@@ -1,17 +1,21 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RestController;
+
 // import com.google.firebase.internal.FirebaseService;
 
 /**
  * Class contains all the startup logic for the application.
+ *
+ * DO NOT MODIFY ANYTHING BELOW THIS POINT WITH REGARD TO FUNCTIONALITY
+ * YOU MAY MAKE STYLE/REFACTOR MODIFICATIONS AS NEEDED
  */
 @SpringBootApplication
 @RestController
-public class MainApplication implements CommandLineRunner {
+public class DrugInteraction implements CommandLineRunner {
     /**
      * The main launcher for the service all it does
      * is make a call to the overridden run method.
@@ -20,7 +24,7 @@ public class MainApplication implements CommandLineRunner {
      *             runtime arguments
      */
     public static void main(String[] args) {
-        ApplicationContext context = SpringApplication.run(MainApplication.class, args);
+        ApplicationContext context = SpringApplication.run(DrugInteraction.class, args);
         // FIREBASE DATABASE
         context.getBean(FirebaseService.class);
     }

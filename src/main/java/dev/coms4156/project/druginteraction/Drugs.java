@@ -1,10 +1,9 @@
-package dev.coms4156.project.individualproject;
+package dev.coms4156.project.druginteraction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -12,17 +11,11 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.cloud.firestore.WriteResult;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 
 @Service
 public class Drugs {
-
 
   private final FirebaseService firebaseService;
 
@@ -37,7 +30,7 @@ public class Drugs {
   /**
    * Add a new document (drug) to the Firestore collection.
    *
-   * @param drugName  The name of the drug.
+   * @param drugName The name of the drug.
    * @return A boolean indicating whether the addition was successful.
    */
   public boolean addDrug(String drugName) {
@@ -57,17 +50,17 @@ public class Drugs {
       CompletableFuture<Void> future = firebaseService.addDocument("drugs", documentId, newDrug);
       future.join();
 
-      return true;  // Successfully added
+      return true; // Successfully added
     } catch (Exception e) {
       e.printStackTrace();
-      return false;  // Error occurred during addition
+      return false; // Error occurred during addition
     }
   }
 
   /**
    * Remove a specific drug from the Firestore "drugs" collection.
    *
-   * @param drugName  The name of the drug to be removed.
+   * @param drugName The name of the drug to be removed.
    * @return A boolean indicating whether the removal was successful.
    */
   public boolean removeDrug(String drugName) {
@@ -85,11 +78,11 @@ public class Drugs {
         document.getReference().delete();
         return true;
       } else {
-        return false;  // No document found for the specified drug
+        return false; // No document found for the specified drug
       }
     } catch (Exception e) {
       e.printStackTrace();
-      return false;  // Error occurred during deletion
+      return false; // Error occurred during deletion
     }
   }
 
@@ -126,8 +119,9 @@ public class Drugs {
   /**
    * Get all interactions for a specific drug.
    *
-   * @param drugName  The name of the drug to check interactions for.
-   * @return A list of strings, each representing an interaction involving the drug.
+   * @param drugName The name of the drug to check interactions for.
+   * @return A list of strings, each representing an interaction involving the
+   *         drug.
    */
   public List<String> getInteraction(String drugName) {
     List<String> interactions = new ArrayList<>();

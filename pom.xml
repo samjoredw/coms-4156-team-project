@@ -31,14 +31,19 @@
  		 	<groupId>com.google.firebase</groupId>
   			<artifactId>firebase-admin</artifactId>
   			<version>9.3.0</version>
+			<scope>compile</scope>
 </dependency>
 	</dependencies>
 
 	<build>
+	<finalName>coms-4156-team-project</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>dev.coms4156.project.druginteraction.DrugInteraction</mainClass> <!-- Replace with your actual main class -->
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -99,7 +104,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>dev.coms4156.project.individualproject</mainClass>
+							<mainClass>dev.coms4156.project.druginteraction</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
