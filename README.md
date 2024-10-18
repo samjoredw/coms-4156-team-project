@@ -151,7 +151,7 @@ Retrieve all interactions for a specific drug.
 
 ## Drug Interaction Endpoints
 
-## 1. **Get Interaction Between Two Drugs**
+### 1. **Get Interaction Between Two Drugs**
 Retrieve the interaction effect between two specific drugs.
 
 - **Endpoint:** `/interactions`  
@@ -185,7 +185,7 @@ Retrieve the interaction effect between two specific drugs.
 
 ---
 
-## 2. **Get Interactions Between Multiple Drugs**
+### 2. **Get Interactions Between Multiple Drugs**
 Retrieve interactions among multiple drugs (up to five).
 
 - **Endpoint:** `/get_interactions`  
@@ -220,7 +220,7 @@ Retrieve interactions among multiple drugs (up to five).
 
 ---
 
-## 3. **Add New Drug Interaction**
+### 3. **Add New Drug Interaction**
 Add a new interaction between two drugs to the database.
 
 - **Endpoint:** `/interactions/add`  
@@ -237,7 +237,7 @@ Add a new interaction between two drugs to the database.
 
 ---
 
-## 4. **Update Existing Drug Interaction**
+### 4. **Update Existing Drug Interaction**
 Update the details of an existing drug interaction.
 
 - **Endpoint:** `/interactions/update/{documentId}`  
@@ -255,7 +255,7 @@ Update the details of an existing drug interaction.
 
 ---
 
-## 5. **Delete Drug Interaction**
+### 5. **Delete Drug Interaction**
 Delete a specific drug interaction from the database.
 
 - **Endpoint:** `/interactions/delete`  
@@ -271,7 +271,7 @@ Delete a specific drug interaction from the database.
 
 ---
 
-## 6. **Error Handling**
+### 6. **Error Handling**
 Handles exceptions that occur during any endpoint execution.
 
 - **Response Format:**  
