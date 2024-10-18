@@ -57,11 +57,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-<<<<<<< HEAD
   <component name="RunManager">
-=======
-  <component name="RunManager" selected="JUnit.DrugsUnitTests (1)">
->>>>>>> 2ed79ba0382e7f60621f02f3e17841b620f6f8cf
     <configuration name="DrugsUnitTests (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="coms-4156-team-project" />
       <extension name="coverage">

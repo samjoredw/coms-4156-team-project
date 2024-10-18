@@ -24,7 +24,6 @@ public class RouteController {
     this.drugService = drugService;
   }
 
-
   /**
    * Retrieves information about a specific drug.
    *
@@ -43,6 +42,21 @@ public class RouteController {
         return new ResponseEntity<>(drugInfo, HttpStatus.OK);
       } else {
         return new ResponseEntity<>("Drug not found", HttpStatus.NOT_FOUND);
+=======
+  /**
+   * Adds a new drug to the database.
+   *
+   * @param drugName The name of the drug to be added.
+   * @return A ResponseEntity indicating success or failure of the operation.
+   */
+  @PostMapping(value = "/drugs/add", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> addDrug(@RequestParam("drugName") String drugName) {
+    try {
+      boolean added = drugService.addDrug(drugName);
+      if (added) {
+        return new ResponseEntity<>("Drug added successfully", HttpStatus.CREATED);
+      } else {
+        return new ResponseEntity<>("Failed to add drug", HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       return handleException(e);
@@ -72,6 +86,20 @@ public class RouteController {
         return new ResponseEntity<>("Drug added successfully", HttpStatus.CREATED);
       } else {
         return new ResponseEntity<>("Failed to add drug", HttpStatus.BAD_REQUEST);
+
+   * Removes a drug from the database.
+   *
+   * @param drugName The name of the drug to be removed.
+   * @return A ResponseEntity indicating success or failure of the operation.
+   */
+  @DeleteMapping(value = "/drugs/remove", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> removeDrug(@RequestParam("drugName") String drugName) {
+    try {
+      boolean removed = drugService.removeDrug(drugName);
+      if (removed) {
+        return new ResponseEntity<>("Drug removed successfully", HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Failed to remove drug", HttpStatus.BAD_REQUEST);
       }
     } catch (Exception e) {
       return handleException(e);
@@ -102,6 +130,20 @@ public class RouteController {
       return handleException(e);
     }
   }
+        
+   * Retrieves all drugs from the database.
+   *
+   * @return A ResponseEntity containing a list of all drugs or an error message.
+   */
+  @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getAllDrugs() {
+    try {
+      List<String> drugs = drugService.getAllDrugs();
+      return new ResponseEntity<>(drugs, HttpStatus.OK);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
 
   /**
    * Removes a specific drug from the database.
@@ -122,6 +164,17 @@ public class RouteController {
       } else {
         return new ResponseEntity<>("Failed to remove drug", HttpStatus.NOT_FOUND);
       }
+
+   * Retrieves all interactions for a specific drug.
+   *
+   * @param drugName The name of the drug to check interactions for.
+   * @return A ResponseEntity containing a list of interactions or an error message.
+   */
+  @GetMapping(value = "/drugs/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName) {
+    try {
+      List<String> interactions = drugService.getInteraction(drugName);
+      return new ResponseEntity<>(interactions, HttpStatus.OK);
     } catch (Exception e) {
       return handleException(e);
     }
@@ -137,7 +190,7 @@ public class RouteController {
    */
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB) {
+                                          @RequestParam("drugB") String drugB) {
     try {
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty", HttpStatus.BAD_REQUEST);
@@ -177,10 +230,10 @@ public class RouteController {
    */
   @GetMapping(value = "/get_interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getMultipleInteractions(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestParam(value = "drugC", required = false) String drugC,
-      @RequestParam(value = "drugD", required = false) String drugD,
-      @RequestParam(value = "drugE", required = false) String drugE) {
+                                                   @RequestParam("drugB") String drugB,
+                                                   @RequestParam(value = "drugC", required = false) String drugC,
+                                                   @RequestParam(value = "drugD", required = false) String drugD,
+                                                   @RequestParam(value = "drugE", required = false) String drugE) {
     try {
       List<String> drugs = new ArrayList<>();
       drugs.add(drugA);
@@ -244,8 +297,8 @@ public class RouteController {
    */
   @PostMapping(value = "/interactions/add", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> addInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestParam("interactionEffect") String interactionEffect) {
+                                          @RequestParam("drugB") String drugB,
+                                          @RequestParam("interactionEffect") String interactionEffect) {
     try {
       String existingInteraction = interactionService.getInteraction(drugA, drugB);
       if (!existingInteraction.startsWith("No known interaction")) {
@@ -275,9 +328,9 @@ public class RouteController {
    */
   @PatchMapping(value = "/interactions/update/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> updateInteraction(@PathVariable String documentId,
-      @RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestParam("interactionEffect") String interactionEffect) {
+                                             @RequestParam("drugA") String drugA,
+                                             @RequestParam("drugB") String drugB,
+                                             @RequestParam("interactionEffect") String interactionEffect) {
     try {
       boolean updated = interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect);
       if (updated) {
@@ -302,8 +355,8 @@ public class RouteController {
    */
   @DeleteMapping(value = "/interactions/delete", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> deleteInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestParam("interactionEffect") String interactionEffect) {
+                                             @RequestParam("drugB") String drugB,
+                                             @RequestParam("interactionEffect") String interactionEffect) {
     try {
       boolean deleted = interactionService.removeInteraction(drugA, drugB, interactionEffect);
       if (deleted) {
