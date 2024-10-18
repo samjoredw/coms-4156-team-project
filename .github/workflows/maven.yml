@@ -2,13 +2,12 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,17 +20,14 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: List files in the workspace (for debugging)
-        run: ls -la
-
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
 
       - name: Run Tests with Maven
         run: mvn test
-
-      - name: Print Environment Variables
-        run: printenv
-
-      - name: List files for debugging
-        run: ls -la ./firebase_config.json
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true

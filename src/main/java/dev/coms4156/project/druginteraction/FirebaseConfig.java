@@ -30,25 +30,43 @@ public class FirebaseConfig {
      */
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
+        FirebaseOptions options;
+        String firebaseConfig = System.getenv("FIREBASE_CONFIG");
 
-        try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
-            FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
-
-            return FirebaseApp.initializeApp(options);
+        if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
+            byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
+            InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
+            options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+        } else {
+            try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
+                options = FirebaseOptions.builder()
+                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                        .build();
+            }
         }
+
+        return FirebaseApp.initializeApp(options);
     }
 
     /**
      * Creates a firestore instance.
-     * 
+     *
      * @param firebaseApp a FirebaseApp object
      *
      * @return a Firestore object
      */
     @Bean
     public Firestore firestore(FirebaseApp firebaseApp) {
-        return FirestoreOptions.getDefaultInstance().getService();
+        try {
+            if (System.getenv("CI") != null) {
+                return com.google.firebase.cloud.FirestoreClient.getFirestore(firebaseApp);
+            } else {
+                return FirestoreOptions.getDefaultInstance().getService();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not initialize Firestore", e);
+        }
     }
 }
