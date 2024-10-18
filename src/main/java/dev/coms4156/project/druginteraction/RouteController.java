@@ -7,22 +7,123 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/v1")
 public class RouteController {
 
   private final Interaction interactionService;
-
-  // This one needs endpoints first but im putting it here anyway.
-  // private final Drugs drugService;
+  private final Drugs drugService;
 
   @Autowired
-  public RouteController(Interaction interactionService) {
+  public RouteController(Interaction interactionService, Drugs drugService) {
     this.interactionService = interactionService;
+    this.drugService = drugService;
+  }
+
+  /**
+   * Retrieves information about a specific drug.
+   *
+   * @param name The name of the drug.
+   * @return A ResponseEntity containing the drug information or an error message.
+   */
+  @GetMapping(value = "/drug", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getDrug(@RequestParam("name") String name) {
+    try {
+      if (name == null || name.isEmpty()) {
+        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", HttpStatus.BAD_REQUEST);
+      }
+
+      Map<String, Object> drugInfo = drugService.getDrug(name);
+      if (drugInfo != null) {
+        return new ResponseEntity<>(drugInfo, HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Drug not found", HttpStatus.NOT_FOUND);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Adds a new drug to the database.
+   *
+   * @param drugInfo A map containing the drug information.
+   * @return A ResponseEntity indicating success or failure of the operation.
+   */
+  @PostMapping(value = "/drug/add", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> addDrug(@RequestBody Map<String, Object> drugInfo) {
+    try {
+      String name = (String) drugInfo.get("name");
+      if (name == null || name.isEmpty()) {
+        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", HttpStatus.BAD_REQUEST);
+      }
+
+      if (drugService.getDrug(name) != null) {
+        return new ResponseEntity<>("Drug already exists", HttpStatus.CONFLICT);
+      }
+
+      boolean added = drugService.addDrug(drugInfo);
+      if (added) {
+        return new ResponseEntity<>("Drug added successfully", HttpStatus.CREATED);
+      } else {
+        return new ResponseEntity<>("Failed to add drug", HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Updates an existing drug in the database.
+   *
+   * @param name The name of the drug to update.
+   * @param updates A map containing the fields to update.
+   * @return A ResponseEntity indicating success or failure of the update operation.
+   */
+  @PatchMapping(value = "/drug/update/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> updateDrug(@PathVariable String name, @RequestBody Map<String, Object> updates) {
+    try {
+      if (drugService.getDrug(name) == null) {
+        return new ResponseEntity<>("Drug not found", HttpStatus.NOT_FOUND);
+      }
+
+      boolean updated = drugService.updateDrug(name, updates);
+      if (updated) {
+        return new ResponseEntity<>("Drug updated successfully", HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Failed to update drug", HttpStatus.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Removes a specific drug from the database.
+   *
+   * @param name The name of the drug to be removed.
+   * @return A ResponseEntity indicating success or failure of the removal operation.
+   */
+  @DeleteMapping(value = "/drug/remove", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> removeDrug(@RequestParam("name") String name) {
+    try {
+      if (name == null || name.isEmpty()) {
+        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", HttpStatus.BAD_REQUEST);
+      }
+
+      boolean removed = drugService.removeDrug(name);
+      if (removed) {
+        return new ResponseEntity<>("Drug removed successfully", HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>("Failed to remove drug", HttpStatus.NOT_FOUND);
+      }
+    } catch (Exception e) {
+      return handleException(e);
+    }
   }
 
   /**
