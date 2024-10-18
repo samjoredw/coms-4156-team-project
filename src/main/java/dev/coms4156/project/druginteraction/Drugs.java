@@ -1,20 +1,27 @@
 package dev.coms4156.project.druginteraction;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Firestore;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Service;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.WriteResult;
 
+/**
+ * This class represents drugs and their properties.
+ */
 @Service
 public class Drugs {
 
@@ -177,13 +184,13 @@ public class Drugs {
               .collection("interactions")
               .whereEqualTo("drugA", drugName)
               .get();
-
       com.google.cloud.firestore.QuerySnapshot querySnapshotA = queryA.get();
 
       for (DocumentSnapshot document : querySnapshotA.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugB");
-        interactions.add("Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add(
+            "Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
       }
 
       // Query where drugB = drugName
@@ -197,7 +204,8 @@ public class Drugs {
       for (DocumentSnapshot document : querySnapshotB.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugA");
-        interactions.add("Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add(
+            "Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
       }
     } catch (Exception e) {
       e.printStackTrace();
