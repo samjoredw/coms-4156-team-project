@@ -1,7 +1,9 @@
 package dev.coms4156.project.druginteraction;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,15 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.WriteResult;
+
 
 /**
  * This class represents drugs and their properties.
@@ -26,13 +22,12 @@ import com.google.cloud.firestore.WriteResult;
 public class Drugs {
 
   private final FirebaseService firebaseService;
+  private final Firestore firestore;
 
   @Autowired
-  private Firestore firestore;
-
-  @Autowired
-  public Drugs(FirebaseService firebaseService) {
+  public Drugs(FirebaseService firebaseService, Firestore firestore) {
     this.firebaseService = firebaseService;
+    this.firestore = firestore;
   }
 
   /**
@@ -43,7 +38,8 @@ public class Drugs {
    */
   public Map<String, Object> getDrug(String drugName) {
     try {
-      DocumentSnapshot document = firestore.collection("drugs").document(drugName.toLowerCase()).get().get();
+      DocumentSnapshot document = 
+          firestore.collection("drugs").document(drugName.toLowerCase()).get().get();
       if (document.exists()) {
         return document.getData();
       } else {
@@ -114,7 +110,8 @@ public class Drugs {
       updates.put("updatedBy", "admin");
 
       // Update the document in Firestore
-      ApiFuture<WriteResult> writeResult = firestore.collection("drugs").document(documentId).update(updates);
+      ApiFuture<WriteResult> writeResult = 
+          firestore.collection("drugs").document(documentId).update(updates);
       writeResult.get(); // Wait for the update to complete
 
       return true; // Successfully updated
@@ -133,7 +130,8 @@ public class Drugs {
   public boolean removeDrug(String drugName) {
     try {
       String documentId = drugName.toLowerCase();
-      ApiFuture<WriteResult> writeResult = firestore.collection("drugs").document(documentId).delete();
+      ApiFuture<WriteResult> writeResult = 
+          firestore.collection("drugs").document(documentId).delete();
       writeResult.get(); // Wait for the deletion to complete
       return true;
     } catch (Exception e) {

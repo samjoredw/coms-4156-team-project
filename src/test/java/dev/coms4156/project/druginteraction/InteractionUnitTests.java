@@ -42,36 +42,40 @@ public class InteractionUnitTests {
     assertEquals("Increased risk of bleeding.", interactionEffect);
   }
 
-   @Test
-   @Order(2)
+  @Test
+  @Order(2)
     public void addInteractionTest() {
-        boolean result = testInteraction.addInteraction("Ibuprofen", "Naproxen", "Increased risk of gastrointestinal side effects.");
-        assertTrue(result, "Adding a new interaction should return true");
+    boolean result = testInteraction.addInteraction("Ibuprofen", 
+        "Naproxen", "Increased risk of gastrointestinal side effects.");
+    assertTrue(result, "Adding a new interaction should return true");
 
-        String interactionEffect = testInteraction.getInteraction("Ibuprofen", "Naproxen");
-        assertEquals("Increased risk of gastrointestinal side effects.", interactionEffect);
-    }
+    String interactionEffect = testInteraction.getInteraction("Ibuprofen", "Naproxen");
+    assertEquals("Increased risk of gastrointestinal side effects.", interactionEffect);
+  }
 
-     @Test
-    @Order(3)
+  @Test
+  @Order(3)
     public void getInteractionListTest() {
-        List<String> drugs = Arrays.asList("Aspirin", "Warfarin", "Ibuprofen");
-        List<String> interactions = testInteraction.getInteraction(drugs);
+    List<String> drugs = Arrays.asList("Aspirin", "Warfarin", "Ibuprofen");
+    List<String> interactions = testInteraction.getInteraction(drugs);
 
-        assertEquals(3, interactions.size(), "Should return 3 interactions for 3 drugs");
-        assertTrue(interactions.contains("Increased risk of bleeding."), "Should contain known interaction");
+    assertEquals(3, interactions.size(), "Should return 3 interactions for 3 drugs");
+    assertTrue(interactions.contains("Increased risk of bleeding."), 
+        "Should contain known interaction");
       
-    }
+  }
 
-    @Test
-    @Order(4)
+  @Test
+  @Order(4)
     public void removeInteractionTest() {
-        boolean result = testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
-        assertTrue(result, "Removing existing interaction should return true");
+    boolean result = testInteraction.removeInteraction("Aspirin", 
+        "Warfarin", "Increased risk of bleeding.");
+    assertTrue(result, "Removing existing interaction should return true");
 
-        // Test removing non-existent interaction
-        result = testInteraction.removeInteraction("Aspirin", "Ibuprofen", "Non-existent interaction");
-        assertFalse(result, "Removing non-existent interaction should return false");
-    }
-    // TODO: Add unit test for getInteractionList method
+    // Test removing non-existent interaction
+    result = testInteraction.removeInteraction("Aspirin", "Ibuprofen", "Non-existent interaction");
+    assertFalse(result, "Removing non-existent interaction should return false");
+  }
+  
+  // TODO: Add unit test for getInteractionList method
 }
