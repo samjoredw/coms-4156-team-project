@@ -223,10 +223,13 @@ public class RouteController {
    */
   @GetMapping(value = "/get_interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getMultipleInteractions(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestParam(value = "drugC", required = false) String drugC,
-      @RequestParam(value = "drugD", required = false) String drugD,
-      @RequestParam(value = "drugE", required = false) String drugE) {
+                                                   @RequestParam("drugB") String drugB,
+                                                   @RequestParam(value = "drugC", required = false)
+                                                     String drugC,
+                                                   @RequestParam(value = "drugD", required = false)
+                                                     String drugD,
+                                                   @RequestParam(value = "drugE", required = false)
+                                                     String drugE) {
     try {
       List<String> drugs = new ArrayList<>();
       drugs.add(drugA);
@@ -241,32 +244,26 @@ public class RouteController {
         drugs.add(drugE);
       }
 
-      List<String> interactionEffects = interactionService.getInteraction(drugs);
+      List<Map<String, String>> interactionEffects = interactionService.getInteraction(drugs);
 
       Map<String, List<Map<String, Object>>> response = new HashMap<>();
       List<Map<String, Object>> interactions = new ArrayList<>();
       List<Map<String, Object>> noInteractions = new ArrayList<>();
 
-      System.out.println(interactionEffects);
-
-      for (String effect : interactionEffects) {
+      for (Map<String, String> effect : interactionEffects) {
         Map<String, Object> interactionData = new HashMap<>();
+        String drugPair = effect.get("drugPair");
+        String interactionEffect = effect.get("interactionEffect");
 
-        String[] parts = effect.split(": ", 2);
+        interactionData.put("drugPair", drugPair);
+        interactionData.put("interactionEffect", interactionEffect);
 
-        if (parts.length < 2) {
-          interactionData.put("drugPair", parts[0]);
-          interactionData.put("interactionEffect", "Unknown interaction");
+        if (interactionEffect.startsWith("No known interaction between")) {
           interactionData.put("interactionBool", false);
-        } else {
-          interactionData.put("drugPair", parts[0]);
-          interactionData.put("interactionEffect", parts[1]);
-          interactionData.put("interactionBool", !parts[1].startsWith("No known interaction"));
-        }
-        if ((boolean) interactionData.get("interactionBool")) {
-          interactions.add(interactionData);
-        } else {
           noInteractions.add(interactionData);
+        } else {
+          interactionData.put("interactionBool", true);
+          interactions.add(interactionData);
         }
       }
 

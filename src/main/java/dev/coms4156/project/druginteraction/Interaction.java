@@ -182,8 +182,8 @@ public class Interaction {
    * @param drugs The List of drugs to check for any pairwise interaction.
    * @return A List of String indicating all pairwise interaction effect
    */
-  public List<String> getInteraction(List<String> drugs) {
-    List<String> interactions = new ArrayList<>();
+  public List<Map<String, String>> getInteraction(List<String> drugs) {
+    List<Map<String, String>> interactions = new ArrayList<>();
 
     try {
       for (int i = 0; i < drugs.size(); i++) {
@@ -191,13 +191,20 @@ public class Interaction {
           String drugA = drugs.get(i);
           String drugB = drugs.get(j);
 
-          String interaction = getInteraction(drugA, drugB);
+          String interactionEffect = getInteraction(drugA, drugB);
+          Map<String, String> interaction = new HashMap<>();
+          interaction.put("drugPair", drugA + " and " + drugB);
+          interaction.put("interactionEffect", interactionEffect);
           interactions.add(interaction);
         }
       }
     } catch (Exception e) {
       e.printStackTrace();
-      interactions.add("Error retrieving drug interactions: " + e.getMessage());
+      Map<String, String> errorInteraction = new HashMap<>();
+      errorInteraction.put("drugPair", "Error");
+      errorInteraction.put("interactionEffect",
+              "Error retrieving drug interactions: " + e.getMessage());
+      interactions.add(errorInteraction);
     }
 
     return interactions;
