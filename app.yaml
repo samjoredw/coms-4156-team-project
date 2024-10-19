@@ -1,0 +1,19 @@
+runtime: java21
+
+entrypoint: java -jar target/coms-4156-team-project.jar
+
+instance_class: F1
+
+env_variables:
+  BUCKET_NAME: "example-gcs-bucket"
+
+# handlers:
+
+# - url: /.*
+#   secure: always
+#   redirect_http_response_code: 301
+#   script: auto
+
+# - url: /data.txt
+#   static_files: data.txt
+#   upload: data.txt
