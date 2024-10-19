@@ -8,19 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+
 
 /**
  * Controller for handling routes related to interactions.
@@ -49,7 +47,8 @@ public class RouteController {
   public ResponseEntity<?> getDrug(@RequestParam("name") String name) {
     try {
       if (name == null || name.isEmpty()) {
-        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", 
+            HttpStatus.BAD_REQUEST);
       }
 
       Map<String, Object> drugInfo = drugService.getDrug(name);
@@ -74,7 +73,8 @@ public class RouteController {
     try {
       String name = (String) drugInfo.get("name");
       if (name == null || name.isEmpty()) {
-        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", 
+            HttpStatus.BAD_REQUEST);
       }
 
       if (drugService.getDrug(name) != null) {
@@ -100,7 +100,8 @@ public class RouteController {
    * @return A ResponseEntity indicating success or failure of the update operation.
    */
   @PatchMapping(value = "/drug/update/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateDrug(@PathVariable String name, @RequestBody Map<String, Object> updates) {
+  public ResponseEntity<?> updateDrug(@PathVariable String name, 
+      @RequestBody Map<String, Object> updates) {
     try {
       if (drugService.getDrug(name) == null) {
         return new ResponseEntity<>("Drug not found", HttpStatus.NOT_FOUND);
@@ -127,7 +128,8 @@ public class RouteController {
   public ResponseEntity<?> removeDrug(@RequestParam("name") String name) {
     try {
       if (name == null || name.isEmpty()) {
-        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid input: Drug name cannot be empty", 
+            HttpStatus.BAD_REQUEST);
       }
 
       boolean removed = drugService.removeDrug(name);
@@ -141,7 +143,7 @@ public class RouteController {
     }
   }
 
-  /*
+  /**
    * Retrieves all drugs from the database.
    *
    * @return A ResponseEntity containing a list of all drugs or an error message.
@@ -156,7 +158,7 @@ public class RouteController {
     }
   }
 
-  /*
+  /**
    * Retrieves all interactions for a specific drug.
    *
    * @param drugName The name of the drug to check interactions for.

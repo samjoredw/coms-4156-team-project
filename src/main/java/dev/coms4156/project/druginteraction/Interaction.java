@@ -20,13 +20,12 @@ import org.springframework.stereotype.Service;
 public class Interaction {
 
   private final FirebaseService firebaseService;
+  private final Firestore firestore;
 
   @Autowired
-  private Firestore firestore;
-
-  @Autowired
-  public Interaction(FirebaseService firebaseService) {
+  public Interaction(FirebaseService firebaseService, Firestore firestore) {
     this.firebaseService = firebaseService;
+    this.firestore = firestore;
   }
 
   /**
