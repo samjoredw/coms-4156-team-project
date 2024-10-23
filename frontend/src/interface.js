@@ -52,8 +52,8 @@ getInteractionButton.addEventListener('click', () => {
         fetch(apiUrl, {
             method: 'GET',
             headers: {
+                'Authorization': `Bearer ${idToken}`,
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`  // Include the ID token in the Authorization header
             },
         })
             .then(response => {
