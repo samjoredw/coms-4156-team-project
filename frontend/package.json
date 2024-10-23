@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cors-anywhere": "^0.4.4",
     "firebase": "^10.14.1",
     "firebase-cli": "^1.2.0",
     "firebaseui": "^6.1.0",
