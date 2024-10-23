@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for handling routes related to interactions.
  */
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1")
 public class RouteController {
 
   private final Interaction interactionService;
   private final Drugs drugService;
+  private final FirebaseService firebaseService;
 
   // This one needs endpoints first b
   @Autowired
@@ -183,8 +185,12 @@ public class RouteController {
    */
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB) {
+      @RequestParam("drugB") String drugB, @RequestHeader HttpHeaders headers) {
     try {
+      if (!firebaseService.authenticateToken(headers)) {
+        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
+      }
+
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty",
             HttpStatus.BAD_REQUEST);
