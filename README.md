@@ -93,7 +93,22 @@ Add a new drug to the database.
 
 - **Endpoint:** `/drug/add`
 - **Method:** `POST`
-- **Request Body:** Map<String, Object> containing drug information.
+- **Example Request URL:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/add
+- **Example Request Body (in Postman select "Body" => "Raw"):**
+    ```json
+    {
+      "name": "Test Drug",
+      "dosageForm": "Tablet",
+      "indications": "None",
+      "contraindications": "Also none",
+      "sideEffects": "Maybe some",
+      "createdBy": "admin",
+      "updatedBy": "admin",
+      "createdAt": "2024-10-24 04:02:00",
+      "updatedAt": "2024-10-25 19:42:02"
+    }
+    ```
 - **Response:**
   - **201 Created:** Drug added successfully.
   - **400 Bad Request:** Invalid input or failed to add drug.
@@ -105,9 +120,16 @@ Update an existing drug in the database.
 
 - **Endpoint:** `/drug/update/{name}`
 - **Method:** `PATCH`
-- **Path Parameter:**
-  - `name` (String) – Required. Name of the drug to update.
-- **Request Body:** Map<String, Object> containing fields to update.
+- **Example Request URL:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/update/digoxin
+- **Example Request Body (in Postman select "Body" => "Raw"):**
+    ```json
+    {
+      "dosageForm": "Tablet",
+      "indications": "For pain when writing software",
+      "contraindications": "None"
+    }
+    ```
 - **Response:**
   - **200 OK:** Drug updated successfully.
   - **400 Bad Request:** Failed to update drug.
@@ -121,6 +143,10 @@ Remove a specific drug from the database.
 - **Method:** `DELETE`
 - **Parameters:**
   - `name` (String) – Required. Name of the drug to be removed.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/remove?name=fluconazole
+- **List of Drugs to Try (for demo):**
+  - digoxin, paroxetine, simvastatin
 - **Response:**
   - **200 OK:** Drug removed successfully.
   - **400 Bad Request:** Invalid input or missing drug name.
@@ -132,6 +158,8 @@ Retrieve all drugs from the database.
 
 - **Endpoint:** `/drugs`
 - **Method:** `GET`
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs
 - **Response:**
   - **200 OK:** List of all drugs retrieved successfully.
   - **500 Internal Server Error:** Unexpected error occurred.
@@ -143,6 +171,8 @@ Retrieve all interactions for a specific drug.
 - **Method:** `GET`
 - **Parameters:**
   - `drugName` (String) – Required. Name of the drug to check interactions for.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs/interactions?drugName=TestDrugA
 - **Response:**
   - **200 OK:** List of interactions retrieved successfully.
   - **500 Internal Server Error:** Unexpected error occurred.
@@ -159,7 +189,7 @@ Retrieve the interaction effect between two specific drugs.
 - **Parameters:**  
   - `drugA` (String) – Required. Name of the first drug.  
   - `drugB` (String) – Required. Name of the second drug.
-- **Example Request**
+- **Example Request:**
    - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarin&drugB=Aspirin
 - **Example Response:**  
   - **200 OK:**  
@@ -198,7 +228,7 @@ Retrieve interactions among multiple drugs (up to five).
   - `drugC` (String) – Optional.  
   - `drugD` (String) – Optional.  
   - `drugE` (String) – Optional.
-- **Example Request**
+- **Example Request:**
    - https://drug-interaction-api.uk.r.appspot.com/api/v1/get_interactions?drugA=Warfarin&drugB=Aspirin&drugC=Not a Drug
 - **Example Response:**    
 - **Response:**  
