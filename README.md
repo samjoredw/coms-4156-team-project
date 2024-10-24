@@ -158,26 +158,28 @@ Retrieve the interaction effect between two specific drugs.
 - **Method:** `GET`  
 - **Parameters:**  
   - `drugA` (String) – Required. Name of the first drug.  
-  - `drugB` (String) – Required. Name of the second drug.  
-- **Response:**  
+  - `drugB` (String) – Required. Name of the second drug.
+- **Example Request**
+   - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarin&drugB=Aspirin
+- **Example Response:**  
   - **200 OK:**  
     ```json
     {
-      "interactions": {
-        "drugPair": "DrugA and DrugB",
-        "interactionBool": true,
-        "interactionEffect": "Description of the interaction effect"
-      }
+        "interactions": {
+            "interactionEffect": "Increased risk of bleeding.",
+            "interactionBool": true,
+            "drugPair": "Warfarin and Aspirin"
+        }
     }
     ```
   - **200 OK (No known interaction):**  
     ```json
     {
-      "noInteractions": {
-        "drugPair": "DrugA and DrugB",
+        "noInteractions": {
+        "interactionEffect": "No known interaction between Warfarine and Aspirin",
         "interactionBool": false,
-        "interactionEffect": "No known interaction"
-      }
+        "drugPair": "Warfarine and Aspirin"
+        }
     }
     ```
   - **400 Bad Request:** Invalid input or missing drug names.
@@ -195,27 +197,36 @@ Retrieve interactions among multiple drugs (up to five).
   - `drugB` (String) – Required.  
   - `drugC` (String) – Optional.  
   - `drugD` (String) – Optional.  
-  - `drugE` (String) – Optional.  
+  - `drugE` (String) – Optional.
+- **Example Request**
+   - https://drug-interaction-api.uk.r.appspot.com/api/v1/get_interactions?drugA=Warfarin&drugB=Aspirin&drugC=Not a Drug
+- **Example Response:**    
 - **Response:**  
   - **200 OK:**  
     ```json
     {
-      "interactions": [
-        {
-          "drugPair": "DrugA and DrugB",
-          "interactionBool": true,
-          "interactionEffect": "Interaction description"
-        }
-      ],
-      "noInteractions": [
-        {
-          "drugPair": "DrugC and DrugD",
-          "interactionBool": false,
-          "interactionEffect": "No known interaction"
-        }
-      ]
+        "noInteractions": [
+            {
+                "interactionEffect": "No known interaction between Warfarin and Not a Drug",
+                "interactionBool": false,
+                "drugPair": "Warfarin and Not a Drug"
+            },
+            {
+                "interactionEffect": "No known interaction between Aspirin and Not a Drug",
+                "interactionBool": false,
+                "drugPair": "Aspirin and Not a Drug"
+            }
+        ],
+        "interactions": [
+            {
+                "interactionEffect": "Increased risk of bleeding.",
+                "interactionBool": true,
+                "drugPair": "Warfarin and Aspirin"
+            }
+        ]
     }
     ```
+  - **400 Bad Request:** Invalid input or missing drug names.
   - **500 Internal Server Error:** Unexpected error occurred.
 
 ---
@@ -228,7 +239,9 @@ Add a new interaction between two drugs to the database.
 - **Parameters:**  
   - `drugA` (String) – Required.  
   - `drugB` (String) – Required.  
-  - `interactionEffect` (String) – Required.  
+  - `interactionEffect` (String) – Required.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/add?drugA=TestDrugA&drugB=TestDrugB&interactionEffect=This is a test interaction.
 - **Response:**  
   - **201 Created:** Interaction added successfully.  
   - **409 Conflict:** Interaction already exists.  
@@ -243,11 +256,15 @@ Update the details of an existing drug interaction.
 - **Endpoint:** `/interactions/update/{documentId}`  
 - **Method:** `PATCH`  
 - **Path Parameter:**  
-  - `documentId` (String) – Required. ID of the interaction to update.  
+  - `documentId` (String) – Required. ID of the interaction to update.
 - **Request Parameters:**  
   - `drugA` (String) – Required.  
   - `drugB` (String) – Required.  
-  - `interactionEffect` (String) – Required.  
+  - `interactionEffect` (String) – Required.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/update/11Zyx?drugA=UpdateA&drugB=UpdateB&interactionEffect=This is a test update.
+- **Example IDs to Try**
+  - 98fkB, 9xtu5, 9zjMs 
 - **Response:**  
   - **200 OK:** Interaction updated successfully.  
   - **400 Bad Request:** Failed to update interaction.  
@@ -258,12 +275,14 @@ Update the details of an existing drug interaction.
 ### 5. **Delete Drug Interaction**
 Delete a specific drug interaction from the database.
 
-- **Endpoint:** `/interactions/delete`  
+- **Endpoint:** `/interactions/delete`
 - **Method:** `DELETE`  
 - **Parameters:**  
   - `drugA` (String) – Required.  
   - `drugB` (String) – Required.  
-  - `interactionEffect` (String) – Required.  
+  - `interactionEffect` (String) – Required.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/delete?drugA=Aspirin&drugB=Ibuprofen&interactionEffect=Increased risk of gastrointestinal bleeding.
 - **Response:**  
   - **200 OK:** Interaction deleted successfully.  
   - **400 Bad Request:** Failed to delete interaction.  
