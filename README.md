@@ -82,6 +82,22 @@ Retrieve information about a specific drug.
 - **Method:** `GET`
 - **Parameters:**
   - `name` (String) – Required. Name of the drug.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug?name=alcohol
+- **Example Response:**
+    ```json
+   {
+      "createdAt": "2024-10-23 19:42:02",
+      "indications": "Not a medication; consumed as a beverage",
+      "contraindications": "Liver disease, certain medications, and pregnancy",
+      "updatedBy": "admin",
+      "createdBy": "admin",
+      "dosageForm": "Liquid",
+      "name": "Alcohol",
+      "sideEffects": "Impaired judgment, liver damage, and increased risk of accidents",
+      "updatedAt": "2024-10-23 19:42:02"
+  }
+    ```
 - **Response:**
   - **200 OK:** Drug information retrieved successfully.
   - **400 Bad Request:** Invalid input or missing drug name.
