@@ -9,10 +9,9 @@ The other part of the service covers information about drugs themselves. This ta
 
 # Using the API as a client
 
-For a short while, our service will be hosted on Google Cloud. More details to be added
-as we add this.
+For a short while, our service will be hosted on Google Cloud.
 
-Please see the API Documentation below for the endpoints that can be reached using Postman
+Please see the API documentation below for the endpoints that can be reached using Postman
 or any other such service
 
 # Building, running, and testing the service locally
@@ -205,7 +204,7 @@ Retrieve the interaction effect between two specific drugs.
 - **Parameters:**  
   - `drugA` (String) – Required. Name of the first drug.  
   - `drugB` (String) – Required. Name of the second drug.
-- **Example Request:**
+- **Example Request (Interaction Exists):**
    - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarin&drugB=Aspirin
 - **Example Response:**  
   - **200 OK:**  
@@ -218,6 +217,8 @@ Retrieve the interaction effect between two specific drugs.
         }
     }
     ```
+- **Example Request (No Interaction Exists):**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarine&drugB=Aspirin
   - **200 OK (No known interaction):**  
     ```json
     {
@@ -335,8 +336,8 @@ Delete a specific drug interaction from the database.
   - **500 Internal Server Error:** Unexpected error occurred.
 
 ---
-
-### 6. **Error Handling**
+## General
+### 1. **Error Handling**
 Handles exceptions that occur during any endpoint execution.
 
 - **Response Format:**  
