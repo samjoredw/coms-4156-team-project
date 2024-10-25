@@ -1,7 +1,7 @@
 # Team: Runtime Terrors - Drug Interaction and Information API
 # Service Overview
 
-This service provides useful information on individual drugs and their interactions with each other.
+This service provides useful information on individual drugs and their interactions with each other. 
 
 One part of the service covers drug interactions. This part takes in up to five pharmaceutical drug names and returns two things about each potential pair of drugs (ex: 1+2, 1+3, 1+4, 1+5, 2+3, etc.): (1) whether or not there’s an interaction between them, (2) if there is, a description of that interaction.
 
