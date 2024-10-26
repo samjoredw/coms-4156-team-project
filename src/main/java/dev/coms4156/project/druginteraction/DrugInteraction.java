@@ -35,4 +35,5 @@ public class DrugInteraction implements CommandLineRunner {
   public void run(String[] args) {
     System.out.println("Start up");
   }
+  // This is a test comment
 }
