@@ -31,3 +31,18 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
+      
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
+        with:
+          reports: target/site/jacoco/jacoco.xml
+          reporttypes: HtmlInline;Cobertura;TextSummary
+          sourcedirs: src/main/java/com/dev/sweproject
+          title: JaCoCo code coverage report
+      
+      - name: JaCoCoSummary
+        run: cat coveragereport/Summary.txt
+      
+      - name: Run PMD Static Analysis
+        run: mvn pmd:check || true
+      
