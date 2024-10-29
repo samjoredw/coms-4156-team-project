@@ -1,6 +1,6 @@
 Summary - JaCoCo code coverage report
-  Generated on: 10/29/2024 - 15:07:21
-  Coverage date: 10/29/2024 - 15:06:44
+  Generated on: 10/29/2024 - 15:25:47
+  Coverage date: 10/29/2024 - 15:25:04
   Parser: JaCoCo
   Assemblies: 1
   Classes: 6
@@ -16,7 +16,7 @@ Summary - JaCoCo code coverage report
   Method coverage: 77.5% (31 of 40)
   Covered methods: 31
   Total methods: 40
-  Tag: 88_11576751079
+  Tag: 89_11577109680
 
 dev/coms4156/project/druginteraction                     57.2%
   dev/coms4156/project/druginteraction/DrugInteraction   50.0%

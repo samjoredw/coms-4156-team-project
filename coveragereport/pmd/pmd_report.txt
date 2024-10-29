@@ -1,0 +1,46 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------< dev.coms4156.project:coms-4156-team-project >-------------
+[INFO] Building coms-4156-team-project 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> maven-pmd-plugin:3.21.2:check (default-cli) > :pmd @ coms-4156-team-project >>>
+[INFO] 
+[INFO] --- maven-pmd-plugin:3.21.2:pmd (pmd) @ coms-4156-team-project ---
+[WARNING] Unable to locate Source XRef to link to - DISABLED
+[INFO] PMD version: 6.55.0
+[INFO] Rendering content with org.apache.maven.skins:maven-default-skin:jar:1.3 skin.
+[INFO] 
+[INFO] <<< maven-pmd-plugin:3.21.2:check (default-cli) < :pmd @ coms-4156-team-project <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-pmd-plugin:3.21.2:check (default-cli) @ coms-4156-team-project ---
+[INFO] PMD version: 6.55.0
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.DrugInteraction:35 Rule:MissingOverride Priority:3 The method 'run(String)' is missing an @Override annotation..
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:42 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:46 Rule:ReturnEmptyCollectionRatherThanNull Priority:1 Return an empty collection rather than null..
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:50 Rule:ReturnEmptyCollectionRatherThanNull Priority:1 Return an empty collection rather than null..
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:76 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:98 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:132 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.DrugInteraction:35 Rule:MissingOverride Priority:3 The method 'run(String)' is missing an @Override annotation..
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:42 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:46 Rule:ReturnEmptyCollectionRatherThanNull Priority:1 Return an empty collection rather than null..
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:50 Rule:ReturnEmptyCollectionRatherThanNull Priority:1 Return an empty collection rather than null..
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:76 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:98 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] PMD Failure: dev.coms4156.project.druginteraction.Drugs:132 Rule:UseLocaleWithCaseConversions Priority:3 When doing a String.toLowerCase()/toUpperCase() call, use a Locale.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.997 s
+[INFO] Finished at: 2024-10-29T15:25:52Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-pmd-plugin:3.21.2:check (default-cli) on project coms-4156-team-project: You have 7 PMD violations. For more details see: /home/runner/work/coms-4156-team-project/coms-4156-team-project/target/pmd.xml -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
