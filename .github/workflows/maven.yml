@@ -39,10 +39,19 @@ jobs:
           reporttypes: HtmlInline;Cobertura;TextSummary
           sourcedirs: src/main/java/com/dev/sweproject
           title: JaCoCo code coverage report
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
       
       - name: JaCoCoSummary
         run: cat coveragereport/Summary.txt
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
       
       - name: Run PMD Static Analysis
         run: mvn pmd:check || true
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
       
