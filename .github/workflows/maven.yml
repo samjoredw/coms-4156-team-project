@@ -37,7 +37,7 @@ jobs:
         with:
           reports: target/site/jacoco/jacoco.xml
           reporttypes: HtmlInline;Cobertura;TextSummary
-          sourcedirs: src/main/java/com/dev/sweproject
+          sourcedirs: src/main/java/dev/coms4156/project/druginteraction
           title: JaCoCo code coverage report
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
