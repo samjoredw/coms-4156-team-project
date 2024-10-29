@@ -64,6 +64,11 @@ jobs:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
 
+      - name: Configure Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Extract Current Branch Name
         id: extract_branch
         run: |
