@@ -58,7 +58,7 @@ jobs:
       - name: Run PMD Static Analysis
         run: |
           mkdir -p coveragereport/pmd 
-          mvn pmd:check pmd:report -DreportOutputDirectory=coveragereport/pmd || true
+          mvn pmd:check > coveragereport/pmd/pmd_report.txt || true
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
@@ -66,7 +66,7 @@ jobs:
       - name: Run Checkstyle
         run: |
           mkdir -p coveragereport/checkstyle  # Create folder for Checkstyle reports
-          mvn checkstyle:checkstyle -Dcheckstyle.output.format=html -DoutputFile=coveragereport/checkstyle/checkstyle-report.html || true
+          mvn checkstyle:checkstyle -Dcheckstyle.output.format=xml -DoutputFile=coveragereport/checkstyle/checkstyle-report.xml || true
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
