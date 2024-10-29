@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Drug Interaction Checker</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Drug Interaction Checker</h1>
+            <p class="description">
+                Check potential interactions between multiple medications
+            </p>
+
+            <div class="drug-inputs" id="drugInputs">
+                <div class="drug-input-group">
+                    <input
+                        type="text"
+                        placeholder="Enter drug 1"
+                        list="drugsList"
+                    />
+                </div>
+                <div class="drug-input-group">
+                    <input
+                        type="text"
+                        placeholder="Enter drug 2"
+                        list="drugsList"
+                    />
+                </div>
+            </div>
+
+            <datalist id="drugsList"></datalist>
+
+            <button id="addDrugBtn" class="btn-outline">
+                + Add Another Drug
+            </button>
+
+            <button id="checkBtn" class="btn-primary" style="margin-top: 1rem">
+                Check Interactions
+            </button>
+
+            <div id="results"></div>
+        </div>
+
+        <script src="app.js"></script>
+    </body>
+</html>

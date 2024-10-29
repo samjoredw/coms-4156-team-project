@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e1cfeb23-00a6-4eaa-a595-81d8029cf8b4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/Interaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/Interaction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/RouteController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/RouteController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/InteractionUnitTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/InteractionUnitTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,12 +45,13 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "get__interactions__fix",
+    "git-widget-placeholder": "client",
     "last_opened_file_path": "/Users/tommylam/columbia/f24/swe/coms-4156-team-project",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -60,84 +59,6 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="DrugsUnitTests (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="coms-4156-team-project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.coms4156.project.druginteraction.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="dev.coms4156.project.druginteraction" />
-      <option name="MAIN_CLASS_NAME" value="dev.coms4156.project.druginteraction.DrugsUnitTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="DrugsUnitTests.addDrugTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="coms-4156-team-project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.coms4156.project.druginteraction.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="dev.coms4156.project.druginteraction" />
-      <option name="MAIN_CLASS_NAME" value="dev.coms4156.project.druginteraction.DrugsUnitTests" />
-      <option name="METHOD_NAME" value="addDrugTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="FirebaseServiceUnitTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="coms-4156-team-project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.coms4156.project.individualproject.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="dev.coms4156.project.individualproject" />
-      <option name="MAIN_CLASS_NAME" value="dev.coms4156.project.individualproject.FirebaseServiceUnitTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="InteractionUnitTests (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="coms-4156-team-project" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.coms4156.project.druginteraction.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="dev.coms4156.project.druginteraction" />
-      <option name="MAIN_CLASS_NAME" value="dev.coms4156.project.druginteraction.InteractionUnitTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="MainApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="coms-4156-team-project" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="dev.coms4156.project.individualproject.MainApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="JUnit.DrugsUnitTests.addDrugTest" />
-        <item itemvalue="JUnit.DrugsUnitTests (1)" />
-        <item itemvalue="JUnit.InteractionUnitTests (1)" />
-        <item itemvalue="JUnit.FirebaseServiceUnitTests" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -153,6 +74,8 @@
       <workItem from="1729090251457" duration="1258000" />
       <workItem from="1729189844785" duration="934000" />
       <workItem from="1729377616317" duration="2414000" />
+      <workItem from="1729725882099" duration="4380000" />
+      <workItem from="1729819117355" duration="4217000" />
     </task>
     <servers />
   </component>
@@ -169,5 +92,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/coms_4156_team_project$DrugInteraction.ic" NAME="DrugInteraction Coverage Results" MODIFIED="1729725919158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>dev.coms4156.project.druginteraction.*</FILTER>
+    </SUITE>
   </component>
 </project>
