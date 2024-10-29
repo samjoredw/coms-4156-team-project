@@ -1,0 +1,27 @@
+Summary - JaCoCo code coverage report
+  Generated on: 10/29/2024 - 14:53:00
+  Coverage date: 10/29/2024 - 14:52:21
+  Parser: JaCoCo
+  Assemblies: 1
+  Classes: 6
+  Files: 6
+  Line coverage: 57.2%
+  Covered lines: 228
+  Uncovered lines: 170
+  Coverable lines: 398
+  Total lines: 1120
+  Branch coverage: 58.1% (57 of 98)
+  Covered branches: 57
+  Total branches: 98
+  Method coverage: 77.5% (31 of 40)
+  Covered methods: 31
+  Total methods: 40
+  Tag: 87_11576471108
+
+dev/coms4156/project/druginteraction                     57.2%
+  dev/coms4156/project/druginteraction/DrugInteraction   50.0%
+  dev/coms4156/project/druginteraction/Drugs             76.4%
+  dev/coms4156/project/druginteraction/FirebaseConfig    64.7%
+  dev/coms4156/project/druginteraction/FirebaseService   47.7%
+  dev/coms4156/project/druginteraction/Interaction       65.6%
+  dev/coms4156/project/druginteraction/RouteController   40.1%
