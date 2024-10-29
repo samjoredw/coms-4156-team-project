@@ -34,8 +34,8 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  3.997 s
-[INFO] Finished at: 2024-10-29T15:25:52Z
+[INFO] Total time:  4.189 s
+[INFO] Finished at: 2024-10-29T15:31:13Z
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-pmd-plugin:3.21.2:check (default-cli) on project coms-4156-team-project: You have 7 PMD violations. For more details see: /home/runner/work/coms-4156-team-project/coms-4156-team-project/target/pmd.xml -> [Help 1]
 [ERROR] 
