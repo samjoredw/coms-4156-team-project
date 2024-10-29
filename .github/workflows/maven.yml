@@ -63,4 +63,16 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
+
+      - name: Extract Current Branch Name
+        id: extract_branch
+        run: |
+          echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Commit and Push Reports
+        run: |
+          git add coveragereport/
+          git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
+          git push origin HEAD:${{ env.branch_name }}
+
       
