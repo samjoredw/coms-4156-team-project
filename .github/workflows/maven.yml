@@ -57,4 +57,10 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
+
+      - name: Run Checkstyle
+        run: mvn checkstyle:checkstyle || true
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
       
