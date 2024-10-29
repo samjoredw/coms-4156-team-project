@@ -2,9 +2,10 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "test" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - '**'
+    pull_request:
+    workflow_dispatch:
 
 jobs:
   build:
@@ -71,10 +72,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Extract Current Branch Name
-        id: extract_branch
+      - name: Detect Branch Name
+        id: detect_branch
         run: |
-          echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+          else
+            echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          fi
 
       - name: Commit and Push Reports
         run: |
