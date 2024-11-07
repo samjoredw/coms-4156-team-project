@@ -4,6 +4,8 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -176,4 +178,27 @@ public class FirebaseService {
     return future;
   }
 
+  /**
+   * Authenticate whether a idToken is valid or not for API request
+   *
+   * @param headers The HttpHeaders that were sent to the API, including token
+   *
+   * @return A boolean Indicating whether the token is valid or not
+   */
+  public boolean authenticateToken(HttpHeaders headers) {
+    String authorizationHeader = headers.getFirst("Authorization");
+    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+      return false;
+    }
+
+    String idToken = authorizationHeader.substring(7);  // Remove "Bearer " prefix
+
+    // Verify the Firebase ID token
+    try {
+      FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
 }
