@@ -2,92 +2,230 @@ import "./interface.css";
 import { getAuth, signOut } from "firebase/auth";
 import firebase from "firebase/compat/app";
 
-// Initialize firebase in the new page again since we use auth function
-const firebaseConfig = {
-    apiKey: "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs",
-    authDomain: "drug-interaction-api.firebaseapp.com",
-    databaseURL: "https://drug-interaction-api-default-rtdb.firebaseio.com",
-    projectId: "drug-interaction-api",
-    storageBucket: "drug-interaction-api.appspot.com",
-    messagingSenderId: "1063129233703",
-    appId: "1:1063129233703:web:3b10cb724f33e2d1535102",
-    measurementId: "G-ZB6S14BCRN"
-};
+class DrugInteractionChecker {
+    constructor() {
+        this.apiBase = "http://localhost:8080/api/v1";
+        this.maxDrugs = 5;
+        this.firebaseConfig = {
+            apiKey: "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs",
+            authDomain: "drug-interaction-api.firebaseapp.com",
+            databaseURL: "https://drug-interaction-api-default-rtdb.firebaseio.com",
+            projectId: "drug-interaction-api",
+            storageBucket: "drug-interaction-api.appspot.com",
+            messagingSenderId: "1063129233703",
+            appId: "1:1063129233703:web:3b10cb724f33e2d1535102",
+            measurementId: "G-ZB6S14BCRN"
+        };
+        this.init();
+    }
 
-firebase.initializeApp(firebaseConfig);
+    async init() {
+        firebase.initializeApp(this.firebaseConfig);
 
-// Reference the DOM elements
-var drug1Input = document.getElementById('drug1');
-var drug2Input = document.getElementById('drug2');
-const getInteractionButton = document.getElementById('get-interaction');
-var interactionResult = document.getElementById('interaction-result');
-const signOutButton = document.getElementById('signout');
-const userInfo = document.getElementById('user-info');
-const status = document.getElementById('sign-in-status');
-var idToken = localStorage.getItem("userToken");
-var user = localStorage.getItem("user");
+        this.drugInputs = document.getElementById("drugInputs");
+        this.addDrugBtn = document.getElementById("addDrugBtn");
+        this.checkBtn = document.getElementById("checkBtn");
+        this.results = document.getElementById("results");
+        this.drugsList = document.getElementById("drugsList");
+        this.idToken = localStorage.getItem("userToken");
+        this.userInfo = localStorage.getItem("user");
+        this.auth = getAuth();
 
-const apiEndpoint = 'https://drug-interaction-api.uk.r.appspot.com';
+        this.addDrugBtn.addEventListener("click", () =>
+            this.addDrugInput()
+        );
+        this.checkBtn.addEventListener("click", () =>
+            this.checkInteractions()
+        );
 
-// Initialize Firebase Auth
-const auth = getAuth();
+        await this.fetchDrugsList();
+    }
 
-// Handle Get Interaction Button click
-getInteractionButton.addEventListener('click', () => {
-    const drug1 = drug1Input.value.trim();
-    const drug2 = drug2Input.value.trim();
+    async fetchWithTimeout(url, options = {}) {
+        const timeout = 5000;
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
 
-    if (user) {
-        // Validate that both drugs are provided
-        if (!drug1 || !drug2) {
-            interactionResult.textContent = 'Please enter both drug names.';
+        const defaultOptions = {
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        };
+
+        try {
+            const response = await fetch(url, {
+                ...defaultOptions,
+                ...options,
+                signal: controller.signal,
+            });
+
+            clearTimeout(id);
+
+            if (response.status === 403) {
+                throw new Error(
+                    "Access forbidden. Please check your authentication."
+                );
+            }
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(
+                    `HTTP error! status: ${response.status}, message: ${errorText}`
+                );
+            }
+
+            return response;
+        } catch (error) {
+            clearTimeout(id);
+            if (error.name === "AbortError") {
+                throw new Error("Request timed out");
+            }
+            throw error;
+        }
+    }
+
+    async fetchDrugsList() {
+        try {
+            const response = await this.fetchWithTimeout(
+                `${this.apiBase}/drugs`
+            );
+            const drugs = await response.json();
+
+            this.drugsList.innerHTML = drugs
+                .map((drug) => `<option value="${drug}">`)
+                .join("");
+        } catch (error) {
+            this.showError(
+                `Failed to fetch drugs list: ${error.message}`
+            );
+        }
+    }
+
+    addDrugInput() {
+        const inputs = this.drugInputs.querySelectorAll("input");
+        if (inputs.length >= this.maxDrugs) return;
+
+        const group = document.createElement("div");
+        group.className = "drug-input-group";
+
+        group.innerHTML = `
+            <input type="text" placeholder="Enter drug ${
+            inputs.length + 1
+        }" list="drugsList">
+            <button class="btn-outline remove-btn" onclick="this.parentElement.remove()">×</button>
+        `;
+
+        this.drugInputs.appendChild(group);
+    }
+
+    async checkInteractions() {
+        const inputs = Array.from(
+            this.drugInputs.querySelectorAll("input")
+        );
+        const drugs = inputs
+            .map((input) => input.value.trim())
+            .filter(Boolean);
+
+        if (drugs.length < 2) {
+            this.showError("Please select at least two drugs");
             return;
         }
 
-        // Construct the API URL with query parameters
-        const apiUrl = `${apiEndpoint}/interactions?drugA=${encodeURIComponent(drug1)}&drugB=${encodeURIComponent(drug2)}`;
-        console.log(apiUrl);
+        this.setLoading(true);
 
-        // Send the GET request to the API with the ID token in the Authorization header
-        fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${idToken}`,
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle the response from the API
-                if (data.interactions) {
-                    interactionResult.textContent = `Interaction Found: ${data.interactions.interactionEffect}`;
-                } else {
-                    interactionResult.textContent = `No Interaction: ${data.noInteractions.interactionEffect}`;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching drug interaction:', error);
-                interactionResult.textContent = 'Error fetching interaction. Please try again.';
+        try {
+            const params = new URLSearchParams();
+            drugs.forEach((drug, index) => {
+                params.append(
+                    `drug${String.fromCharCode(65 + index)}`,
+                    drug
+                );
             });
-    } else {
-        // User is not authenticated, show error
-        interactionResult.textContent = 'You need to be signed in to get interaction details.';
-    }
-});
 
-// Handle sign out
-signOutButton.addEventListener('click', () => {
-    console.log("signout button clicked");
-    signOut(auth).then(() => {
-        console.log('User signed out');
-        localStorage.clear();
-        window.location.href = '/';
-    }).catch((error) => {
-        console.error('Error signing out:', error);
-    });
-});
+            const response = await this.fetchWithTimeout(
+                `${this.apiBase}/get_interactions?${params}`
+            );
+            const data = await response.json();
+            this.displayResults(data);
+        } catch (error) {
+            this.showError(
+                `Failed to check drug interactions: ${error.message}`
+            );
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    setLoading(isLoading) {
+        this.checkBtn.disabled = isLoading;
+        this.checkBtn.innerHTML = isLoading
+            ? '<div class="loading"></div>Checking...'
+            : "Check Interactions";
+    }
+
+    showError(message) {
+        this.results.innerHTML = `
+            <div class="alert alert-error">
+                ${message}
+            </div>
+        `;
+    }
+
+    showMessage(message, type = "error") {
+        this.results.innerHTML = `
+            <div class="alert alert-${type}">
+                ${message}
+            </div>
+        `;
+    }
+
+    displayResults(data) {
+        let html = "";
+
+        if (data.interactions?.length) {
+            html += `
+                <div class="alert alert-error">
+                    <strong>Found Interactions</strong>
+                    <ul class="interaction-list">
+                        ${data.interactions
+                .map(
+                    (interaction) => `
+                            <li class="interaction-item">
+                                <strong>${interaction.drugPair}:</strong> 
+                                ${interaction.interactionEffect}
+                            </li>
+                        `
+                )
+                .join("")}
+                    </ul>
+                </div>
+            `;
+        }
+
+        if (data.noInteractions?.length) {
+            html += `
+                <div class="alert alert-success">
+                    <strong>No Interactions Found</strong>
+                    <ul class="interaction-list">
+                        ${data.noInteractions
+                .map(
+                    (interaction) => `
+                            <li class="interaction-item">
+                                <strong>${interaction.drugPair}:</strong> 
+                                ${interaction.interactionEffect}
+                            </li>
+                        `
+                )
+                .join("")}
+                    </ul>
+                </div>
+            `;
+        }
+
+        this.results.innerHTML = html;
+    }
+}
+
+const app = new DrugInteractionChecker();

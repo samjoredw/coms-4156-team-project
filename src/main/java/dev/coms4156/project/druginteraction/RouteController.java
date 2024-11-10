@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
  * Controller for handling routes related to interactions.
  */
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "http://localhost:5500", // Add your frontend origin
+@CrossOrigin(origins = {"http://localhost:5500", "http://localhost:3000"}, // Add your frontend
+// origin
         allowedHeaders = "*",
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH},
         allowCredentials = "true")
@@ -25,7 +26,7 @@ public class RouteController {
 
   private final Interaction interactionService;
   private final Drugs drugService;
-  private final FirebaseService firebaseService;
+//  private final FirebaseService firebaseService;
 
   // This one needs endpoints first b
   @Autowired
@@ -180,11 +181,11 @@ public class RouteController {
    */
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB, @RequestHeader HttpHeaders headers) {
+      @RequestParam("drugB") String drugB) {
     try {
-      if (!firebaseService.authenticateToken(headers)) {
-        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
-      }
+//      if (!firebaseService.authenticateToken(headers)) {
+//        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
+//      }
 
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty",

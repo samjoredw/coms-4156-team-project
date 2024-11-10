@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpHeaders;
+
 
 /**
  * This class provides methods to interact with Firebase Firestore database.
