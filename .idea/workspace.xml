@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e1cfeb23-00a6-4eaa-a595-81d8029cf8b4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/Drugs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/Drugs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/Interaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/coms4156/project/druginteraction/Interaction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/DrugsUnitTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/DrugsUnitTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/InteractionUnitTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/InteractionUnitTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/RouteControllerUnitTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/dev/coms4156/project/druginteraction/RouteControllerUnitTests.java" afterDir="false" />
-    </list>
+    <list default="true" id="e1cfeb23-00a6-4eaa-a595-81d8029cf8b4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
