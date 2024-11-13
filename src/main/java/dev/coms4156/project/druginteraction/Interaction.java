@@ -212,7 +212,11 @@ public class Interaction {
       }
     } catch (Exception e) {
       e.printStackTrace();
-      interactions.add("Error retrieving drug interactions: " + e.getMessage());
+      Map<String, String> errorInteraction = new HashMap<>();
+      errorInteraction.put("drugPair", "Error");
+      errorInteraction.put("interactionEffect",
+              "Error retrieving drug interactions: " + e.getMessage());
+      interactions.add(errorInteraction);
     }
 
     return interactions;

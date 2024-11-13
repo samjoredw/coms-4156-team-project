@@ -1,7 +1,7 @@
 # Team: Runtime Terrors - Drug Interaction and Information API
 # Service Overview
 
-This service provides useful information on individual drugs and their interactions with each other.
+This service provides useful information on individual drugs and their interactions with each other. 
 
 One part of the service covers drug interactions. This part takes in up to five pharmaceutical drug names and returns two things about each potential pair of drugs (ex: 1+2, 1+3, 1+4, 1+5, 2+3, etc.): (1) whether or not there’s an interaction between them, (2) if there is, a description of that interaction.
 
@@ -9,10 +9,9 @@ The other part of the service covers information about drugs themselves. This ta
 
 # Using the API as a client
 
-For a short while, our service will be hosted on Google Cloud. More details to be added
-as we add this.
+For a short while, our service will be hosted on Google Cloud.
 
-Please see the API Documentation below for the endpoints that can be reached using Postman
+Please see the API documentation below for the endpoints that can be reached using Postman
 or any other such service
 
 # Building, running, and testing the service locally
@@ -82,6 +81,22 @@ Retrieve information about a specific drug.
 - **Method:** `GET`
 - **Parameters:**
   - `name` (String) – Required. Name of the drug.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug?name=alcohol
+- **Example Response:**
+    ```json
+   {
+      "createdAt": "2024-10-23 19:42:02",
+      "indications": "Not a medication; consumed as a beverage",
+      "contraindications": "Liver disease, certain medications, and pregnancy",
+      "updatedBy": "admin",
+      "createdBy": "admin",
+      "dosageForm": "Liquid",
+      "name": "Alcohol",
+      "sideEffects": "Impaired judgment, liver damage, and increased risk of accidents",
+      "updatedAt": "2024-10-23 19:42:02"
+  }
+    ```
 - **Response:**
   - **200 OK:** Drug information retrieved successfully.
   - **400 Bad Request:** Invalid input or missing drug name.
@@ -93,7 +108,22 @@ Add a new drug to the database.
 
 - **Endpoint:** `/drug/add`
 - **Method:** `POST`
-- **Request Body:** Map<String, Object> containing drug information.
+- **Example Request URL:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/add
+- **Example Request Body (in Postman select "Body" => "Raw"):**
+    ```json
+    {
+      "name": "Test Drug",
+      "dosageForm": "Tablet",
+      "indications": "None",
+      "contraindications": "Also none",
+      "sideEffects": "Maybe some",
+      "createdBy": "admin",
+      "updatedBy": "admin",
+      "createdAt": "2024-10-24 04:02:00",
+      "updatedAt": "2024-10-25 19:42:02"
+    }
+    ```
 - **Response:**
   - **201 Created:** Drug added successfully.
   - **400 Bad Request:** Invalid input or failed to add drug.
@@ -105,9 +135,16 @@ Update an existing drug in the database.
 
 - **Endpoint:** `/drug/update/{name}`
 - **Method:** `PATCH`
-- **Path Parameter:**
-  - `name` (String) – Required. Name of the drug to update.
-- **Request Body:** Map<String, Object> containing fields to update.
+- **Example Request URL:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/update/digoxin
+- **Example Request Body (in Postman select "Body" => "Raw"):**
+    ```json
+    {
+      "dosageForm": "Tablet",
+      "indications": "For pain when writing software",
+      "contraindications": "None"
+    }
+    ```
 - **Response:**
   - **200 OK:** Drug updated successfully.
   - **400 Bad Request:** Failed to update drug.
@@ -121,6 +158,10 @@ Remove a specific drug from the database.
 - **Method:** `DELETE`
 - **Parameters:**
   - `name` (String) – Required. Name of the drug to be removed.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/remove?name=fluconazole
+- **List of Drugs to Try (for demo):**
+  - digoxin, paroxetine, simvastatin
 - **Response:**
   - **200 OK:** Drug removed successfully.
   - **400 Bad Request:** Invalid input or missing drug name.
@@ -132,6 +173,8 @@ Retrieve all drugs from the database.
 
 - **Endpoint:** `/drugs`
 - **Method:** `GET`
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs
 - **Response:**
   - **200 OK:** List of all drugs retrieved successfully.
   - **500 Internal Server Error:** Unexpected error occurred.
@@ -143,6 +186,8 @@ Retrieve all interactions for a specific drug.
 - **Method:** `GET`
 - **Parameters:**
   - `drugName` (String) – Required. Name of the drug to check interactions for.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs/interactions?drugName=TestDrugA
 - **Response:**
   - **200 OK:** List of interactions retrieved successfully.
   - **500 Internal Server Error:** Unexpected error occurred.
@@ -158,26 +203,30 @@ Retrieve the interaction effect between two specific drugs.
 - **Method:** `GET`  
 - **Parameters:**  
   - `drugA` (String) – Required. Name of the first drug.  
-  - `drugB` (String) – Required. Name of the second drug.  
-- **Response:**  
+  - `drugB` (String) – Required. Name of the second drug.
+- **Example Request (Interaction Exists):**
+   - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarin&drugB=Aspirin
+- **Example Response:**  
   - **200 OK:**  
     ```json
     {
-      "interactions": {
-        "drugPair": "DrugA and DrugB",
-        "interactionBool": true,
-        "interactionEffect": "Description of the interaction effect"
-      }
+        "interactions": {
+            "interactionEffect": "Increased risk of bleeding.",
+            "interactionBool": true,
+            "drugPair": "Warfarin and Aspirin"
+        }
     }
     ```
+- **Example Request (No Interaction Exists):**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarine&drugB=Aspirin
   - **200 OK (No known interaction):**  
     ```json
     {
-      "noInteractions": {
-        "drugPair": "DrugA and DrugB",
+        "noInteractions": {
+        "interactionEffect": "No known interaction between Warfarine and Aspirin",
         "interactionBool": false,
-        "interactionEffect": "No known interaction"
-      }
+        "drugPair": "Warfarine and Aspirin"
+        }
     }
     ```
   - **400 Bad Request:** Invalid input or missing drug names.
@@ -195,27 +244,36 @@ Retrieve interactions among multiple drugs (up to five).
   - `drugB` (String) – Required.  
   - `drugC` (String) – Optional.  
   - `drugD` (String) – Optional.  
-  - `drugE` (String) – Optional.  
+  - `drugE` (String) – Optional.
+- **Example Request:**
+   - https://drug-interaction-api.uk.r.appspot.com/api/v1/get_interactions?drugA=Warfarin&drugB=Aspirin&drugC=Not a Drug
+- **Example Response:**    
 - **Response:**  
   - **200 OK:**  
     ```json
     {
-      "interactions": [
-        {
-          "drugPair": "DrugA and DrugB",
-          "interactionBool": true,
-          "interactionEffect": "Interaction description"
-        }
-      ],
-      "noInteractions": [
-        {
-          "drugPair": "DrugC and DrugD",
-          "interactionBool": false,
-          "interactionEffect": "No known interaction"
-        }
-      ]
+        "noInteractions": [
+            {
+                "interactionEffect": "No known interaction between Warfarin and Not a Drug",
+                "interactionBool": false,
+                "drugPair": "Warfarin and Not a Drug"
+            },
+            {
+                "interactionEffect": "No known interaction between Aspirin and Not a Drug",
+                "interactionBool": false,
+                "drugPair": "Aspirin and Not a Drug"
+            }
+        ],
+        "interactions": [
+            {
+                "interactionEffect": "Increased risk of bleeding.",
+                "interactionBool": true,
+                "drugPair": "Warfarin and Aspirin"
+            }
+        ]
     }
     ```
+  - **400 Bad Request:** Invalid input or missing drug names.
   - **500 Internal Server Error:** Unexpected error occurred.
 
 ---
@@ -228,7 +286,9 @@ Add a new interaction between two drugs to the database.
 - **Parameters:**  
   - `drugA` (String) – Required.  
   - `drugB` (String) – Required.  
-  - `interactionEffect` (String) – Required.  
+  - `interactionEffect` (String) – Required.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/add?drugA=TestDrugA&drugB=TestDrugB&interactionEffect=This is a test interaction.
 - **Response:**  
   - **201 Created:** Interaction added successfully.  
   - **409 Conflict:** Interaction already exists.  
@@ -243,11 +303,15 @@ Update the details of an existing drug interaction.
 - **Endpoint:** `/interactions/update/{documentId}`  
 - **Method:** `PATCH`  
 - **Path Parameter:**  
-  - `documentId` (String) – Required. ID of the interaction to update.  
+  - `documentId` (String) – Required. ID of the interaction to update.
 - **Request Parameters:**  
   - `drugA` (String) – Required.  
   - `drugB` (String) – Required.  
-  - `interactionEffect` (String) – Required.  
+  - `interactionEffect` (String) – Required.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/update/11Zyx?drugA=UpdateA&drugB=UpdateB&interactionEffect=This is a test update.
+- **Example IDs to Try**
+  - 98fkB, 9xtu5, 9zjMs 
 - **Response:**  
   - **200 OK:** Interaction updated successfully.  
   - **400 Bad Request:** Failed to update interaction.  
@@ -258,20 +322,22 @@ Update the details of an existing drug interaction.
 ### 5. **Delete Drug Interaction**
 Delete a specific drug interaction from the database.
 
-- **Endpoint:** `/interactions/delete`  
+- **Endpoint:** `/interactions/delete`
 - **Method:** `DELETE`  
 - **Parameters:**  
   - `drugA` (String) – Required.  
   - `drugB` (String) – Required.  
-  - `interactionEffect` (String) – Required.  
+  - `interactionEffect` (String) – Required.
+- **Example Request:**
+  - https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/delete?drugA=Aspirin&drugB=Ibuprofen&interactionEffect=Increased risk of gastrointestinal bleeding.
 - **Response:**  
   - **200 OK:** Interaction deleted successfully.  
   - **400 Bad Request:** Failed to delete interaction.  
   - **500 Internal Server Error:** Unexpected error occurred.
 
 ---
-
-### 6. **Error Handling**
+## General
+### 1. **Error Handling**
 Handles exceptions that occur during any endpoint execution.
 
 - **Response Format:**  
