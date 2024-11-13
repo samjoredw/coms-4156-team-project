@@ -1,27 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Drug Interaction Checker</title>
-    <script type="module" src="./interface.js"></script>
 <script defer src="interface.js"></script></head>
 <body>
-<div class="interaction-container">
+<div class="container">
     <h1>Drug Interaction Checker</h1>
+    <p class="description">
+        Check potential interactions between multiple medications
+    </p>
 
-    <label for="drug1">Drug 1</label>
-    <input type="text" id="drug1" placeholder="Enter first drug name">
+    <div class="drug-inputs" id="drugInputs">
+        <div class="drug-input-group">
+            <input
+                    type="text"
+                    placeholder="Enter drug 1"
+                    list="drugsList"
+            />
+        </div>
+        <div class="drug-input-group">
+            <input
+                    type="text"
+                    placeholder="Enter drug 2"
+                    list="drugsList"
+            />
+        </div>
+    </div>
 
-    <label for="drug2">Drug 2</label>
-    <input type="text" id="drug2" placeholder="Enter second drug name">
+    <datalist id="drugsList"></datalist>
 
-    <button id="get-interaction">Get Interaction</button>
+    <button id="addDrugBtn" class="btn-outline">
+        + Add Another Drug
+    </button>
 
-    <div id="interaction-result"></div>
+    <button id="checkBtn" class="btn-primary" style="margin-top: 1rem">
+        Check Interactions
+    </button>
 
-    <button id="signout">Sign Out</button>
-
+    <div id="results"></div>
 </div>
+
+<script src="./interface.js"></script>
 </body>
 </html>
