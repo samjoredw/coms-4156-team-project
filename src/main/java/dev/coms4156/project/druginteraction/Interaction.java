@@ -37,12 +37,27 @@ public class Interaction {
    * @return A CompletableFuture indicating completion of the addition.
    */
   public boolean addInteraction(String drugA, String drugB, String interactionEffect) {
+    if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
+      return false; // Do not add interactions with null or empty drug names
+    }
     try {
-      // Prepare a timestamp for createdAt and updatedAt fields
+      // Query Firestore to see if an identical interaction already exists
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> existingQuery = firestore
+          .collection("interactions")
+          .whereEqualTo("drugA", drugA)
+          .whereEqualTo("drugB", drugB)
+          .whereEqualTo("interactionEffect", interactionEffect)
+          .get();
+
+      if (!existingQuery.get().isEmpty()) {
+        // Interaction already exists; do not add it again
+        return false;
+      }
+
+      // Prepare a timestamp and create new interaction data
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-      // Create a new interaction document
       Map<String, Object> newInteraction = new HashMap<>();
       newInteraction.put("drugA", drugA);
       newInteraction.put("drugB", drugB);
@@ -52,12 +67,9 @@ public class Interaction {
       newInteraction.put("updatedBy", "Admin");
       newInteraction.put("updatedAt", sdf.format(timestamp));
 
-      // Generate a random 5-character alphanumeric document ID
+      // Generate a unique document ID and add the new interaction to Firestore
       String documentId = generateRandomId(5);
-
-      // Add the new document to Firestore with the generated document ID
-      CompletableFuture<Void> future =
-          firebaseService.addDocument("interactions", documentId, newInteraction);
+      CompletableFuture<Void> future = firebaseService.addDocument("interactions", documentId, newInteraction);
       future.join();
 
       return true; // Successfully added
@@ -94,38 +106,35 @@ public class Interaction {
    * @return boolean values indicating whether the interaction pair is removed or not.
    */
   public boolean removeInteraction(String drugA, String drugB, String interactionEffect) {
+    boolean deleted = false; // Track if any deletion occurs
     try {
-      // Query where drugA = drugA and drugB = drugB
+      // Query for interaction in direct order
       ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
-          .collection("interactions").whereEqualTo("drugA", drugA).whereEqualTo("drugB", drugB)
-          .whereEqualTo("interactionEffect", interactionEffect).get();
+          .collection("interactions")
+          .whereEqualTo("drugA", drugA)
+          .whereEqualTo("drugB", drugB)
+          .whereEqualTo("interactionEffect", interactionEffect)
+          .get();
 
-      com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
-
-      if (!querySnapshot.isEmpty()) {
-        // Document found, delete the interaction
-        com.google.cloud.firestore.DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+      for (com.google.cloud.firestore.DocumentSnapshot document : query.get().getDocuments()) {
         document.getReference().delete();
-        return true;
-      } else {
-        // Try reverse: drugA = drugB and drugB = drugA
-        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
-            .collection("interactions").whereEqualTo("drugA", drugB).whereEqualTo("drugB", drugA)
-            .whereEqualTo("interactionEffect", interactionEffect).get();
-
-        com.google.cloud.firestore.QuerySnapshot reverseQuerySnapshot = reverseQuery.get();
-
-        if (!reverseQuerySnapshot.isEmpty()) {
-          // Interaction found with reverse order, delete the interaction
-          com.google.cloud.firestore.DocumentSnapshot reverseDocument =
-              reverseQuerySnapshot.getDocuments().get(0);
-          reverseDocument.getReference().delete();
-          return true;
-        } else {
-          // No interaction found in either order
-          return false;
-        }
+        deleted = true;
       }
+
+      // Query for interaction in reverse order
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
+          .collection("interactions")
+          .whereEqualTo("drugA", drugB)
+          .whereEqualTo("drugB", drugA)
+          .whereEqualTo("interactionEffect", interactionEffect)
+          .get();
+
+      for (com.google.cloud.firestore.DocumentSnapshot reverseDocument : reverseQuery.get().getDocuments()) {
+        reverseDocument.getReference().delete();
+        deleted = true;
+      }
+
+      return deleted; // Return true only if an interaction was deleted
     } catch (Exception e) {
       e.printStackTrace();
       return false;
@@ -140,36 +149,33 @@ public class Interaction {
    * @return A String indicating the interaction effect between them
    */
   public String getInteraction(String drugA, String drugB) {
+    if (drugA == null || drugB == null) {
+      return null; // Return null if drug names are null
+    }
     try {
-      // Query where drugA = drugA and drugB = drugB
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query =
-          firestore.collection("interactions").whereEqualTo("drugA", drugA)
-              .whereEqualTo("drugB", drugB).get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
+          .collection("interactions")
+          .whereEqualTo("drugA", drugA)
+          .whereEqualTo("drugB", drugB)
+          .get();
 
-      com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
-
-      if (!querySnapshot.isEmpty()) {
-        // Interaction found
-        com.google.cloud.firestore.DocumentSnapshot document = querySnapshot.getDocuments().get(0);
-        return (String) document.get("interactionEffect");
-      } else {
-        // Try the reverse (drugA = drugB and drugB = drugA)
-        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery =
-            firestore.collection("interactions").whereEqualTo("drugA", drugB)
-                .whereEqualTo("drugB", drugA).get();
-
-        com.google.cloud.firestore.QuerySnapshot reverseQuerySnapshot = reverseQuery.get();
-
-        if (!reverseQuerySnapshot.isEmpty()) {
-          // Interaction found with reverse order
-          com.google.cloud.firestore.DocumentSnapshot reverseDocument =
-              reverseQuerySnapshot.getDocuments().get(0);
-          return (String) reverseDocument.get("interactionEffect");
-        } else {
-          // No interaction found in either order
-          return "No known interaction between " + drugA + " and " + drugB;
-        }
+      if (!query.get().isEmpty()) {
+        return (String) query.get().getDocuments().get(0).get("interactionEffect");
       }
+
+      // Try reverse order
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
+          .collection("interactions")
+          .whereEqualTo("drugA", drugB)
+          .whereEqualTo("drugB", drugA)
+          .get();
+
+      if (!reverseQuery.get().isEmpty()) {
+        return (String) reverseQuery.get().getDocuments().get(0).get("interactionEffect");
+      }
+
+      // No interaction found in either order
+      return null;
     } catch (Exception e) {
       e.printStackTrace();
       return "Error retrieving drug interaction: " + e.getMessage();
@@ -183,6 +189,11 @@ public class Interaction {
    * @return A List of String indicating all pairwise interaction effect
    */
   public List<String> getInteraction(List<String> drugs) {
+
+    if (drugs.isEmpty()) {
+      List<String> none = new ArrayList<>();
+      return null;
+    }
     List<String> interactions = new ArrayList<>();
 
     try {
@@ -192,7 +203,9 @@ public class Interaction {
           String drugB = drugs.get(j);
 
           String interaction = getInteraction(drugA, drugB);
-          interactions.add(interaction);
+          if (interaction != null) { // Only add if interaction is not null
+            interactions.add(interaction);
+          }
         }
       }
     } catch (Exception e) {
