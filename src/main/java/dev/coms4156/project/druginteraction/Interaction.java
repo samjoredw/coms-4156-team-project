@@ -69,7 +69,8 @@ public class Interaction {
 
       // Generate a unique document ID and add the new interaction to Firestore
       String documentId = generateRandomId(5);
-      CompletableFuture<Void> future = firebaseService.addDocument("interactions", documentId, newInteraction);
+      CompletableFuture<Void> future = firebaseService.addDocument(
+          "interactions", documentId, newInteraction);
       future.join();
 
       return true; // Successfully added
@@ -129,7 +130,8 @@ public class Interaction {
           .whereEqualTo("interactionEffect", interactionEffect)
           .get();
 
-      for (com.google.cloud.firestore.DocumentSnapshot reverseDocument : reverseQuery.get().getDocuments()) {
+      for (com.google.cloud.firestore.DocumentSnapshot reverseDocument :
+          reverseQuery.get().getDocuments()) {
         reverseDocument.getReference().delete();
         deleted = true;
       }

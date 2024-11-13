@@ -223,9 +223,11 @@ class RouteControllerUnitTests {
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
-    when(interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect)).thenReturn(true);
+    when(interactionService.updateInteraction(documentId, drugA,
+        drugB, interactionEffect)).thenReturn(true);
 
-    ResponseEntity<?> response = routeController.updateInteraction(documentId, drugA, drugB, interactionEffect);
+    ResponseEntity<?> response = routeController.updateInteraction(
+        documentId, drugA, drugB, interactionEffect);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals("Interaction updated successfully", response.getBody());
@@ -238,9 +240,11 @@ class RouteControllerUnitTests {
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
-    when(interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect)).thenReturn(false);
+    when(interactionService.updateInteraction(documentId, drugA,
+        drugB, interactionEffect)).thenReturn(false);
 
-    ResponseEntity<?> response = routeController.updateInteraction(documentId, drugA, drugB, interactionEffect);
+    ResponseEntity<?> response = routeController.updateInteraction(
+        documentId, drugA, drugB, interactionEffect);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Failed to update interaction", response.getBody());
@@ -253,10 +257,12 @@ class RouteControllerUnitTests {
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
-    when(interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect))
+    when(interactionService.updateInteraction(documentId, drugA,
+        drugB, interactionEffect))
         .thenThrow(new RuntimeException("Database error"));
 
-    ResponseEntity<?> response = routeController.updateInteraction(documentId, drugA, drugB, interactionEffect);
+    ResponseEntity<?> response = routeController.updateInteraction(
+        documentId, drugA, drugB, interactionEffect);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertEquals("An error occurred: Database error", response.getBody());
@@ -414,12 +420,15 @@ class RouteControllerUnitTests {
     String interactionEffect = "New interaction effect";
 
     // Mock an exception when checking for an existing interaction
-    when(interactionService.getInteraction(drugA, drugB)).thenThrow(new RuntimeException("Database error"));
+    when(interactionService.getInteraction(drugA, drugB)).thenThrow(
+        new RuntimeException("Database error"));
 
-    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect);
+    ResponseEntity<?> response = routeController.addInteraction(
+        drugA, drugB, interactionEffect);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals("An error occurred: Database error", response.getBody());
+    assertEquals("An error occurred: Database error",
+        response.getBody());
   }
 
   @Test
@@ -427,7 +436,8 @@ class RouteControllerUnitTests {
     String drugA = "Test_DrugA";
     String drugB = "Test_DrugB";
     String interactionEffect = "New interaction effect";
-    testInteractions.add(new String[]{drugA, drugB, interactionEffect});  // Track interaction for cleanup
+    // Track interaction for cleanup
+    testInteractions.add(new String[]{drugA, drugB, interactionEffect});
 
     when(interactionService.getInteraction(drugA, drugB)).thenReturn("No known interaction");
     when(interactionService.addInteraction(drugA, drugB, interactionEffect)).thenReturn(true);
@@ -471,7 +481,8 @@ class RouteControllerUnitTests {
     // Case 4: drugB is empty
     response = routeController.getInteraction("DrugA", "");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    assertEquals("Invalid input: Drug names cannot be empty", response.getBody());
+    assertEquals("Invalid input: Drug names cannot be empty",
+        response.getBody());
   }
 
   @Test
@@ -480,12 +491,14 @@ class RouteControllerUnitTests {
     String drugA = "DrugA";
     String drugB = "DrugB";
 
-    when(interactionService.getInteraction(drugA, drugB)).thenThrow(new RuntimeException("Service error"));
+    when(interactionService.getInteraction(drugA, drugB)).thenThrow(
+        new RuntimeException("Service error"));
 
     ResponseEntity<?> response = routeController.getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals("An error occurred: Service error", response.getBody());
+    assertEquals("An error occurred: Service error",
+        response.getBody());
   }
 
   @Test
@@ -501,9 +514,11 @@ class RouteControllerUnitTests {
         "Interaction between DrugC and DrugD"  // Missing ": " to trigger parts.length < 2
     );
 
-    when(interactionService.getInteraction(Arrays.asList(drugA, drugB, drugC, drugD))).thenReturn(interactions);
+    when(interactionService.getInteraction(Arrays.asList(
+        drugA, drugB, drugC, drugD))).thenReturn(interactions);
 
-    ResponseEntity<?> response = routeController.getMultipleInteractions(drugA, drugB, drugC, drugD, null);
+    ResponseEntity<?> response = routeController.getMultipleInteractions(
+        drugA, drugB, drugC, drugD, null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // Adjusted expected response to separate `interactions` and `noInteractions`
@@ -547,10 +562,12 @@ class RouteControllerUnitTests {
         "Interaction between DrugE and DrugA"  // Missing ": " to trigger parts.length < 2
     );
 
-    when(interactionService.getInteraction(Arrays.asList(drugA, drugB, drugC, drugD, drugE)))
+    when(interactionService.getInteraction(Arrays.asList(
+        drugA, drugB, drugC, drugD, drugE)))
         .thenReturn(interactions);
 
-    ResponseEntity<?> response = routeController.getMultipleInteractions(drugA, drugB, drugC, drugD, drugE);
+    ResponseEntity<?> response = routeController.getMultipleInteractions(
+        drugA, drugB, drugC, drugD, drugE);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     Map<String, List<Map<String, Object>>> expectedResponse = new HashMap<>();
@@ -588,7 +605,8 @@ class RouteControllerUnitTests {
   void testGetMultipleInteractions_ExceptionHandling() {
     when(interactionService.getInteraction(Arrays.asList("DrugA", "DrugB")))
         .thenThrow(new RuntimeException("Database error"));
-    ResponseEntity<?> response = routeController.getMultipleInteractions("DrugA", "DrugB", null, null, null);
+    ResponseEntity<?> response = routeController.getMultipleInteractions(
+        "DrugA", "DrugB", null, null, null);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertEquals("An error occurred: Database error", response.getBody());

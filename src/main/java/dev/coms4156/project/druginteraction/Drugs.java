@@ -137,7 +137,8 @@ public class Drugs {
       }
 
       // Proceed to delete if the document exists
-      ApiFuture<WriteResult> writeResult = firestore.collection("drugs").document(documentId).delete();
+      ApiFuture<WriteResult> writeResult = firestore.collection("drugs")
+          .document(documentId).delete();
       writeResult.get(); // Wait for the deletion to complete
       return true;
     } catch (Exception e) {
@@ -198,7 +199,8 @@ public class Drugs {
       for (DocumentSnapshot document : querySnapshotA.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugB");
-        interactions.add("Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add("Interaction between " + drugName + " and "
+            + otherDrug + ": " + interactionEffect);
       }
 
       // Query where drugB = drugName
@@ -212,7 +214,8 @@ public class Drugs {
       for (DocumentSnapshot document : querySnapshotB.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugA");
-        interactions.add("Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add("Interaction between " + drugName + " and "
+            + otherDrug + ": " + interactionEffect);
       }
     } catch (Exception e) {
       e.printStackTrace();

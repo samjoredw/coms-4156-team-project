@@ -67,7 +67,8 @@ public class DrugsUnitTests {
     Map<String, Object> drug = testDrugs.getDrug("Aspirin");
     assertNotNull(drug, "Aspirin should be retrieved");
     assertEquals("Tablet", drug.get("dosageForm"), "Dosage form should match");
-    assertEquals("Pain relief, fever reduction", drug.get("indications"), "Indications should match");
+    assertEquals("Pain relief, fever reduction",
+        drug.get("indications"), "Indications should match");
 
     // Non-existent drug retrieval
     Map<String, Object> nonExistentDrug = testDrugs.getDrug("NonExistentDrug");
@@ -90,8 +91,10 @@ public class DrugsUnitTests {
     assertTrue(isUpdated, "Aspirin should be updated successfully");
 
     Map<String, Object> updatedDrug = testDrugs.getDrug("Aspirin");
-    assertEquals("Capsule", updatedDrug.get("dosageForm"), "Updated dosage form should match");
-    assertEquals("Pain relief, fever reduction, anti-inflammatory", updatedDrug.get("indications"), "Updated indications should match");
+    assertEquals("Capsule", updatedDrug.get("dosageForm"),
+        "Updated dosage form should match");
+    assertEquals("Pain relief, fever reduction, anti-inflammatory",
+        updatedDrug.get("indications"), "Updated indications should match");
 
     // Non-existent drug update
     boolean nonExistentUpdate = testDrugs.updateDrug("NonExistentDrug", updates);

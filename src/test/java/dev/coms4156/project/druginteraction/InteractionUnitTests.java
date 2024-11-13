@@ -9,8 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,11 @@ public class InteractionUnitTests {
   @AfterEach
   public void clearDatabase() {
     // Remove all test-specific data after each test
-    testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
-    testInteraction.removeInteraction("Ibuprofen", "Naproxen", "Increased risk of gastrointestinal side effects.");
+    testInteraction.removeInteraction(
+        "Aspirin", "Warfarin", "Increased risk of bleeding.");
+    testInteraction.removeInteraction(
+        "Ibuprofen", "Naproxen",
+        "Increased risk of gastrointestinal side effects.");
   }
 
 
@@ -52,8 +55,8 @@ public class InteractionUnitTests {
 
 
     // Non-existent interaction case
-//    interactionEffect = testInteraction.getInteraction("Aspirin", "Ibuprofen");
-//    assertNull(interactionEffect, "Non-existent interaction should return null");
+    // interactionEffect = testInteraction.getInteraction("Aspirin", "Ibuprofen");
+    // assertNull(interactionEffect, "Non-existent interaction should return null");
 
     // Null drug names
     interactionEffect = testInteraction.getInteraction(null, "Warfarin");
@@ -101,14 +104,8 @@ public class InteractionUnitTests {
     List<String> interactions = testInteraction.getInteraction(drugs);
 
     // Filter out any non-interaction messages (like default messages or errors)
-    interactions.removeIf(interaction -> interaction.startsWith("No known interaction") || interaction.startsWith("Error"));
-
-//    assertEquals(1, interactions.size(), "Should return exactly 1 valid interaction for 3 drugs");
-//    assertTrue(interactions.contains("Increased risk of bleeding."), "Should contain the expected interaction");
-
-//    // Test with an empty list input
-//    interactions = testInteraction.getInteraction(Arrays.asList());
-//    assertTrue(interactions.isEmpty(), "Empty drug list should return an empty interactions list");
+    interactions.removeIf(interaction -> interaction.startsWith(
+        "No known interaction") || interaction.startsWith("Error"));
 
     // Test with a null input
     List<String> none = new ArrayList<>();
@@ -118,7 +115,8 @@ public class InteractionUnitTests {
     // Test with a list of non-existent drugs
     drugs = Arrays.asList("NonExistentDrug1", "NonExistentDrug2");
     interactions = testInteraction.getInteraction(drugs);
-    assertTrue(interactions.isEmpty(), "Non-existent drugs should return an empty interactions list");
+    assertTrue(interactions.isEmpty(),
+        "Non-existent drugs should return an empty interactions list");
   }
 
   @Test
