@@ -67,6 +67,7 @@
             callbacks: {
                 signInSuccessWithAuthResult: function(authResult, redirectUrl) {
                     console.log('User signed in:', authResult.user);
+                    localStorage.clear();
                     localStorage.setItem('user', authResult.user);
 
                     // Obtain the auth token
@@ -101,10 +102,17 @@
                 localStorage.setItem('user', user);
             } else {
                 // User is signed out, clear the token
-                localStorage.removeItem('userToken');
+                localStorage.clear();
                 console.log('User is signed out, token removed from localStorage');
             }
         });
+
+        window.onload = function() {
+            firebase.auth().signOut().then(() => {
+                console.log("User signed out on page load");
+                localStorage.clear(); // Clear stored tokens
+            });
+        };
     </script>
 <script defer src="index.js"></script></head>
 <body>
