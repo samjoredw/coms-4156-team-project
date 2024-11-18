@@ -3,9 +3,9 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - '**'
-    pull_request:
-    workflow_dispatch:
+      - '**' 
+  # pull_request:
+  # workflow_dispatch:
 
 jobs:
   build:
@@ -23,6 +23,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
       
+      - name: Check if this is a merge commit
+        id: check_merge
+        run: |
+          if [[ "$(git log -1 --pretty=%B)" =~ ^Merge.* ]]; then
+            echo "is_merge=true" >> $GITHUB_ENV
+          else
+            echo "is_merge=false" >> $GITHUB_ENV
+          fi
+
+      - name: Exit on merge commit
+        if: env.is_merge == 'true'
+        run: echo "This is a merge commit. Exiting."
+
       - name: Install Newman
         run: npm install -g newman
 
@@ -70,6 +83,11 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
+      
+      - name: Run Postman Tests
+        run: |
+          cd postman
+          newman run postman_tests.json
 
       - name: Configure Git User
         run: |

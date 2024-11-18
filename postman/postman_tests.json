@@ -1,0 +1,65 @@
+{
+    "info": {
+        "_postman_id": "aafe3f0a-c6fc-4f60-a4b9-f8481c8483f5",
+        "name": "Drug Interaction",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "39822577"
+    },
+    "item": [
+        {
+            "name": "Get All Drugs",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs",
+                    "protocol": "https",
+                    "host": [
+                        "drug-interaction-api",
+                        "uk",
+                        "r",
+                        "appspot",
+                        "com"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "drugs"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get All Drug Interactions",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs/interactions?drugName=TestDrugA",
+                    "protocol": "https",
+                    "host": [
+                        "drug-interaction-api",
+                        "uk",
+                        "r",
+                        "appspot",
+                        "com"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "drugs",
+                        "interactions"
+                    ],
+                    "query": [
+                        {
+                            "key": "drugName",
+                            "value": "TestDrugA"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}
