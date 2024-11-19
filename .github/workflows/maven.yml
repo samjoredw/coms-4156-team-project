@@ -71,7 +71,8 @@ jobs:
       - name: Run PMD Static Analysis
         run: |
           mkdir -p coveragereport/pmd 
-          mvn pmd:check > coveragereport/pmd/pmd_report.txt || true
+          mvn pmd:check > coveragereport/pmd/pmd_report.txt 
+          cat coveragereport/pmd/pmd_report.txt || true
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
@@ -79,7 +80,8 @@ jobs:
       - name: Run Checkstyle
         run: |
           mkdir -p coveragereport/checkstyle  # Create folder for Checkstyle reports
-          mvn checkstyle:check > coveragereport/checkstyle/checkstyle_report.txt || true
+          mvn checkstyle:check > coveragereport/checkstyle/checkstyle_report.txt 
+          cat coveragereport/checkstyle/checkstyle_report.txt || true
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
@@ -89,24 +91,24 @@ jobs:
           cd postman
           newman run postman_tests.json
 
-      - name: Configure Git User
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      # - name: Configure Git User
+      #   run: |
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Detect Branch Name
-        id: detect_branch
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
-          else
-            echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-          fi
+      # - name: Detect Branch Name
+      #   id: detect_branch
+      #   run: |
+      #     if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+      #       echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+      #     else
+      #       echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      #     fi
 
-      - name: Commit and Push Reports
-        run: |
-          git add coveragereport/
-          git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
-          git push origin HEAD:${{ env.branch_name }}
+      # - name: Commit and Push Reports
+      #   run: |
+      #     git add coveragereport/
+      #     git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
+      #     git push origin HEAD:${{ env.branch_name }}
 
       
