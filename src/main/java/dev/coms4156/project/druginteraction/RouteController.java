@@ -258,7 +258,8 @@ public class RouteController {
    * @return A ResponseEntity containing a list of all drugs or an error message.
    */
   @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getAllDrugs() {
+  public ResponseEntity<?> getAllDrugs(@RequestHeader(value="authorization",
+          required=false) String authorization) {
     try {
       List<String> drugs = drugService.getAllDrugs();
       return new ResponseEntity<>(drugs, HttpStatus.OK);
@@ -314,11 +315,11 @@ public class RouteController {
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
                                           @RequestParam("drugB") String drugB,
                                           @RequestHeader(value="authorization", required = false)
-                                          String authroization) {
+                                          String authorization) {
     try {
-//      if (!firebaseService.authenticateToken(headers)) {
-//        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
-//      }
+      if (!firebaseService.authenticateToken(headers)) {
+        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
+      }
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
