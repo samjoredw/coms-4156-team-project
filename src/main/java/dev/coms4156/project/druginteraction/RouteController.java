@@ -317,9 +317,9 @@ public class RouteController {
                                           @RequestHeader(value="authorization", required = false)
                                           String authorization) {
     try {
-      if (!firebaseService.authenticateToken(headers)) {
-        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
-      }
+//      if (!firebaseService.authenticateToken(headers)) {
+//        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
+//      }
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
