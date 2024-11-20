@@ -154,7 +154,7 @@ class RouteControllerUnitTests {
     List<String> drugs = Arrays.asList("Drug1", "Drug2", "Drug3");
     when(drugService.getAllDrugs()).thenReturn(drugs);
 
-    ResponseEntity<?> response = routeController.getAllDrugs();
+    ResponseEntity<?> response = routeController.getAllDrugs(AUTH_TOKEN);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(drugs, response.getBody());

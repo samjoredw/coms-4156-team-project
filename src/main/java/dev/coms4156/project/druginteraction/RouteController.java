@@ -269,8 +269,27 @@ public class RouteController {
    * @return A ResponseEntity containing a list of all drugs or an error message.
    */
   @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getAllDrugs() {
+  public ResponseEntity<?> getAllDrugs(@RequestHeader(value = "authorization", required = false)
+                                         String authorization) {
     try {
+      // Check if the Authorization header is present
+      if (authorization == null || !authorization.startsWith("Bearer ")) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body("Missing or invalid Authorization header");
+      }
+
+      // Extract the idToken from the Authorization header
+      String idToken = authorization.substring(7);
+
+      // Verify the token using Firebase Authentication
+      FirebaseToken decodedToken;
+      try {
+        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+      } catch (FirebaseAuthException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body("Invalid or expired token");
+      }
+
       List<String> drugs = drugService.getAllDrugs();
       return new ResponseEntity<>(drugs, HttpStatus.OK);
     } catch (Exception e) {
@@ -415,15 +434,6 @@ public class RouteController {
             .body("Invalid or expired token");
       }
 
-      // Retrieve user information from the token
-      String uid = decodedToken.getUid();
-      String email = decodedToken.getEmail();
-      if (email == null || !email.endsWith("@columbia.edu")) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body("Access denied: User " + uid + " is not associated with the Columbia "
-                + "University");
-      }
-
       List<String> drugs = new ArrayList<>();
       drugs.add(drugA);
       drugs.add(drugB);
@@ -545,8 +555,36 @@ public class RouteController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> updateInteraction(@PathVariable String documentId,
       @RequestParam("drugA") String drugA, @RequestParam("drugB") String drugB,
-      @RequestParam("interactionEffect") String interactionEffect) {
+      @RequestParam("interactionEffect") String interactionEffect,
+      @RequestHeader(value = "authorization", required = false) String authorization) {
     try {
+      // Check if the Authorization header is present
+      if (authorization == null || !authorization.startsWith("Bearer ")) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body("Missing or invalid Authorization header");
+      }
+
+      // Extract the idToken from the Authorization header
+      String idToken = authorization.substring(7);
+
+      // Verify the token using Firebase Authentication
+      FirebaseToken decodedToken;
+      try {
+        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+      } catch (FirebaseAuthException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body("Invalid or expired token");
+      }
+
+      // Retrieve user information from the token
+      String uid = decodedToken.getUid();
+      String email = decodedToken.getEmail();
+      if (email == null || !email.endsWith("@columbia.edu")) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body("Access denied: User " + uid + " is not associated with the Columbia "
+                + "University");
+      }
+
       boolean updated =
           interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect);
       if (updated) {
@@ -570,8 +608,36 @@ public class RouteController {
   @DeleteMapping(value = "/interactions/delete", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> deleteInteraction(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
-      @RequestParam("interactionEffect") String interactionEffect) {
+      @RequestParam("interactionEffect") String interactionEffect,
+      @RequestHeader(value = "authorization", required = false) String authorization) {
     try {
+      // Check if the Authorization header is present
+      if (authorization == null || !authorization.startsWith("Bearer ")) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body("Missing or invalid Authorization header");
+      }
+
+      // Extract the idToken from the Authorization header
+      String idToken = authorization.substring(7);
+
+      // Verify the token using Firebase Authentication
+      FirebaseToken decodedToken;
+      try {
+        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+      } catch (FirebaseAuthException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body("Invalid or expired token");
+      }
+
+      // Retrieve user information from the token
+      String uid = decodedToken.getUid();
+      String email = decodedToken.getEmail();
+      if (email == null || !email.endsWith("@columbia.edu")) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body("Access denied: User " + uid + " is not associated with the Columbia "
+                + "University");
+      }
+
       boolean deleted = interactionService.removeInteraction(drugA, drugB, interactionEffect);
       if (deleted) {
         return new ResponseEntity<>("Interaction deleted successfully", HttpStatus.OK);
