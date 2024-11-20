@@ -28,6 +28,7 @@ class DrugInteractionChecker {
         this.results = document.getElementById("results");
         this.drugsList = document.getElementById("drugsList");
         this.idToken = localStorage.getItem("userToken");
+        console.log(this.idToken);
         this.userInfo = localStorage.getItem("user");
         this.auth = getAuth();
 

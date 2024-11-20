@@ -314,7 +314,7 @@ public class RouteController {
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
                                           @RequestParam("drugB") String drugB,
                                           @RequestHeader(value="authorization", required = false)
-                                          String authroization) {
+                                          String authorization) {
     try {
 //      if (!firebaseService.authenticateToken(headers)) {
 //        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
