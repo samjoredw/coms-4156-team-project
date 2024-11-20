@@ -18,7 +18,21 @@ import org.springframework.http.ResponseEntity;
 
 class RouteControllerUnitTests {
 
-  private static final String AUTH_TOKEN = "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlNTIxYmY1ZjdhNDAwOGMzYmQ3MjFmMzk2OTcwOWI1MzY0MzA5NjEiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiQ2hhcmxpZSBab3UiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTExnN1JmOE5DNzYxbnhTWEhBbFQwalhwWHg3Vmo4bk1MQ3VuZHNDX0NJRWJTVmFnPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2RydWctaW50ZXJhY3Rpb24tYXBpIiwiYXVkIjoiZHJ1Zy1pbnRlcmFjdGlvbi1hcGkiLCJhdXRoX3RpbWUiOjE3MzIxMTg5NTUsInVzZXJfaWQiOiJsVVhla3p6cFBnZUZQOFR5Z3F3dXVrMEd1ZUozIiwic3ViIjoibFVYZWt6enBQZ2VGUDhUeWdxd3V1azBHdWVKMyIsImlhdCI6MTczMjExODk1NSwiZXhwIjoxNzMyMTIyNTU1LCJlbWFpbCI6Imp6MzMzMUBjb2x1bWJpYS5lZHUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwMjA2OTE0MjQxMzMwNjAzMzM5OSJdLCJlbWFpbCI6WyJqejMzMzFAY29sdW1iaWEuZWR1Il19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.ki6TP1FWUG-Os4VHxe_GSK9P_Tfk7zgiGtDJNPD8gcjvuEGYRR80VBsNm9W93CVYmSWk-V748y-c2PsPyhkSib30ThNgoIE2EbeGk_fC-lGJz2Uyk0waHoyjzqrLrfNUxzoE91kk7LjBH8aNSrUte2Dmhvh3_O2NwjkRI7qx9kv8S8gxS7Zf_tLAw6GWgKEa5SJjAgAHcwhQThKa3dzWeUilC-y3gkaIOKkwDweDWEgSxtBSJWZzhtU1Msxg9OBPtNbt1tDuKw6uO_E__DZpsCddGfQntbQclDs_zJ0YJAiLaP8da_7RKhFtFSUqtPS8xCjNWq3OF7eGLIGQo6f3uw";
+  private static final String AUTH_TOKEN = "Bearer "
+      + "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlNTIxYmY1ZjdhNDAwOGMzYmQ3MjFmMzk2OTcwOWI1MzY0MzA5NjEiLC"
+      + "J0eXAiOiJKV1QifQ.eyJuYW1lIjoiQ2hhcmxpZSBab3UiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXN"
+      + "lcmNvbnRlbnQuY29tL2EvQUNnOG9jTExnN1JmOE5DNzYxbnhTWEhBbFQwalhwWHg3Vmo4bk1MQ3VuZHNDX0NJRWJ"
+      + "TVmFnPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2RydWctaW50ZXJhY3Rpb24"
+      + "tYXBpIiwiYXVkIjoiZHJ1Zy1pbnRlcmFjdGlvbi1hcGkiLCJhdXRoX3RpbWUiOjE3MzIxMTg5NTUsInVzZXJfaWQ"
+      + "iOiJsVVhla3p6cFBnZUZQOFR5Z3F3dXVrMEd1ZUozIiwic3ViIjoibFVYZWt6enBQZ2VGUDhUeWdxd3V1azBHdWV"
+      + "KMyIsImlhdCI6MTczMjExODk1NSwiZXhwIjoxNzMyMTIyNTU1LCJlbWFpbCI6Imp6MzMzMUBjb2x1bWJpYS5lZHU"
+      + "iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjE"
+      + "wMjA2OTE0MjQxMzMwNjAzMzM5OSJdLCJlbWFpbCI6WyJqejMzMzFAY29sdW1iaWEuZWR1Il19LCJzaWduX2luX3B"
+      + "yb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.ki6TP1FWUG-Os4VHxe_GSK9P_Tfk7zgiGtDJNPD8gcjvuEGYRR80VBsN"
+      + "m9W93CVYmSWk-V748y-c2PsPyhkSib30ThNgoIE2EbeGk_fC-lGJz2Uyk0waHoyjzqrLrfNUxzoE91kk7LjBH8aN"
+      + "SrUte2Dmhvh3_O2NwjkRI7qx9kv8S8gxS7Zf_tLAw6GWgKEa5SJjAgAHcwhQThKa3dzWeUilC-y3gkaIOKkwDweD"
+      + "WEgSxtBSJWZzhtU1Msxg9OBPtNbt1tDuKw6uO_E__DZpsCddGfQntbQclDs_zJ0YJAiLaP8da_7RKhFtFSUqtPS8"
+      + "xCjNWq3OF7eGLIGQo6f3uw";
 
   @Mock
   private Interaction interactionService;
@@ -204,7 +218,8 @@ class RouteControllerUnitTests {
     when(interactionService.getInteraction(drugA, drugB)).thenReturn("No known interaction");
     when(interactionService.addInteraction(drugA, drugB, interactionEffect)).thenReturn(true);
 
-    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect, AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect,
+        AUTH_TOKEN);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals("Interaction added successfully", response.getBody());
@@ -217,7 +232,8 @@ class RouteControllerUnitTests {
     String interactionEffect = "Existing interaction effect";
     when(interactionService.getInteraction(drugA, drugB)).thenReturn("Existing interaction");
 
-    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect, AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect,
+        AUTH_TOKEN);
 
     assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     assertEquals("Interaction already exists", response.getBody());
