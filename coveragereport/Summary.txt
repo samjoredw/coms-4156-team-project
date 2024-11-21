@@ -1,6 +1,11 @@
 Summary - JaCoCo code coverage report
+<<<<<<< HEAD
   Generated on: 11/21/2024 - 00:13:40
   Coverage date: 11/21/2024 - 00:12:48
+=======
+  Generated on: 11/18/2024 - 16:17:29
+  Coverage date: 11/18/2024 - 16:16:42
+>>>>>>> origin
   Parser: JaCoCo
   Assemblies: 1
   Classes: 7
@@ -16,7 +21,11 @@ Summary - JaCoCo code coverage report
   Method coverage: 76.7% (33 of 43)
   Covered methods: 33
   Total methods: 43
+<<<<<<< HEAD
   Tag: 117_11944005846
+=======
+  Tag: 103_11896534152
+>>>>>>> origin
 
 dev/coms4156/project/druginteraction                     51.4%
   dev/coms4156/project/druginteraction/DrugInteraction   50.0%

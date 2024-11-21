@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+<<<<<<< HEAD
 <coverage line-rate="0.514760147601476" branch-rate="0.4764705882352941" lines-covered="279" lines-valid="542" branches-covered="81" branches-valid="170" complexity="NaN" version="0" timestamp="1732148020">
+=======
+<coverage line-rate="0.5690072639225182" branch-rate="0.5588235294117647" lines-covered="235" lines-valid="413" branches-covered="57" branches-valid="102" complexity="NaN" version="0" timestamp="1731946649">
+>>>>>>> origin
   <sources>
     <source>src/main/java/dev/coms4156/project/druginteraction</source>
   </sources>

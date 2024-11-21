@@ -3,10 +3,20 @@ package dev.coms4156.project.druginteraction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.gson.Gson;
+import java.io.FileInputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,23 +28,7 @@ import org.springframework.http.ResponseEntity;
 
 class RouteControllerUnitTests {
 
-  private static final String AUTH_TOKEN = "Bearer "
-      + "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkyODg2OGRjNDRlYTZhOThjODhiMzkzZDM2NDQ1MTM2NWViYjMwZDgiL"
-      + "CJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiQ2hhcmxpZSBab3UiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xld"
-      + "XNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTExnN1JmOE5DNzYxbnhTWEhBbFQwalhwWHg3Vmo4bk1MQ3VuZHNDX0NJ"
-      + "RWJTVmFnPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2RydWctaW50ZXJhY3R"
-      + "pb24tYXBpIiwiYXVkIjoiZHJ1Zy1pbnRlcmFjdGlvbi1hcGkiLCJhdXRoX3RpbWUiOjE3MzIxNDc3NjgsInVzZX"
-      + "JfaWQiOiJsVVhla3p6cFBnZUZQOFR5Z3F3dXVrMEd1ZUozIiwic3ViIjoibFVYZWt6enBQZ2VGUDhUeWdxd3V1a"
-      + "zBHdWVKMyIsImlhdCI6MTczMjE0Nzc2OCwiZXhwIjoxNzMyMTUxMzY4LCJlbWFpbCI6Imp6MzMzMUBjb2x1bWJp"
-      + "YS5lZHUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29"
-      + "tIjpbIjEwMjA2OTE0MjQxMzMwNjAzMzM5OSJdLCJlbWFpbCI6WyJqejMzMzFAY29sdW1iaWEuZWR1Il19LCJzaW"
-      + "duX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.jUsIPiDZWPtX55XtNp9BBuH-9D85RuMUlh19kRDAQRLvLW"
-      + "E-ILTS7uP7wnUbqy_7h8yNjhp4VFvDSNu0-ccqJSSWlOT4CIJNgUZk4vc1y53uB4EYA6gvbGQ-mp8yvpmxPlyqf"
-      + "tY6IdWQXIc-62i7gYMBqbrLmNhePQXdVz6ba0BaWkyn5MRY7InGjZWHvCL5BnkABoU-ndoxjJi9Q4GmvFbdRrzE"
-      + "iCecEhJaCLCOyshqKH2oExuiiuPITuPvrcoxTCTlAX9uRi_7FhtfnysJNPNL_AFuzJN-ztM1Z8g4C3yzN7Xl1db"
-      + "4XutyF80Wu8TPhxrR_Jcp_12MxvBjpVstSQ";
-
-  private static final String userId = "lUXekzzpPgeFP8Tygqwuuk0GueJ3";
+  private static String AUTH_TOKEN;
 
   @Mock
   private Interaction interactionService;
@@ -47,12 +41,64 @@ class RouteControllerUnitTests {
 
   private HttpHeaders headers;
 
+  @BeforeAll
+  public static void setUp() {
+    try {
+      if (FirebaseApp.getApps().isEmpty()) {
+        System.out.println("Firebase is empty");
+        FileInputStream serviceAccount = new FileInputStream("./firebase_config.json");
+
+        FirebaseOptions options = FirebaseOptions.builder()
+            .setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+
+        FirebaseApp.initializeApp(options);
+      }
+
+      // Authenticate using Identity Toolkit API
+      String apiKey = "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs";
+      String email = "test@columbia.edu"; // Replace with the email of the user
+      String password = "testuser";
+
+      // Prepare the request payload
+      Map<String, String> payload = new HashMap<>();
+      payload.put("email", email);
+      payload.put("password", password);
+      payload.put("returnSecureToken", "true");
+
+      // Convert payload to JSON
+      String jsonPayload = new Gson().toJson(payload);
+
+      // Send POST request
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + apiKey))
+          .header("Content-Type", "application/json")
+          .POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
+
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+      // Handle the response
+      if (response.statusCode() == 200) {
+        Map<String, Object> responseBody = new Gson().fromJson(response.body(), HashMap.class);;
+        AUTH_TOKEN = (String) responseBody.get("idToken");
+        AUTH_TOKEN = "Bearer " + AUTH_TOKEN;
+      } else {
+        System.out.println("Sign-in failed! Status Code: " + response.statusCode());
+        System.out.println("Response: " + response.body());
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   @BeforeEach
-  void setUp() {
+  void setUpBeforeEach() {
     MockitoAnnotations.openMocks(this);
     headers = new HttpHeaders();
     headers.add(HttpHeaders.AUTHORIZATION, AUTH_TOKEN);
   }
+
 
   @Test
   void testGetDrug_Success() {
@@ -220,8 +266,8 @@ class RouteControllerUnitTests {
     when(interactionService.getInteraction(drugA, drugB)).thenReturn("No known interaction");
     when(interactionService.addInteraction(drugA, drugB, interactionEffect)).thenReturn(true);
 
-    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect,
-        AUTH_TOKEN);
+    ResponseEntity<?> response =
+        routeController.addInteraction(drugA, drugB, interactionEffect, AUTH_TOKEN);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals("Interaction added successfully", response.getBody());
@@ -234,11 +280,13 @@ class RouteControllerUnitTests {
     String interactionEffect = "Existing interaction effect";
     when(interactionService.getInteraction(drugA, drugB)).thenReturn("Existing interaction");
 
-    ResponseEntity<?> response = routeController.addInteraction(drugA, drugB, interactionEffect,
-        AUTH_TOKEN);
+    ResponseEntity<?> response =
+        routeController.addInteraction(drugA, drugB, interactionEffect, AUTH_TOKEN);
 
     assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     assertEquals("Interaction already exists", response.getBody());
   }
 
 }
+
+
