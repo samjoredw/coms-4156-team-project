@@ -54,9 +54,8 @@ class RouteControllerUnitTests {
         FirebaseApp.initializeApp(options);
       }
 
-      // Authenticate using Identity Toolkit API
       String apiKey = "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs";
-      String email = "test@columbia.edu"; // Replace with the email of the user
+      String email = "test@columbia.edu";
       String password = "testuser";
 
       // Prepare the request payload
