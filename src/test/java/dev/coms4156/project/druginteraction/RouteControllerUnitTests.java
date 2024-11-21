@@ -19,20 +19,20 @@ import org.springframework.http.ResponseEntity;
 class RouteControllerUnitTests {
 
   private static final String AUTH_TOKEN = "Bearer "
-      + "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFlNTIxYmY1ZjdhNDAwOGMzYmQ3MjFmMzk2OTcwOWI1MzY0MzA5NjEiLCJ0"
-      + "eXAiOiJKV1QifQ.eyJuYW1lIjoiQ2hhcmxpZSBab3UiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcm"
-      + "NvbnRlbnQuY29tL2EvQUNnOG9jTExnN1JmOE5DNzYxbnhTWEhBbFQwalhwWHg3Vmo4bk1MQ3VuZHNDX0NJRWJTVmF"
-      + "nPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2RydWctaW50ZXJhY3Rpb24tYXBp"
-      + "IiwiYXVkIjoiZHJ1Zy1pbnRlcmFjdGlvbi1hcGkiLCJhdXRoX3RpbWUiOjE3MzIxNDIyMjMsInVzZXJfaWQiOiJsV"
-      + "Vhla3p6cFBnZUZQOFR5Z3F3dXVrMEd1ZUozIiwic3ViIjoibFVYZWt6enBQZ2VGUDhUeWdxd3V1azBHdWVKMyIsIm"
-      + "lhdCI6MTczMjE0MjIyMywiZXhwIjoxNzMyMTQ1ODIzLCJlbWFpbCI6Imp6MzMzMUBjb2x1bWJpYS5lZHUiLCJlbWF"
-      + "pbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwMjA2OTE0"
-      + "MjQxMzMwNjAzMzM5OSJdLCJlbWFpbCI6WyJqejMzMzFAY29sdW1iaWEuZWR1Il19LCJzaWduX2luX3Byb3ZpZGVyI"
-      + "joiZ29vZ2xlLmNvbSJ9fQ.IkIxquN_GKapDn2Oqfaa00sTmYpmiDhsmvEfA_SXb8oBJNy9kmeAef3c73DvscZ8sIE"
-      + "QwvFzmD-pTkNYEBt_BC0Grkeo-oCbfhcf0AkuANkI1wwqp2GAm-u6W0mTk7yeD4hDYRcOzcKa6nOhIXorjAfqqX_8"
-      + "h8hT9yDqU3kL1E9MnapurMAV1swjLp3P8oMkiyuF3HZL4FNc2EokwgEwCyp04glWecrYOjBnFgNDGngaob3cAmUgu"
-      + "djem42fvfo8_ftQNxX1i1Xj5f2qAS4JDxyjFzl4H0Bv8WJfTP33auG769139dZ-RNdWS2wK-55pTaI_FIfsMRWTSv"
-      + "IixO1Riw";
+      + "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkyODg2OGRjNDRlYTZhOThjODhiMzkzZDM2NDQ1MTM2NWViYjMwZDgiL"
+      + "CJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiQ2hhcmxpZSBab3UiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xld"
+      + "XNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTExnN1JmOE5DNzYxbnhTWEhBbFQwalhwWHg3Vmo4bk1MQ3VuZHNDX0NJ"
+      + "RWJTVmFnPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2RydWctaW50ZXJhY3R"
+      + "pb24tYXBpIiwiYXVkIjoiZHJ1Zy1pbnRlcmFjdGlvbi1hcGkiLCJhdXRoX3RpbWUiOjE3MzIxNDc3NjgsInVzZX"
+      + "JfaWQiOiJsVVhla3p6cFBnZUZQOFR5Z3F3dXVrMEd1ZUozIiwic3ViIjoibFVYZWt6enBQZ2VGUDhUeWdxd3V1a"
+      + "zBHdWVKMyIsImlhdCI6MTczMjE0Nzc2OCwiZXhwIjoxNzMyMTUxMzY4LCJlbWFpbCI6Imp6MzMzMUBjb2x1bWJp"
+      + "YS5lZHUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29"
+      + "tIjpbIjEwMjA2OTE0MjQxMzMwNjAzMzM5OSJdLCJlbWFpbCI6WyJqejMzMzFAY29sdW1iaWEuZWR1Il19LCJzaW"
+      + "duX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.jUsIPiDZWPtX55XtNp9BBuH-9D85RuMUlh19kRDAQRLvLW"
+      + "E-ILTS7uP7wnUbqy_7h8yNjhp4VFvDSNu0-ccqJSSWlOT4CIJNgUZk4vc1y53uB4EYA6gvbGQ-mp8yvpmxPlyqf"
+      + "tY6IdWQXIc-62i7gYMBqbrLmNhePQXdVz6ba0BaWkyn5MRY7InGjZWHvCL5BnkABoU-ndoxjJi9Q4GmvFbdRrzE"
+      + "iCecEhJaCLCOyshqKH2oExuiiuPITuPvrcoxTCTlAX9uRi_7FhtfnysJNPNL_AFuzJN-ztM1Z8g4C3yzN7Xl1db"
+      + "4XutyF80Wu8TPhxrR_Jcp_12MxvBjpVstSQ";
 
   private static final String userId = "lUXekzzpPgeFP8Tygqwuuk0GueJ3";
 
