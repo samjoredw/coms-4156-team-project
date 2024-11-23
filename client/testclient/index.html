@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drug Interaction API Frontend</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+    }
+    pre {
+      background-color: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drug Interaction API Frontend</h1>
+
+  <!-- Get All Drugs -->
+  <section>
+    <h2>1. Get All Drugs</h2>
+    <button onclick="getAllDrugs()">Fetch All Drugs</button>
+  </section>
+
+  <!-- Get All Drug Interactions -->
+  <section>
+    <h2>2. Get All Drug Interactions</h2>
+    <input id="drugName" type="text" placeholder="Enter Drug Name">
+    <button onclick="getAllDrugInteractions()">Fetch All Drug Interactions</button>
+  </section>
+
+  <!-- Get Drug Info -->
+  <section>
+    <h2>3. Get Drug Info</h2>
+    <input id="drugName2" type="text" placeholder="Enter Drug Name">
+    <button onclick="getDrugInfo()">Get Drug Info</button>
+  </section>
+
+
+  <!-- Add New Drug -->
+  <section>
+    <h2>4. Add New Drug</h2>
+    <input id="newDrugName" type="text" placeholder="Drug Name">
+    <input id="newDrugDosageForm" type="text" placeholder="Dosage Form">
+    <input id="newDrugIndications" type="text" placeholder="Indications">
+    <input id="newDrugContraindications" type="text" placeholder="Contraindications">
+    <button onclick="addNewDrug()">Add Drug</button>
+  </section>
+  
+  <!-- Update Existing Drug -->
+  <section>
+    <h2>5. Update Existing Drug</h2>
+    <input id="updateDrugName" type="text" placeholder="Drug Name (Required)">
+    <input id="updateDrugDosageForm" type="text" placeholder="Updated Dosage Form">
+    <input id="updateDrugIndications" type="text" placeholder="Updated Indications">
+    <input id="updateDrugContraindications" type="text" placeholder="Updated Contraindications">
+    <button onclick="updateExistingDrug()">Update Drug</button>
+  </section>
+
+
+  <!-- Delete Drug -->
+  <section>
+    <h2>6. Delete Drug</h2>
+    <input id="deleteDrugName" type="text" placeholder="Enter Drug Name">
+    <button onclick="deleteDrug()">Delete Drug</button>
+  </section>
+
+  <!-- Check Drug Interactions -->
+  <section>
+    <h2>7. Check Drug Interactions (Two Drugs)</h2>
+    <input id="interactionDrugA" type="text" placeholder="Enter Drug A">
+    <input id="interactionDrugB" type="text" placeholder="Enter Drug B">
+    <button onclick="checkInteractions()">Check Interactions</button>
+  </section>
+
+  <!-- Check Drug Interactions -->
+  <section>
+    <h2>8. Check Drug Interactions (Up to Five Drugs)</h2>
+    <input id="interactionMultiDrugA" type="text" placeholder="Enter Drug A">
+    <input id="interactionMultiDrugB" type="text" placeholder="Enter Drug B">
+    <input id="interactionMultiDrugC" type="text" placeholder="Enter Drug C">
+    <input id="interactionMultiDrugD" type="text" placeholder="Enter Drug D">
+    <input id="interactionMultiDrugE" type="text" placeholder="Enter Drug E">
+    <button onclick="checkMultipleInteractions()">Check Multiple Interactions</button>
+  </section>
+
+  <!-- Add New Drug Interactions -->
+  <section>
+    <h2>9. Add Drug Interactions</h2>
+    <input id="addInteractionDrugA" type="text" placeholder="Enter Drug A">
+    <input id="addInteractionDrugB" type="text" placeholder="Enter Drug B">
+    <input id="addInteractionEffect" type="text" placeholder="Enter Interaction Effect">
+    <button onclick="addDrugInteraction()">Add Drug Interaction</button>
+  </section>  
+
+  <!-- Delete Existing Drug Interactions -->
+  <section>
+    <h2>10. Delete Existing Drug Interactions</h2>
+    <input id="deleteInteractionDrugA" type="text" placeholder="Enter Drug A">
+    <input id="deleteInteractionDrugB" type="text" placeholder="Enter Drug B">
+    <input id="deleteInteractionEffect" type="text" placeholder="Enter Interaction Effect">
+    <button onclick="deleteDrugInteraction()">Delete Drug Interaction</button>
+  </section>  
+
+
+  <!-- Update Existing Drug Interactions -->
+  <section>
+    <h2>11. Update Existing Drug Interactions</h2>
+    <input id="updateInteractionId" type="text" placeholder="Enter Interaction ID">
+    <input id="updateInteractionDrugA" type="text" placeholder="Enter Updated Drug A Name">
+    <input id="updateInteractionDrugB" type="text" placeholder="Enter Updated Drug B Name">
+    <input id="updateInteractionEffect" type="text" placeholder="Enter Updated Interaction Effect">
+    <button onclick="updateDrugInteraction()">Update Drug Interaction</button>
+  </section>  
+
+
+  <!-- Response Display -->
+  <section>
+    <h2>Response</h2>
+    <pre id="response">No response yet</pre>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
