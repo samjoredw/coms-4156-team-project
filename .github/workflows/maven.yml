@@ -103,11 +103,6 @@ jobs:
           cd postman
           newman run postman_tests.json
 
-      # - name: Configure Git User
-      #   run: |
-      #     git config --global user.name "github-actions[bot]"
-      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       # - name: Detect Branch Name
       #   id: detect_branch
       #   run: |
