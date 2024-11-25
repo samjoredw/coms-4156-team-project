@@ -23,10 +23,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # - name: Exit on merge commit
-      #   if: env.is_merge == 'true'
-      #   run: echo "This is a merge commit. Exiting."
-
       - name: Install Newman
         run: npm install -g newman
 
