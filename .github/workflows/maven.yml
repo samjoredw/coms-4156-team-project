@@ -103,10 +103,4 @@ jobs:
           cd postman
           newman run postman_tests.json
 
-      # - name: Commit and Push Reports
-      #   run: |
-      #     git add coveragereport/
-      #     git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
-      #     git push origin HEAD:${{ env.branch_name }}
-
       
