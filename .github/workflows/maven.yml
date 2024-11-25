@@ -22,15 +22,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      
-      # - name: Check if this is a merge commit
-      #   id: check_merge
-      #   run: |
-      #     if [[ "$(git log -1 --pretty=%B)" =~ ^Merge.* ]]; then
-      #       echo "is_merge=true" >> $GITHUB_ENV
-      #     else
-      #       echo "is_merge=false" >> $GITHUB_ENV
-      #     fi
 
       # - name: Exit on merge commit
       #   if: env.is_merge == 'true'
