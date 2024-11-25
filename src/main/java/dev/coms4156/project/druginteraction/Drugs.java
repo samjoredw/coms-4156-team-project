@@ -130,8 +130,15 @@ public class Drugs {
   public boolean removeDrug(String drugName) {
     try {
       String documentId = drugName.toLowerCase();
-      ApiFuture<WriteResult> writeResult = 
-          firestore.collection("drugs").document(documentId).delete();
+      DocumentSnapshot document = firestore.collection("drugs").document(documentId).get().get();
+
+      if (!document.exists()) {
+        return false;  // Return false if the document doesn't exist
+      }
+
+      // Proceed to delete if the document exists
+      ApiFuture<WriteResult> writeResult = firestore.collection("drugs")
+          .document(documentId).delete();
       writeResult.get(); // Wait for the deletion to complete
       return true;
     } catch (Exception e) {
@@ -176,34 +183,39 @@ public class Drugs {
   public List<String> getInteraction(String drugName) {
     List<String> interactions = new ArrayList<>();
 
+    // Check for null drug name input and return an empty list if null
+    if (drugName == null) {
+      return interactions;  // Return empty list immediately
+    }
+
     try {
       // Query where drugA = drugName
       ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA = firestore
-              .collection("interactions")
-              .whereEqualTo("drugA", drugName)
-              .get();
+          .collection("interactions")
+          .whereEqualTo("drugA", drugName)
+          .get();
       com.google.cloud.firestore.QuerySnapshot querySnapshotA = queryA.get();
 
       for (DocumentSnapshot document : querySnapshotA.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugB");
-        interactions.add(
-            "Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add("Interaction between " + drugName + " and "
+            + otherDrug + ": " + interactionEffect);
       }
 
       // Query where drugB = drugName
       ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB = firestore
-              .collection("interactions")
-              .whereEqualTo("drugB", drugName)
-              .get();
+          .collection("interactions")
+          .whereEqualTo("drugB", drugName)
+          .get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshotB = queryB.get();
 
       for (DocumentSnapshot document : querySnapshotB.getDocuments()) {
         String interactionEffect = (String) document.get("interactionEffect");
         String otherDrug = (String) document.get("drugA");
-        interactions.add(
-            "Interaction between " + drugName + " and " + otherDrug + ": " + interactionEffect);
+        interactions.add("Interaction between " + drugName + " and "
+            + otherDrug + ": " + interactionEffect);
       }
     } catch (Exception e) {
       e.printStackTrace();
