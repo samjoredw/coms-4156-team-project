@@ -40,10 +40,8 @@ public class InteractionUnitTests {
   @AfterEach
   public void clearDatabase() {
     // Remove all test-specific data after each test
-    testInteraction.removeInteraction(
-        "Aspirin", "Warfarin", "Increased risk of bleeding.");
-    testInteraction.removeInteraction(
-        "Ibuprofen", "Naproxen",
+    testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
+    testInteraction.removeInteraction("Ibuprofen", "Naproxen",
         "Increased risk of gastrointestinal side effects.");
   }
 
@@ -130,8 +128,7 @@ public class InteractionUnitTests {
 
     List<String> drugs = Arrays.asList("Warfarin", "Aspirin", "Ibuprofen");
     List<Map<String, String>> interactionList = testInteraction.getInteraction(drugs);
-    assertEquals(3, interactionList.size(),
-            "Should return 3 interactions for 3 drugs");
+    assertEquals(3, interactionList.size(), "Should return 3 interactions for 3 drugs");
 
     Map<String, List<Map<String, Object>>> actualOutput = new HashMap<>();
     actualOutput.put("interactions", new ArrayList<>());
@@ -141,7 +138,7 @@ public class InteractionUnitTests {
       Map<String, Object> interactionData = new HashMap<>(interaction);
       System.out.println(interactionData);
       boolean hasInteraction =
-              !interaction.get("interactionEffect").startsWith("No known interaction");
+          !interaction.get("interactionEffect").startsWith("No known interaction");
       interactionData.put("interactionBool", hasInteraction);
 
       if (hasInteraction) {
@@ -152,46 +149,44 @@ public class InteractionUnitTests {
     }
 
     // Compare expected and actual outputs
-    assertEquals(expectedOutput.get("interactions").size(),
-            actualOutput.get("interactions").size(),
-            "Number of interactions should match");
+    assertEquals(expectedOutput.get("interactions").size(), actualOutput.get("interactions").size(),
+        "Number of interactions should match");
     assertEquals(expectedOutput.get("noInteractions").size(),
-            actualOutput.get("noInteractions").size(),
-            "Number of noInteractions should match");
+        actualOutput.get("noInteractions").size(), "Number of noInteractions should match");
 
     // for (Map<String, Object> expected : expectedOutput.get("interactions")) {
-    //   assertTrue(actualOutput.get("interactions").stream()
-    //                   .anyMatch(actual -> compareInteractions(expected, actual)),
-    //           "Expected interaction not found: " + expected);
+    // assertTrue(actualOutput.get("interactions").stream()
+    // .anyMatch(actual -> compareInteractions(expected, actual)),
+    // "Expected interaction not found: " + expected);
     // }
 
     for (Map<String, Object> expected : expectedOutput.get("noInteractions")) {
-      assertTrue(actualOutput.get("noInteractions").stream()
-                      .anyMatch(actual -> compareInteractions(expected, actual)),
-              "Expected noInteraction not found: " + expected);
+      assertTrue(
+          actualOutput.get("noInteractions").stream()
+              .anyMatch(actual -> compareInteractions(expected, actual)),
+          "Expected noInteraction not found: " + expected);
     }
   }
 
   private boolean compareInteractions(Map<String, Object> expected, Map<String, Object> actual) {
     return expected.get("drugPair").equals(actual.get("drugPair"))
-            && expected.get("interactionEffect").equals(actual.get("interactionEffect"))
-            && expected.get("interactionBool").equals(actual.get("interactionBool"));
+        && expected.get("interactionEffect").equals(actual.get("interactionEffect"))
+        && expected.get("interactionBool").equals(actual.get("interactionBool"));
   }
 
   @Test
   @Order(4)
   public void removeInteractionTest() {
 
-    testInteraction.addInteraction("Aspirin", "Warfarin",
-        "Increased risk of bleeding.");
+    testInteraction.addInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
     // Remove an existing interaction
-    boolean result = testInteraction.removeInteraction("Aspirin", "Warfarin",
-        "Increased risk of bleeding.");
+    boolean result =
+        testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
     assertTrue(result, "Removing existing interaction should return true");
 
     // Check that the interaction was removed
     String interactionEffect = testInteraction.getInteraction("Aspirin", "Warfarin");
-//    assertEqual(interactionEffect, "");
+    // assertEqual(interactionEffect, "");
 
     // Attempt to remove a non-existent interaction
     result = testInteraction.removeInteraction("Aspirin", "Ibuprofen", "Non-existent interaction");
