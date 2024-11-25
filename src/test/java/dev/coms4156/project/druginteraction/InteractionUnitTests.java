@@ -53,7 +53,7 @@ public class InteractionUnitTests {
   public void getInteractionTest() {
     // Valid case: Retrieve known interaction
     String interactionEffect = testInteraction.getInteraction("Aspirin", "Warfarin");
-    assertEquals("Increased risk of bleeding.", interactionEffect);
+    assertEquals("Increased risk of bleeding", interactionEffect);
 
 
     // Non-existent interaction case
