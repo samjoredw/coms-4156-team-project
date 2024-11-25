@@ -29,7 +29,6 @@ public class FirebaseConfig {
   public FirebaseApp firebaseApp() throws IOException {
     FirebaseOptions options;
     String firebaseConfig = System.getenv("FIREBASE_CONFIG");
-
     if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
       byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
       InputStream serviceAccount = new ByteArrayInputStream(decodedConfig);
