@@ -193,12 +193,12 @@ public class FirebaseService {
       return false;
     }
 
-    String idToken = authorizationHeader.substring(7);  // Remove "Bearer " prefix
+    String idToken = authorizationHeader.substring(7); // Remove "Bearer " prefix
 
     // Verify the Firebase ID token
     try {
       FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-      return true;
+      return (decodedToken != null);
     } catch (Exception e) {
       return false;
     }

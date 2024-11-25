@@ -62,9 +62,8 @@ public class RouteController {
       String idToken = authorization.substring(7);
 
       // Verify the token using Firebase Authentication
-      FirebaseToken decodedToken;
       try {
-        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        FirebaseAuth.getInstance().verifyIdToken(idToken);
       } catch (FirebaseAuthException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
       }
@@ -263,9 +262,8 @@ public class RouteController {
       String idToken = authorization.substring(7);
 
       // Verify the token using Firebase Authentication
-      FirebaseToken decodedToken;
       try {
-        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        FirebaseAuth.getInstance().verifyIdToken(idToken);
       } catch (FirebaseAuthException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
       }
@@ -297,9 +295,8 @@ public class RouteController {
       String idToken = authorization.substring(7);
 
       // Verify the token using Firebase Authentication
-      FirebaseToken decodedToken;
       try {
-        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        FirebaseAuth.getInstance().verifyIdToken(idToken);
       } catch (FirebaseAuthException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
       }
@@ -337,9 +334,8 @@ public class RouteController {
       String idToken = authorization.substring(7);
 
       // Verify the token using Firebase Authentication
-      FirebaseToken decodedToken;
       try {
-        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        FirebaseAuth.getInstance().verifyIdToken(idToken);
       } catch (FirebaseAuthException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
       }
@@ -398,9 +394,8 @@ public class RouteController {
       String idToken = authorization.substring(7);
 
       // Verify the token using Firebase Authentication
-      FirebaseToken decodedToken;
       try {
-        decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        FirebaseAuth.getInstance().verifyIdToken(idToken);
       } catch (FirebaseAuthException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
       }
@@ -435,7 +430,7 @@ public class RouteController {
         // Changed logic to check if the interaction effect indicates no known interaction
         // or if it's an unknown interaction
         if (interactionEffect.startsWith("No known interaction")
-            || interactionEffect.equals("Unknown interaction")) {
+            || "Unknown interaction".equals(interactionEffect)) {
           interactionData.put("interactionBool", false);
           noInteractions.add(interactionData);
         } else {
