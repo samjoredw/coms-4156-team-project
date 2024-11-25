@@ -1,0 +1,28 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------< dev.coms4156.project:coms-4156-team-project >-------------
+[INFO] Building coms-4156-team-project 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-checkstyle-plugin:3.2.0:check (default-cli) @ coms-4156-team-project ---
+[INFO] Starting audit...
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/WebConfig.java:7:1: Missing a Javadoc comment. [MissingJavadocType]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/FirebaseService.java:9:1: Wrong lexicographical order for 'com.google.firebase.FirebaseApp' import. Should be before 'com.google.firebase.auth.FirebaseToken'. [CustomImportOrder]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/FirebaseService.java:18:1: Wrong lexicographical order for 'org.springframework.http.HttpHeaders' import. Should be before 'org.springframework.stereotype.Service'. [CustomImportOrder]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/FirebaseService.java:183: First sentence of Javadoc is missing an ending period. [SummaryJavadoc]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:9:1: Wrong lexicographical order for 'org.springframework.http.HttpHeaders' import. Should be before 'org.springframework.http.HttpStatus'. [CustomImportOrder]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:12:47: Using the '.*' form of import should be avoided - org.springframework.web.bind.annotation.*. [AvoidStarImport]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:21:1: Comment has incorrect indentation level 0, expected is 8, indentation should be the same level as line 22. [CommentsIndentation]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:23: Line is longer than 100 characters (found 120). [LineLength]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:29:1: Comment has incorrect indentation level 0, expected is 2, indentation should be the same level as line 32. [CommentsIndentation]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:187: Line is longer than 100 characters (found 105). [LineLength]
+[WARN] /home/runner/work/coms-4156-team-project/coms-4156-team-project/src/main/java/dev/coms4156/project/druginteraction/RouteController.java:188:1: Comment has incorrect indentation level 0, expected is 6, indentation should be the same level as line 190. [CommentsIndentation]
+Audit done.
+[INFO] You have 0 Checkstyle violations.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.265 s
+[INFO] Finished at: 2024-11-18T16:17:37Z
+[INFO] ------------------------------------------------------------------------

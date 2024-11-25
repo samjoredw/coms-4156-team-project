@@ -2,13 +2,16 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "test" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - '**' 
+  # pull_request:
+  # workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write 
 
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +22,22 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      
+      # - name: Check if this is a merge commit
+      #   id: check_merge
+      #   run: |
+      #     if [[ "$(git log -1 --pretty=%B)" =~ ^Merge.* ]]; then
+      #       echo "is_merge=true" >> $GITHUB_ENV
+      #     else
+      #       echo "is_merge=false" >> $GITHUB_ENV
+      #     fi
+
+      # - name: Exit on merge commit
+      #   if: env.is_merge == 'true'
+      #   run: echo "This is a merge commit. Exiting."
+
+      - name: Install Newman
+        run: npm install -g newman
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -31,3 +50,77 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
+      
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
+        with:
+          reports: target/site/jacoco/jacoco.xml
+          reporttypes: HtmlInline;Cobertura;TextSummary
+          sourcedirs: src/main/java/dev/coms4156/project/druginteraction
+          title: JaCoCo code coverage report
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+      
+      - name: JaCoCoSummary
+        run: cat coveragereport/Summary.txt
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+      
+      - name: Run PMD Static Analysis
+        run: |
+          mkdir -p coveragereport/pmd 
+          mvn pmd:check > coveragereport/pmd/pmd_report.txt || true
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+
+      - name: Print PMD Static Analysis
+        run: |
+          cat coveragereport/pmd/pmd_report.txt
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+
+      - name: Run Checkstyle
+        run: |
+          mkdir -p coveragereport/checkstyle  # Create folder for Checkstyle reports
+          mvn checkstyle:check > coveragereport/checkstyle/checkstyle_report.txt || true
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+      
+      - name: Print Checkstyle
+        run: |
+          cat coveragereport/checkstyle/checkstyle_report.txt
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+      
+      - name: Run Postman Tests
+        run: |
+          cd postman
+          newman run postman_tests.json
+
+      # - name: Configure Git User
+      #   run: |
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # - name: Detect Branch Name
+      #   id: detect_branch
+      #   run: |
+      #     if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+      #       echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+      #     else
+      #       echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      #     fi
+
+      # - name: Commit and Push Reports
+      #   run: |
+      #     git add coveragereport/
+      #     git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
+      #     git push origin HEAD:${{ env.branch_name }}
+
+      

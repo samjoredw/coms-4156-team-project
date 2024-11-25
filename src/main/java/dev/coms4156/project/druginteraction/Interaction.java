@@ -152,37 +152,37 @@ public class Interaction {
    */
   public String getInteraction(String drugA, String drugB) {
     if (drugA == null || drugB == null) {
-      return null; // Return null if drug names are null
+        return null; // Return null if drug names are null
     }
     try {
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
-          .collection("interactions")
-          .whereEqualTo("drugA", drugA)
-          .whereEqualTo("drugB", drugB)
-          .get();
+        ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
+            .collection("interactions")
+            .whereEqualTo("drugA", drugA)
+            .whereEqualTo("drugB", drugB)
+            .get();
 
-      if (!query.get().isEmpty()) {
-        return (String) query.get().getDocuments().get(0).get("interactionEffect");
-      }
+        if (!query.get().isEmpty()) {
+            return (String) query.get().getDocuments().get(0).get("interactionEffect");
+        }
 
-      // Try reverse order
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
-          .collection("interactions")
-          .whereEqualTo("drugA", drugB)
-          .whereEqualTo("drugB", drugA)
-          .get();
+        // Try reverse order
+        ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
+            .collection("interactions")
+            .whereEqualTo("drugA", drugB)
+            .whereEqualTo("drugB", drugA)
+            .get();
 
-      if (!reverseQuery.get().isEmpty()) {
-        return (String) reverseQuery.get().getDocuments().get(0).get("interactionEffect");
-      }
+        if (!reverseQuery.get().isEmpty()) {
+            return (String) reverseQuery.get().getDocuments().get(0).get("interactionEffect");
+        }
 
-      // No interaction found in either order
-      return null;
+        // No interaction found in either order - return a standard message instead of null
+        return "No known interaction between " + drugA + " and " + drugB;
     } catch (Exception e) {
-      e.printStackTrace();
-      return "Error retrieving drug interaction: " + e.getMessage();
+        e.printStackTrace();
+        return "Error retrieving drug interaction: " + e.getMessage();
     }
-  }
+}
 
   /**
    * Get a specific interaction from a list of specified drugs.
@@ -190,33 +190,36 @@ public class Interaction {
    * @param drugs The List of drugs to check for any pairwise interaction.
    * @return A List of String indicating all pairwise interaction effect
    */
-  public List<String> getInteraction(List<String> drugs) {
-
-    if (drugs.isEmpty()) {
-      List<String> none = new ArrayList<>();
-      return null;
-    }
-    List<String> interactions = new ArrayList<>();
+  public List<Map<String, String>> getInteraction(List<String> drugs) {
+    List<Map<String, String>> interactions = new ArrayList<>();
 
     try {
-      for (int i = 0; i < drugs.size(); i++) {
-        for (int j = i + 1; j < drugs.size(); j++) {
-          String drugA = drugs.get(i);
-          String drugB = drugs.get(j);
+        for (int i = 0; i < drugs.size(); i++) {
+            for (int j = i + 1; j < drugs.size(); j++) {
+                String drugA = drugs.get(i);
+                String drugB = drugs.get(j);
 
-          String interaction = getInteraction(drugA, drugB);
-          if (interaction != null) { // Only add if interaction is not null
-            interactions.add(interaction);
-          }
+                String interactionEffect = getInteraction(drugA, drugB);
+                // Only add the interaction if we got a valid response (not null)
+                if (interactionEffect != null) {
+                    Map<String, String> interaction = new HashMap<>();
+                    interaction.put("drugPair", drugA + " and " + drugB);
+                    interaction.put("interactionEffect", interactionEffect);
+                    interactions.add(interaction);
+                }
+            }
         }
-      }
     } catch (Exception e) {
-      e.printStackTrace();
-      interactions.add("Error retrieving drug interactions: " + e.getMessage());
+        e.printStackTrace();
+        Map<String, String> errorInteraction = new HashMap<>();
+        errorInteraction.put("drugPair", "Error");
+        errorInteraction.put("interactionEffect",
+                "Error retrieving drug interactions: " + e.getMessage());
+        interactions.add(errorInteraction);
     }
 
     return interactions;
-  }
+}
 
   /**
    * Update a drug interaction document based on interaction ID.

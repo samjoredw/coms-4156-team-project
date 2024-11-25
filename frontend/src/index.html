@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client</title>
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"></script>
+    <script type="module" src="./index.js"></script>
+    <script>
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs",
+            authDomain: "drug-interaction-api.firebaseapp.com",
+            databaseURL: "https://drug-interaction-api-default-rtdb.firebaseio.com",
+            projectId: "drug-interaction-api",
+            storageBucket: "drug-interaction-api.appspot.com",
+            messagingSenderId: "1063129233703",
+            appId: "1:1063129233703:web:3b10cb724f33e2d1535102",
+            measurementId: "G-ZB6S14BCRN"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.js"></script>
+    <link
+            type="text/css"
+            rel="stylesheet"
+            href="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.css"
+    />
+    <script type="text/javascript">
+        const auth = firebase.auth();
+        // FirebaseUI config.
+        const uiConfig = {
+            signInSuccessUrl: '/interface',  // The URL to redirect after successful login
+            signInFlow: "popup",
+            signInOptions: [
+                // TODO: Remove the providers you don't need for your app.
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                // {
+                //     provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+                //     scopes :[
+                //         'public_profile',
+                //         'email',
+                //         'user_likes',
+                //         'user_friends'
+                //     ]
+                // },
+                // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+                // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+                {
+                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                    requireDisplayName: true,
+                    signInMethod: "password",
+                    disableSignUp: {
+                        status: false
+                    }
+                },
+                firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+                // {
+                //     provider: 'microsoft.com',
+                //     loginHintKey: 'login_hint'
+                // },
+                // cannot work since the v9 has compatability issue, implemented manually below
+                firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID,
+            ],
+            callbacks: {
+                signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+                    console.log('User signed in:', authResult.user);
+                    localStorage.setItem('user', authResult.user);
+
+                    // Obtain the auth token
+                    authResult.user.getIdToken().then((idToken) => {
+                        localStorage.setItem('userToken', idToken);
+                        console.log('JWT ID Token:', idToken);
+                    }).catch((error) => {
+                        console.error('Error getting ID token:', error);
+                    });
+                    // window.location.href = 'interface.html';
+                    return true;
+                },
+                signInFailure: function(error) {
+                    console.error('Sign-in failed:', error);
+                    return false;
+                }
+            },
+        };
+
+        // Initialize the FirebaseUI Widget using Firebase.
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+        // The start method will wait until the DOM is loaded.
+        ui.start('#firebaseui-auth-container', uiConfig);
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in
+                user.getIdToken().then((idToken) => {
+                    localStorage.setItem('userToken', idToken);
+                    console.log('Token updated in localStorage:', idToken);
+                });
+                localStorage.setItem('user', user);
+            } else {
+                // User is signed out, clear the token
+                localStorage.removeItem('userToken');
+                console.log('User is signed out, token removed from localStorage');
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="firebaseui-auth-container"></div>
+</body>
+</html>
