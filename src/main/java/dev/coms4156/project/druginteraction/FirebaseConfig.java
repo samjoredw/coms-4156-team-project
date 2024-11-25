@@ -29,7 +29,7 @@ public class FirebaseConfig {
   public FirebaseApp firebaseApp() throws IOException {
     FirebaseOptions options;
     String firebaseConfig = System.getenv("FIREBASE_CONFIG");
-
+    // New test
     if (firebaseConfig != null && !firebaseConfig.isEmpty()) {
       firebaseConfig = firebaseConfig.replaceAll("\\s", "");
       byte[] decodedConfig = Base64.getDecoder().decode(firebaseConfig);
