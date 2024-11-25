@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -438,11 +438,11 @@ class RouteControllerUnitTests {
     ResponseEntity<?> response = routeController.getInteraction(drugA, drugB, AUTH_TOKEN);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    Map<String, Object> expectedResponse = new HashMap<>();
     Map<String, Object> interactionData = new HashMap<>();
     interactionData.put("drugPair", drugA + " and " + drugB);
     interactionData.put("interactionBool", true);
     interactionData.put("interactionEffect", interactionEffect);
+    Map<String, Object> expectedResponse = new HashMap<>();
     expectedResponse.put("interactions", interactionData);
     assertEquals(expectedResponse, response.getBody());
   }
@@ -457,11 +457,11 @@ class RouteControllerUnitTests {
     ResponseEntity<?> response = routeController.getInteraction(drugA, drugB, AUTH_TOKEN);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    Map<String, Object> expectedResponse = new HashMap<>();
     Map<String, Object> interactionData = new HashMap<>();
     interactionData.put("drugPair", drugA + " and " + drugB);
     interactionData.put("interactionBool", false);
     interactionData.put("interactionEffect", noInteraction);
+    Map<String, Object> expectedResponse = new HashMap<>();
     expectedResponse.put("noInteractions", interactionData);
     assertEquals(expectedResponse, response.getBody());
   }
@@ -593,15 +593,13 @@ class RouteControllerUnitTests {
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // Adjusted expected response to separate `interactions` and `noInteractions`
-    Map<String, List<Map<String, Object>>> expectedResponse = new HashMap<>();
-    List<Map<String, Object>> interactionsList = new ArrayList<>();
-    List<Map<String, Object>> noInteractionsList = new ArrayList<>();
 
     // Expected interaction with the ": " delimiter
     Map<String, Object> interactionData1 = new HashMap<>();
     interactionData1.put("drugPair", "Interaction between DrugA and DrugB");
     interactionData1.put("interactionEffect", "Effect1");
     interactionData1.put("interactionBool", true);
+    List<Map<String, Object>> interactionsList = new ArrayList<>();
     interactionsList.add(interactionData1);
 
     // Expected handling for interaction missing ": ", placed in `noInteractions`
@@ -609,9 +607,11 @@ class RouteControllerUnitTests {
     interactionData2.put("drugPair", "Interaction between DrugC and DrugD");
     interactionData2.put("interactionEffect", "Unknown interaction");
     interactionData2.put("interactionBool", false);
+    List<Map<String, Object>> noInteractionsList = new ArrayList<>();
     noInteractionsList.add(interactionData2);
 
     // Adjust expected response keys
+    Map<String, List<Map<String, Object>>> expectedResponse = new HashMap<>();
     expectedResponse.put("interactions", interactionsList);
     expectedResponse.put("noInteractions", noInteractionsList);
 
@@ -641,15 +641,12 @@ class RouteControllerUnitTests {
         routeController.getMultipleInteractions(drugA, drugB, drugC, drugD, drugE, AUTH_TOKEN);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    Map<String, List<Map<String, Object>>> expectedResponse = new HashMap<>();
-    List<Map<String, Object>> interactionsList = new ArrayList<>();
-    List<Map<String, Object>> noInteractionsList = new ArrayList<>();
-
     // Expected interaction with the ": " delimiter
     Map<String, Object> interactionData1 = new HashMap<>();
     interactionData1.put("drugPair", "Interaction between DrugA and DrugB");
     interactionData1.put("interactionEffect", "Effect1");
     interactionData1.put("interactionBool", true);
+    List<Map<String, Object>> interactionsList = new ArrayList<>();
     interactionsList.add(interactionData1);
 
     // Expected interaction with the ": " delimiter
@@ -664,8 +661,10 @@ class RouteControllerUnitTests {
     interactionData3.put("drugPair", "Interaction between DrugE and DrugA");
     interactionData3.put("interactionEffect", "Unknown interaction");
     interactionData3.put("interactionBool", false);
+    List<Map<String, Object>> noInteractionsList = new ArrayList<>();
     noInteractionsList.add(interactionData3);
 
+    Map<String, List<Map<String, Object>>> expectedResponse = new HashMap<>();
     expectedResponse.put("interactions", interactionsList);
     expectedResponse.put("noInteractions", noInteractionsList);
 

@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -37,6 +37,9 @@ public class InteractionUnitTests {
     testInteraction.addInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
   }
 
+  /**
+   * Clear the database after each test to ensure a clean state.
+   */
   @AfterEach
   public void clearDatabase() {
     // Remove all test-specific data after each test

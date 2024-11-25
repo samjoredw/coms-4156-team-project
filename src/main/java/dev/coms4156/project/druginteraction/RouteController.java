@@ -1,7 +1,5 @@
 package dev.coms4156.project.druginteraction;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -10,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -374,6 +370,16 @@ public class RouteController {
     }
   }
 
+  /**
+   * Retrieves interactions between multiple drugs.
+   *
+   * @param drugA The name of the first drug.
+   * @param drugB The name of the second drug.
+   * @param drugC The name of the third drug.
+   * @param drugD The name of the fourth drug.
+   * @param drugE The name of the fifth drug.
+   * @return A ResponseEntity containing the interaction details or an error message.
+   */
   @GetMapping(value = "/get_interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getMultipleInteractions(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
@@ -607,10 +613,10 @@ public class RouteController {
 
 
   /**
-   * Han xceptions that occur during the execution of controller methods.
-   * 
-   * @pa e exception that was thrown.
-   * @re ResponseEntity containing an error message and an appropriate HTTP status code.
+   * Handle exceptions that occur during the execution of controller methods.
+   *
+   * @param e exception that was thrown.
+   * @return ResponseEntity containing an error message and an appropriate HTTP status code.
    */
   private ResponseEntity<?> handleException(Exception e) {
     e.printStackTrace();
