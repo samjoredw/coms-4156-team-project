@@ -28,6 +28,7 @@ class DrugInteractionChecker {
         this.results = document.getElementById("results");
         this.drugsList = document.getElementById("drugsList");
         this.idToken = localStorage.getItem("userToken");
+        console.log(this.idToken);
         this.userInfo = localStorage.getItem("user");
         this.auth = getAuth();
 
@@ -48,10 +49,6 @@ class DrugInteractionChecker {
 
         const defaultOptions = {
             mode: "cors",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
         };
 
         try {
@@ -144,8 +141,21 @@ class DrugInteractionChecker {
                 );
             });
 
+            if (!this.idToken) {
+                this.showError("User is not authenticated");
+                return;
+            }
+
+            // Include the idToken for this request
             const response = await this.fetchWithTimeout(
-                `${this.apiBase}/get_interactions?${params}`
+                `${this.apiBase}/get_interactions?${params}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${this.idToken}`,
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                }
             );
             const data = await response.json();
             this.displayResults(data);

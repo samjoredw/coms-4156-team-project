@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,16 +68,16 @@ public class DrugsUnitTests {
     Map<String, Object> drug = testDrugs.getDrug("Aspirin");
     assertNotNull(drug, "Aspirin should be retrieved");
     assertEquals("Tablet", drug.get("dosageForm"), "Dosage form should match");
-    assertEquals("Pain relief, fever reduction",
-        drug.get("indications"), "Indications should match");
+    assertEquals("Pain relief, fever reduction", drug.get("indications"),
+        "Indications should match");
 
     // Non-existent drug retrieval
     Map<String, Object> nonExistentDrug = testDrugs.getDrug("NonExistentDrug");
-    assertNull(nonExistentDrug, "Non-existent drug should return null");
+    assertEquals(nonExistentDrug, Collections.emptyMap(), "Non-existent drug should return null");
 
     // Null drug name case
     Map<String, Object> nullDrug = testDrugs.getDrug(null);
-    assertNull(nullDrug, "Null drug name should return null");
+    assertEquals(nullDrug, Collections.emptyMap(), "Null drug name should return null");
   }
 
   @Test
@@ -91,10 +92,9 @@ public class DrugsUnitTests {
     assertTrue(isUpdated, "Aspirin should be updated successfully");
 
     Map<String, Object> updatedDrug = testDrugs.getDrug("Aspirin");
-    assertEquals("Capsule", updatedDrug.get("dosageForm"),
-        "Updated dosage form should match");
-    assertEquals("Pain relief, fever reduction, anti-inflammatory",
-        updatedDrug.get("indications"), "Updated indications should match");
+    assertEquals("Capsule", updatedDrug.get("dosageForm"), "Updated dosage form should match");
+    assertEquals("Pain relief, fever reduction, anti-inflammatory", updatedDrug.get("indications"),
+        "Updated indications should match");
 
     // Non-existent drug update
     boolean nonExistentUpdate = testDrugs.updateDrug("NonExistentDrug", updates);
@@ -142,7 +142,8 @@ public class DrugsUnitTests {
     assertTrue(isRemoved, "Aspirin should be removed successfully");
 
     Map<String, Object> removedDrug = testDrugs.getDrug("Aspirin");
-    assertNull(removedDrug, "Removed drug should return null when queried");
+    assertEquals(removedDrug, Collections.emptyMap(),
+        "Removed drug should return null when queried");
 
     // Attempt to remove a non-existent drug
     boolean nonExistentRemove = testDrugs.removeDrug("NonExistentDrug");
@@ -152,4 +153,5 @@ public class DrugsUnitTests {
     boolean nullRemove = testDrugs.removeDrug(null);
     assertFalse(nullRemove, "Removing drug with null name should return false");
   }
+
 }

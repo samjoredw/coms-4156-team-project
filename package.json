@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "firebase": "^11.0.2",
+    "install": "^0.13.0"
+  }
+}

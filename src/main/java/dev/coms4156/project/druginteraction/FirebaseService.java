@@ -4,9 +4,9 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Service;
 
 
 /**
@@ -181,7 +181,7 @@ public class FirebaseService {
   }
 
   /**
-   * Authenticate whether a idToken is valid or not for API request
+   * Authenticate whether a idToken is valid or not for API request.
    *
    * @param headers The HttpHeaders that were sent to the API, including token
    *
@@ -193,12 +193,12 @@ public class FirebaseService {
       return false;
     }
 
-    String idToken = authorizationHeader.substring(7);  // Remove "Bearer " prefix
+    String idToken = authorizationHeader.substring(7); // Remove "Bearer " prefix
 
     // Verify the Firebase ID token
     try {
       FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-      return true;
+      return (decodedToken != null);
     } catch (Exception e) {
       return false;
     }
