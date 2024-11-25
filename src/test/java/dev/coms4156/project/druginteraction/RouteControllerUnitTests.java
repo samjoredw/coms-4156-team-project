@@ -509,9 +509,9 @@ class RouteControllerUnitTests {
     String drugD = "DrugD";
 
     // Include an interaction string without the ": " delimiter
-    List<String> interactions = Arrays.asList(
-        "Interaction between DrugA and DrugB: Effect1",
-        "Interaction between DrugC and DrugD"  // Missing ": " to trigger parts.length < 2
+    List<Map<String, String>> interactions = Arrays.asList(
+      Map.of("drugPair", "Interaction between DrugA and DrugB", "interactionEffect", "Effect1"),
+      Map.of("drugPair", "Interaction between DrugC and DrugD", "interactionEffect", "Unknown interaction")  // Missing ": " to trigger parts.length < 2
     );
 
     when(interactionService.getInteraction(Arrays.asList(
@@ -556,10 +556,10 @@ class RouteControllerUnitTests {
     String drugE = "DrugE";
 
     // Simulate interactions with all five drugs, with one missing the ": " delimiter
-    List<String> interactions = Arrays.asList(
-        "Interaction between DrugA and DrugB: Effect1",
-        "Interaction between DrugC and DrugD: Effect2",
-        "Interaction between DrugE and DrugA"  // Missing ": " to trigger parts.length < 2
+    List<Map<String, String>> interactions = Arrays.asList(
+      Map.of("drugPair", "Interaction between DrugA and DrugB", "interactionEffect", "Effect1"),
+      Map.of("drugPair", "Interaction between DrugC and DrugD", "interactionEffect", "Effect2"),
+      Map.of("drugPair", "Interaction between DrugE and DrugA", "interactionEffect", "Unknown interaction")  // Missing ": " to trigger parts.length < 2
     );
 
     when(interactionService.getInteraction(Arrays.asList(

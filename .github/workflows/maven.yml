@@ -3,9 +3,9 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - '**'
-    pull_request:
-    workflow_dispatch:
+      - '**' 
+  # pull_request:
+  # workflow_dispatch:
 
 jobs:
   build:
@@ -23,6 +23,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
       
+      # - name: Check if this is a merge commit
+      #   id: check_merge
+      #   run: |
+      #     if [[ "$(git log -1 --pretty=%B)" =~ ^Merge.* ]]; then
+      #       echo "is_merge=true" >> $GITHUB_ENV
+      #     else
+      #       echo "is_merge=false" >> $GITHUB_ENV
+      #     fi
+
+      # - name: Exit on merge commit
+      #   if: env.is_merge == 'true'
+      #   run: echo "This is a merge commit. Exiting."
+
       - name: Install Newman
         run: npm install -g newman
 
@@ -63,6 +76,13 @@ jobs:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
 
+      - name: Print PMD Static Analysis
+        run: |
+          cat coveragereport/pmd/pmd_report.txt
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+
       - name: Run Checkstyle
         run: |
           mkdir -p coveragereport/checkstyle  # Create folder for Checkstyle reports
@@ -70,25 +90,37 @@ jobs:
         env:
           FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
           CI: true
-
-      - name: Configure Git User
+      
+      - name: Print Checkstyle
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Detect Branch Name
-        id: detect_branch
+          cat coveragereport/checkstyle/checkstyle_report.txt
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FB_SECRET_KEY }}
+          CI: true
+      
+      - name: Run Postman Tests
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
-          else
-            echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-          fi
+          cd postman
+          newman run postman_tests.json
 
-      - name: Commit and Push Reports
-        run: |
-          git add coveragereport/
-          git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
-          git push origin HEAD:${{ env.branch_name }}
+      # - name: Configure Git User
+      #   run: |
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # - name: Detect Branch Name
+      #   id: detect_branch
+      #   run: |
+      #     if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+      #       echo "branch_name=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+      #     else
+      #       echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      #     fi
+
+      # - name: Commit and Push Reports
+      #   run: |
+      #     git add coveragereport/
+      #     git commit -m "Add code coverage reports [skip ci]" || echo "No changes to commit"
+      #     git push origin HEAD:${{ env.branch_name }}
 
       

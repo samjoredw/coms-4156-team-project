@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
  * Controller for handling routes related to interactions.
  */
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "http://localhost:5500", // Add your frontend origin
+@CrossOrigin(origins = {"http://localhost:5500", "http://localhost:3000"}, // Add your frontend
+// origin
         allowedHeaders = "*",
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH},
         allowCredentials = "true")
@@ -25,7 +26,7 @@ public class RouteController {
 
   private final Interaction interactionService;
   private final Drugs drugService;
-  private final FirebaseService firebaseService;
+//  private final FirebaseService firebaseService;
 
   // This one needs endpoints first b
   @Autowired
@@ -180,11 +181,11 @@ public class RouteController {
    */
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB, @RequestHeader HttpHeaders headers) {
+      @RequestParam("drugB") String drugB) {
     try {
-      if (!firebaseService.authenticateToken(headers)) {
-        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
-      }
+//      if (!firebaseService.authenticateToken(headers)) {
+//        return new ResponseEntity<>("Unauthorized: Missing or invalid token", HttpStatus.UNAUTHORIZED);
+//      }
 
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty",
@@ -212,74 +213,60 @@ public class RouteController {
     }
   }
 
-  /**
-   * Retrieves interactions for multiple drugs (up to five).
-   *
-   * @param drugA The name of the first drug (required).
-   * @param drugB The name of the second drug (required).
-   * @param drugC The name of the third drug (optional).
-   * @param drugD The name of the fourth drug (optional).
-   * @param drugE The name of the fifth drug (optional).
-   * @return A ResponseEntity containing a list of interactions or an error message.
-   */
   @GetMapping(value = "/get_interactions", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getMultipleInteractions(@RequestParam("drugA") String drugA,
-                                                   @RequestParam("drugB") String drugB,
-                                                   @RequestParam(value = "drugC", required = false)
-                                                     String drugC,
-                                                   @RequestParam(value = "drugD", required = false)
-                                                     String drugD,
-                                                   @RequestParam(value = "drugE", required = false)
-                                                     String drugE) {
+public ResponseEntity<?> getMultipleInteractions(@RequestParam("drugA") String drugA,
+                                               @RequestParam("drugB") String drugB,
+                                               @RequestParam(value = "drugC", required = false) String drugC,
+                                               @RequestParam(value = "drugD", required = false) String drugD,
+                                               @RequestParam(value = "drugE", required = false) String drugE) {
     try {
-      List<String> drugs = new ArrayList<>();
-      drugs.add(drugA);
-      drugs.add(drugB);
-      if (drugC != null) {
-        drugs.add(drugC);
-      }
-      if (drugD != null) {
-        drugs.add(drugD);
-      }
-      if (drugE != null) {
-        drugs.add(drugE);
-      }
-
-      List<Map<String, String>> interactionEffects = interactionService.getInteraction(drugs);
-
-      Map<String, List<Map<String, Object>>> response = new HashMap<>();
-      List<Map<String, Object>> interactions = new ArrayList<>();
-      List<Map<String, Object>> noInteractions = new ArrayList<>();
-
-      for (Map<String, String> effect : interactionEffects) {
-        Map<String, Object> interactionData = new HashMap<>();
-        String drugPair = effect.get("drugPair");
-        String interactionEffect = effect.get("interactionEffect");
-
-        interactionData.put("drugPair", drugPair);
-        interactionData.put("interactionEffect", interactionEffect);
-
-        if (interactionEffect.startsWith("No known interaction between")) {
-          interactionData.put("interactionBool", false);
-          noInteractions.add(interactionData);
-        } else {
-          interactionData.put("interactionBool", true);
-          interactions.add(interactionData);
+        List<String> drugs = new ArrayList<>();
+        drugs.add(drugA);
+        drugs.add(drugB);
+        if (drugC != null) {
+            drugs.add(drugC);
         }
-      }
+        if (drugD != null) {
+            drugs.add(drugD);
+        }
+        if (drugE != null) {
+            drugs.add(drugE);
+        }
 
-      if (!interactions.isEmpty()) {
+        List<Map<String, String>> interactionEffects = interactionService.getInteraction(drugs);
+
+        Map<String, List<Map<String, Object>>> response = new HashMap<>();
+        List<Map<String, Object>> interactions = new ArrayList<>();
+        List<Map<String, Object>> noInteractions = new ArrayList<>();
+
+        for (Map<String, String> effect : interactionEffects) {
+            Map<String, Object> interactionData = new HashMap<>();
+            String drugPair = effect.get("drugPair");
+            String interactionEffect = effect.get("interactionEffect");
+
+            interactionData.put("drugPair", drugPair);
+            interactionData.put("interactionEffect", interactionEffect);
+
+            // Changed logic to check if the interaction effect indicates no known interaction
+            // or if it's an unknown interaction
+            if (interactionEffect.startsWith("No known interaction") || 
+                interactionEffect.equals("Unknown interaction")) {
+                interactionData.put("interactionBool", false);
+                noInteractions.add(interactionData);
+            } else {
+                interactionData.put("interactionBool", true);
+                interactions.add(interactionData);
+            }
+        }
+
         response.put("interactions", interactions);
-      }
-      if (!noInteractions.isEmpty()) {
         response.put("noInteractions", noInteractions);
-      }
 
-      return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (Exception e) {
-      return handleException(e);
+        return handleException(e);
     }
-  }
+}
 
   /**
    * Adds a new drug interaction to the database.

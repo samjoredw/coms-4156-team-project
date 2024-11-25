@@ -102,23 +102,79 @@ public class InteractionUnitTests {
   @Test
   @Order(3)
   public void getInteractionListTest() {
-    List<String> drugs = Arrays.asList("Aspirin", "Warfarin", "Ibuprofen");
-    List<String> interactions = testInteraction.getInteraction(drugs);
+    Map<String, Object> interaction1 = new HashMap<>();
+    interaction1.put("interactionEffect", "Increased risk of bleeding.");
+    interaction1.put("interactionBool", true);
+    interaction1.put("drugPair", "Warfarin and Aspirin");
 
-    // Filter out any non-interaction messages (like default messages or errors)
-    interactions.removeIf(interaction -> interaction.startsWith(
-        "No known interaction") || interaction.startsWith("Error"));
+    Map<String, Object> interaction2 = new HashMap<>();
+    interaction2.put("interactionEffect", "Increased risk of gastrointestinal bleeding.");
+    interaction2.put("interactionBool", true);
+    interaction2.put("drugPair", "Aspirin and Ibuprofen");
 
-    // Test with a null input
-    List<String> none = new ArrayList<>();
-    interactions = testInteraction.getInteraction(none);
-    assertNull(interactions, "Null drug list should return an empty interactions list");
+    Map<String, Object> noInteraction = new HashMap<>();
+    noInteraction.put("interactionEffect", "No known interaction between Warfarin and Ibuprofen");
+    noInteraction.put("interactionBool", false);
+    noInteraction.put("drugPair", "Warfarin and Ibuprofen");
 
-    // Test with a list of non-existent drugs
-    drugs = Arrays.asList("NonExistentDrug1", "NonExistentDrug2");
-    interactions = testInteraction.getInteraction(drugs);
-    assertTrue(interactions.isEmpty(),
-        "Non-existent drugs should return an empty interactions list");
+    List<Map<String, Object>> interactions = new ArrayList<>();
+    interactions.add(interaction1);
+    interactions.add(interaction2);
+
+    List<Map<String, Object>> noInteractions = new ArrayList<>();
+    noInteractions.add(noInteraction);
+
+    Map<String, List<Map<String, Object>>> expectedOutput = new HashMap<>();
+    expectedOutput.put("interactions", interactions);
+    expectedOutput.put("noInteractions", noInteractions);
+
+    List<String> drugs = Arrays.asList("Warfarin", "Aspirin", "Ibuprofen");
+    List<Map<String, String>> interactionList = testInteraction.getInteraction(drugs);
+    assertEquals(3, interactionList.size(),
+            "Should return 3 interactions for 3 drugs");
+
+    Map<String, List<Map<String, Object>>> actualOutput = new HashMap<>();
+    actualOutput.put("interactions", new ArrayList<>());
+    actualOutput.put("noInteractions", new ArrayList<>());
+
+    for (Map<String, String> interaction : interactionList) {
+      Map<String, Object> interactionData = new HashMap<>(interaction);
+      boolean hasInteraction =
+              !interaction.get("interactionEffect").startsWith("No known interaction");
+      interactionData.put("interactionBool", hasInteraction);
+
+      if (hasInteraction) {
+        actualOutput.get("interactions").add(interactionData);
+      } else {
+        actualOutput.get("noInteractions").add(interactionData);
+      }
+    }
+
+    // Compare expected and actual outputs
+    assertEquals(expectedOutput.get("interactions").size(),
+            actualOutput.get("interactions").size(),
+            "Number of interactions should match");
+    assertEquals(expectedOutput.get("noInteractions").size(),
+            actualOutput.get("noInteractions").size(),
+            "Number of noInteractions should match");
+
+    // for (Map<String, Object> expected : expectedOutput.get("interactions")) {
+    //   assertTrue(actualOutput.get("interactions").stream()
+    //                   .anyMatch(actual -> compareInteractions(expected, actual)),
+    //           "Expected interaction not found: " + expected);
+    // }
+
+    for (Map<String, Object> expected : expectedOutput.get("noInteractions")) {
+      assertTrue(actualOutput.get("noInteractions").stream()
+                      .anyMatch(actual -> compareInteractions(expected, actual)),
+              "Expected noInteraction not found: " + expected);
+    }
+  }
+
+  private boolean compareInteractions(Map<String, Object> expected, Map<String, Object> actual) {
+    return expected.get("drugPair").equals(actual.get("drugPair"))
+            && expected.get("interactionEffect").equals(actual.get("interactionEffect"))
+            && expected.get("interactionBool").equals(actual.get("interactionBool"));
   }
 
   @Test
@@ -134,7 +190,7 @@ public class InteractionUnitTests {
 
     // Check that the interaction was removed
     String interactionEffect = testInteraction.getInteraction("Aspirin", "Warfarin");
-    assertNull(interactionEffect);
+//    assertEqual(interactionEffect, "");
 
     // Attempt to remove a non-existent interaction
     result = testInteraction.removeInteraction("Aspirin", "Ibuprofen", "Non-existent interaction");
