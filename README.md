@@ -62,6 +62,77 @@ Tests can be run with the following command from the root directory:
 mvn test
 ```
 
+## About our Client Application
+Our client application targets healthcare professionals, providing a user-friendly interface to access drug information and check potential interactions between medications. The app makes it easier than ever for healthcare workers to verify drug safety and access comprehensive medication information.
+
+### Client Application Features
+* Query drug interactions between multiple medications simultaneously (up to 5 drugs)
+* Access detailed drug information including dosage forms, indications, contraindications, and side effects
+* Simple and intuitive interface requiring no specialized database knowledge
+* Free, open-source solution for healthcare professionals
+
+### How it works with our Service
+When a user performs an action in the client app (like searching for drug interactions), a request is sent to our drug interaction API. The API processes the request and returns relevant drug information or interaction data, which is then presented to the user in an easy-to-understand format.
+
+### Building and Running the Client
+
+#### Prerequisites
+* http-server (can be installed via npm)
+
+#### Running the Client
+```bash
+# Change to correct directory
+cd frontend/dist
+
+# Start development server
+npx http-server
+```
+
+The web client can be accessed at the URL shown in the terminal after starting http-server (typically http://localhost:8080).
+
+### End-to-End Testing
+Please perform the following tests in order to verify proper functionality:
+
+1. Start the client application following the instructions above
+
+2. Navigate to the web client in your browser
+   - Expected result: Display of the welcome page
+
+3. Search for drug interactions:
+   - Enter two or more drug names
+   - Click "Check Interactions"
+   - Expected result: Display of interaction information or "No known interactions" message
+
+4. View drug information:
+   - Search for a specific drug
+   - Expected result: Display of comprehensive drug information including dosage, indications, and side effects
+
+5. Test multiple drug search:
+   - Enter up to 5 drug names
+   - Expected result: Display of all potential interactions between entered drugs
+
+Note: For testing purposes, you can use the following known drug combinations:
+- Warfarin + Aspirin (known interaction)
+- Digoxin + Paroxetine (known interaction)
+- Simvastatin + Warfarin (known interaction)
+
+## A Note to Developers
+This client application serves as a reference implementation for our Drug Interaction API. Developers are encouraged to build their own clients using our documented API endpoints. The source code demonstrates best practices for:
+- Making API calls to check drug interactions
+- Handling API responses and errors
+- Presenting drug information to users
+- Managing multiple drug queries
+
+For more information on developing your own client application, please refer to the API Documentation section to use the endpoints our service provides.
+
+### What makes our Client Better/Faster/Cheaper than prior Solutions
+- **Free and Open Source**: No subscription fees or hidden costs
+- **Privacy-Focused**: We don't sell user data to third parties
+- **Built-in Multiple Drug Analysis**: Check up to 5 drug interactions simultaneously
+- **Simple Interface**: Intuitive design requires minimal training
+- **Modern Technology Stack**: Built with current web technologies for optimal performance
+- **API-First Design**: Easy to integrate with existing healthcare systems
+
 # Drug Interaction API Documentation
 
 
@@ -349,3 +420,79 @@ Handles exceptions that occur during any endpoint execution.
     ```
 ---
 
+## Project Management
+- Jira Project Board: https://4156-runtime-terrors.atlassian.net/jira/software/projects/SCRUM/boards/1
+
+## Cloud Deployment
+### Service Deployment
+- Platform: Google Cloud Platform
+- Region: uk.r.appspot.com
+- Deployment URL: https://drug-interaction-api.uk.r.appspot.com/api/v1/
+- Deployment Instructions: [Add instructions for deploying to GCP]
+
+## Configuration Files
+The following configuration files are required:
+/  
+└── firebase_config.json   # Firebase configuration
+
+## Tools Used 🧰
+This section includes notes on tools and technologies used in building this project.
+
+### Core Technologies
+* **Spring Boot (v3.2.2)**
+  * Core framework for building the REST API
+  * Provides dependency injection and web server capabilities
+
+* **Firebase Admin SDK (v9.3.0)**
+  * Cloud-based database for storing drug and interaction data
+  * Provides real-time updates and scalable storage
+
+* **Maven Package Manager**
+  * Used for dependency management and project building
+  * Handles all Java dependencies and build configurations
+
+* **GitHub Actions CI**
+  * Enabled via the "Actions" tab on GitHub
+  * Ensures code builds successfully and tests pass with each push
+
+### Code Quality Tools
+* **Checkstyle (v3.2.0)**
+  * Used for enforcing Google Java Style Guide
+  * Run using: `mvn checkstyle:check`
+  * Configuration includes test source directories
+
+* **PMD (v3.21.2)**
+  * Performs static analysis of Java code
+  * Configured with quickstart ruleset
+  * Includes Copy-Paste Detection (CPD)
+  * Run using: `mvn pmd:check`
+
+### Testing and Coverage
+* **JUnit (Spring Boot Test)**
+  * Framework for unit testing Java code
+  * Included via spring-boot-starter-test
+  * Tests run automatically in CI pipeline
+  * Located in `src/test/java/dev/coms4156/project/druginteraction`
+
+* **JaCoCo (v0.8.11)**
+  * Generates code coverage reports
+  * Integrated into Maven build lifecycle
+  * Reports generated during prepare-package phase
+
+### Deployment Tools
+* **Google Cloud App Engine Maven Plugin (v2.7.0)**
+  * Used for deploying to Google Cloud Platform
+  * Configured for App Engine standard environment
+
+### Required Versions
+* Java: JDK 17 (required by Spring Boot 3.x)
+* Maven: 3.9.9+ (for build system)
+* Node.js: Latest LTS version (for client development)
+
+### Development Tools
+* **Postman**
+  * Used for API endpoint testing
+  * Collection of API tests available in repository
+  * Provides example requests for all endpoints
+
+All dependencies and versions are managed through Maven - see `pom.xml` for the complete list of dependencies and plugins.
