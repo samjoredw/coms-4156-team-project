@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:8080/api/v1';
+const baseUrl = 'https://drug-interaction-api.uk.r.appspot.com/';
 const responseElement = document.getElementById('response');
 
 function updateResponse(data) {
@@ -15,6 +15,14 @@ function handleError(error) {
 
 async function handleFetch(url, options = {}) {
   try {
+    const token = localStorage.getItem('userToken');
+
+    // Ensure headers exist and add Authorization token
+    options.headers = {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`, // Add the token
+    };
+
     const res = await fetch(url, options);
     const text = await res.text();
     try {

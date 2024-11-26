@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,16 +24,12 @@
         firebase.initializeApp(firebaseConfig);
     </script>
     <script src="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.js"></script>
-    <link
-            type="text/css"
-            rel="stylesheet"
-            href="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.css"
-    />
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.css" />
     <script type="text/javascript">
         const auth = firebase.auth();
         // FirebaseUI config.
         const uiConfig = {
-            signInSuccessUrl: '/interface',  // The URL to redirect after successful login
+            signInSuccessUrl: '/interface2',  // The URL to redirect after successful login
             signInFlow: "popup",
             signInOptions: [
                 // TODO: Remove the providers you don't need for your app.
@@ -65,7 +62,7 @@
                 firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID,
             ],
             callbacks: {
-                signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+                signInSuccessWithAuthResult: function (authResult, redirectUrl) {
                     console.log('User signed in:', authResult.user);
                     localStorage.setItem('user', authResult.user);
 
@@ -79,7 +76,7 @@
                     // window.location.href = 'interface.html';
                     return true;
                 },
-                signInFailure: function(error) {
+                signInFailure: function (error) {
                     console.error('Sign-in failed:', error);
                     return false;
                 }
@@ -107,7 +104,9 @@
         });
     </script>
 </head>
+
 <body>
     <div id="firebaseui-auth-container"></div>
 </body>
+
 </html>
