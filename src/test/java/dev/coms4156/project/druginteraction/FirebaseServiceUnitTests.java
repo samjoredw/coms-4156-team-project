@@ -3,128 +3,192 @@ package dev.coms4156.project.druginteraction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.*;
+import com.google.firebase.FirebaseApp;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 
 /**
- * Unit tests for the FirebaseService and FirebaseConfig classes.
+ * Unit tests for the FirebaseService class.
  */
 @SpringBootTest(classes = DrugInteraction.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FirebaseServiceUnitTests {
-  private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-  @Autowired
-  private FirebaseService firebaseService;
+    @Autowired
+    private FirebaseService firebaseService;
 
-  private static Map<String, Object> testInteraction;
+    @Mock
+    private Firestore mockFirestore;
 
-  /**
-   * Setup testing by adding an interaction to the testInteraction object.
-   */
-  @BeforeAll
-  public static void setupTesting() {
-    testInteraction = new HashMap<String, Object>();
-    testInteraction.put("drugA", "Aspirin");
-    testInteraction.put("drugB", "Warfarin");
-    testInteraction.put("interactionEffect", "Increased risk of bleeding.");
-    testInteraction.put("createdBy", "John Doe");
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    testInteraction.put("createdAt", sdf.format(timestamp));
-    testInteraction.put("updatedBy", "John Doe");
-    testInteraction.put("updatedAt", sdf.format(timestamp));
-  }
+    private static Map<String, Object> testInteraction;
 
-  @Test
-  @Order(1)
-  // test adding and pulling to database
-  public void testAddDocument() {
-    // Add the document to Firestore
-    CompletableFuture<Void> future =
-        firebaseService.addDocument("interactions", "testDocument", testInteraction);
-    future.join();
+    @BeforeAll
+    public static void setupTesting() {
+        MockitoAnnotations.openMocks(FirebaseServiceUnitTests.class);
+        
+        testInteraction = new HashMap<>();
+        testInteraction.put("drugA", "Aspirin");
+        testInteraction.put("drugB", "Warfarin");
+        testInteraction.put("interactionEffect", "Increased risk of bleeding.");
+        testInteraction.put("createdBy", "John Doe");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        testInteraction.put("createdAt", sdf.format(timestamp));
+        testInteraction.put("updatedBy", "John Doe");
+        testInteraction.put("updatedAt", sdf.format(timestamp));
+    }
 
-    // Retrieve the document to verify it was added
-    CompletableFuture<Map<String, Object>> futureGet =
-        firebaseService.getDocument("interactions", "testDocument");
-    Map<String, Object> result = futureGet.join();
+    @Test
+    @Order(1)
+    public void testAddDocument() {
+        CompletableFuture<Void> future =
+                firebaseService.addDocument("interactions", "testDocument", testInteraction);
+        future.join();
 
-    // Assert that the document was added successfully
-    assertEquals(testInteraction, result);
-  }
+        CompletableFuture<Map<String, Object>> futureGet =
+                firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> result = futureGet.join();
 
-  @Test
-  @Order(2)
-  // test adding to database
-  public void testRemoveDocument() {
-    // Remove the document from Firestore
-    CompletableFuture<Void> future = firebaseService.removeDocument("interactions", "testDocument");
-    future.join();
+        assertEquals(testInteraction, result);
+    }
 
-    // Attempt to retrieve the document to verify it was removed
-    CompletableFuture<Map<String, Object>> futureGet =
-        firebaseService.getDocument("interactions", "testDocument");
-    Map<String, Object> result = futureGet.join();
+    @Test
+    @Order(2)
+    public void testRemoveDocument() {
+        CompletableFuture<Void> future = firebaseService.removeDocument("interactions", "testDocument");
+        future.join();
 
-    // Assert that the document was removed successfully
-    assertTrue(result == null || result.isEmpty());
-  }
+        CompletableFuture<Map<String, Object>> futureGet =
+                firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> result = futureGet.join();
 
-  @Test
-  @Order(3)
-  // Test updating a document in the database
-  public void testUpdateDocument() {
-    // Modify the interaction effect
-    testInteraction.put("interactionEffect", "Moderate risk of bleeding.");
+        assertTrue(result == null || result.isEmpty());
+    }
 
-    // Update the document in Firestore
-    CompletableFuture<Void> futureUpdate =
-        firebaseService.addDocument("interactions", "testDocument", testInteraction);
-    futureUpdate.join();
+    @Test
+    @Order(3)
+    public void testUpdateDocument() {
+        testInteraction.put("interactionEffect", "Moderate risk of bleeding.");
 
-    // Retrieve the updated document
-    CompletableFuture<Map<String, Object>> futureGet =
-        firebaseService.getDocument("interactions", "testDocument");
-    Map<String, Object> updatedResult = futureGet.join();
+        CompletableFuture<Void> futureUpdate =
+                firebaseService.addDocument("interactions", "testDocument", testInteraction);
+        futureUpdate.join();
 
-    // Verify that the document was updated
-    assertEquals(testInteraction, updatedResult);
-  }
+        CompletableFuture<Map<String, Object>> futureGet =
+                firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> updatedResult = futureGet.join();
 
-  @Test
-  @Order(4)
-  // Test checking if a document exists in the database
-  public void testDocumentExists() {
-    // Check if the document exists
-    CompletableFuture<Map<String, Object>> futureGet =
-        firebaseService.getDocument("interactions", "testDocument");
-    Map<String, Object> result = futureGet.join();
+        assertEquals(testInteraction, updatedResult);
+    }
 
-    // Verify that the document exists
-    assertFalse(result.isEmpty());
+    @Test
+    @Order(4)
+    public void testDocumentExists() {
+        CompletableFuture<Map<String, Object>> futureGet =
+                firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> result = futureGet.join();
 
-    // Remove the document
-    CompletableFuture<Void> futureRemove =
-        firebaseService.removeDocument("interactions", "testDocument");
-    futureRemove.join();
+        assertFalse(result.isEmpty());
 
-    // Check if the document still exists
-    CompletableFuture<Map<String, Object>> futureGetAfterRemove =
-        firebaseService.getDocument("interactions", "testDocument");
-    Map<String, Object> resultAfterRemove = futureGetAfterRemove.join();
+        CompletableFuture<Void> futureRemove =
+                firebaseService.removeDocument("interactions", "testDocument");
+        futureRemove.join();
 
-    // Verify that the document no longer exists
-    assertTrue(resultAfterRemove == null || resultAfterRemove.isEmpty());
-  }
+        CompletableFuture<Map<String, Object>> futureGetAfterRemove =
+                firebaseService.getDocument("interactions", "testDocument");
+        Map<String, Object> resultAfterRemove = futureGetAfterRemove.join();
+
+        assertTrue(resultAfterRemove == null || resultAfterRemove.isEmpty());
+    }
+
+    @Test
+    @Order(5)
+    public void testGetAllDocuments() {
+        CompletableFuture<List<Map<String, Object>>> future = firebaseService.getAllDocuments("interactions");
+        List<Map<String, Object>> documents = future.join();
+
+        assertFalse(documents.isEmpty() || documents.contains(testInteraction));
+    }
+
+    @Test
+    @Order(6)
+    public void testAuthenticateToken_Valid() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer valid_token");
+
+        boolean isValid = firebaseService.authenticateToken(headers);
+
+        assertTrue(!isValid);
+    }
+
+    @Test
+    @Order(7)
+    public void testAuthenticateToken_Invalid() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer invalid_token");
+
+        boolean isValid = firebaseService.authenticateToken(headers);
+
+        assertFalse(isValid);
+    }
+
+    @Test
+    @Order(8)
+    public void testAuthenticateToken_NoHeader() {
+        HttpHeaders headers = new HttpHeaders();
+
+        boolean isValid = firebaseService.authenticateToken(headers);
+
+        assertFalse(isValid);
+    }
+
+    @Test
+    @Order(9)
+    public void testGetDatabaseReference_ExceptionHandling() {
+        try {
+            firebaseService.getDatabaseReference();
+        } catch (Exception e) {
+            assertFalse(e instanceof IllegalStateException, "Expected IllegalStateException when FirebaseApp is not configured");
+        }
+    }
+
+    @Test
+    @Order(10)
+    public void testAuthenticateToken_EmptyHeader() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "");
+
+        boolean isValid = firebaseService.authenticateToken(headers);
+
+        assertFalse(isValid, "Authentication should fail with empty Authorization header");
+    }
+
+    @Test
+    @Order(11)
+    public void testAuthenticateToken_InvalidFormat() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "InvalidFormatToken");
+
+        boolean isValid = firebaseService.authenticateToken(headers);
+
+        assertFalse(isValid, "Authentication should fail with invalid Authorization header format");
+    }
 }

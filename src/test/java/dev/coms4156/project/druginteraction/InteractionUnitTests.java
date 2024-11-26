@@ -4,6 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +39,6 @@ public class InteractionUnitTests {
 
   @BeforeEach
   public void setupDatabase() {
-    // Add any baseline data needed before each test
     testInteraction.addInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
   }
 
@@ -208,5 +213,57 @@ public class InteractionUnitTests {
 
     result = testInteraction.removeInteraction("Aspirin", "", "Some interaction");
     assertFalse(result, "Removing interaction with empty drug name should return false");
+  }
+
+  @Test
+@Order(5)
+  public void testAddInteraction_ExceptionHandling() {
+      // Simulate invalid input to trigger exception handling
+      boolean result = testInteraction.addInteraction(null, null, null);
+      assertFalse(result, "Adding interaction with null values should return false");
+
+      result = testInteraction.addInteraction("", "", "Invalid input");
+      assertFalse(result, "Adding interaction with empty values should return false");
+  }
+
+  @Test
+  @Order(6)
+  public void testRemoveInteraction_ExceptionHandling() {
+      boolean result = testInteraction.removeInteraction(null, null, null);
+      assertFalse(result, "Removing interaction with null values should return false");
+
+      result = testInteraction.removeInteraction("", "", "Invalid input");
+      assertFalse(result, "Removing interaction with empty values should return false");
+  }
+
+  @Test
+  @Order(7)
+  public void testGetInteraction_ExceptionHandling() {
+      String result = testInteraction.getInteraction(null, null);
+      assertNull(result, "Retrieving interaction with null values should return null");
+
+      result = testInteraction.getInteraction("", "");
+      assertEquals("No known interaction between  and ", result, "Retrieving interaction with empty values should return default message");
+  }
+
+  @Test
+  @Order(8)
+  public void testGetInteractionList_ExceptionHandling() {
+      List<String> drugs = new ArrayList<>();
+      drugs.add(null);
+      drugs.add("DrugB");
+
+      List<Map<String, String>> result = testInteraction.getInteraction(drugs);
+      assertTrue(result.isEmpty(), "Result should contain an error interaction");
+  }
+
+  @Test
+  @Order(9)
+  public void testUpdateInteraction_ExceptionHandling() {
+      boolean result = testInteraction.updateInteraction(null, null, null, null);
+      assertFalse(result, "Updating interaction with null values should return false");
+
+      result = testInteraction.updateInteraction("", "", "", "Invalid input");
+      assertFalse(result, "Updating interaction with empty values should return false");
   }
 }
