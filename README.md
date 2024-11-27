@@ -9,10 +9,10 @@ The other part of the service covers information about drugs themselves. This ta
 
 # Using the API as a client
 
-For a short while, our service will be hosted on Google Cloud.
+For a short while, our service will be hosted on Google Cloud at https://drug-interaction-api.uk.r.appspot.com/api/v1/.
 
-Please see the API documentation below for the endpoints that can be reached using Postman
-or any other such service
+Please see the API documentation below for the endpoints that can be reached using Postman or any other such service.
+Please note that our service requires authentication.
 
 # Building, running, and testing the service locally
 
@@ -62,33 +62,36 @@ Tests can be run with the following command from the root directory:
 mvn test
 ```
 
-## About our Client Application
+# Our Client Application
 Our client application targets healthcare professionals, providing a user-friendly interface to access drug information and check potential interactions between medications. The app makes it easier than ever for healthcare workers to verify drug safety and access comprehensive medication information.
 
-### Client Application Features
+## Client Application Features
 * Query drug interactions between multiple medications simultaneously (up to 5 drugs)
 * Access detailed drug information including dosage forms, indications, contraindications, and side effects
 * Simple and intuitive interface requiring no specialized database knowledge
 * Free, open-source solution for healthcare professionals
 
-### How it works with our Service
-When a user performs an action in the client app (like searching for drug interactions), a request is sent to our drug interaction API. The API processes the request and returns relevant drug information or interaction data, which is then presented to the user in an easy-to-understand format.
+## How it works with our Service
+When a user performs an action in the client app (like searching for drug interactions), a request is sent to our drug interaction API hosted on GCP. The API processes the request and returns relevant drug information or interaction data, which is then presented to the user in an easy-to-understand format.
 
-### Building and Running the Client
+## Building and Running the Client
 
 #### Prerequisites
-* http-server (can be installed via npm)
+* python
 
 #### Running the Client
 ```bash
 # Change to correct directory
-cd frontend/dist
+cd frontend/src
 
 # Start development server
-npx http-server
+python -m http.server 8000
 ```
 
-The web client can be accessed at the URL shown in the terminal after starting http-server (typically http://localhost:8080).
+The web client can be accessed at the URL shown in the terminal after starting the server at http://localhost:8080.
+
+### Authentication
+You will need to log in to the client using one of the options provided on the home page.
 
 ### End-to-End Testing
 Please perform the following tests in order to verify proper functionality:
@@ -134,7 +137,7 @@ For more information on developing your own client application, please refer to 
 - **API-First Design**: Easy to integrate with existing healthcare systems
 
 # Drug Interaction API Documentation
-
+For a short period, this API is hosted on Google Cloud at https://drug-interaction-api.uk.r.appspot.com/
 
 ## Base URL
 ```
@@ -142,6 +145,32 @@ For more information on developing your own client application, please refer to 
 ```
 
 ---
+
+## Authentication
+
+Before using any of the server endpoints, a user needs to be authenticated. Authentication can either happen
+via our client, or as follows if using a tool like Postman:
+- Send a POST request to Google's sign-in service: https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={{$KEY}}
+- For testing, you can use the following key instead of {{$KEY}} in the above URL: AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs
+- The body of the request should contain the following:
+  ```json
+   {
+    "email": "you_email",
+    "password": "your_password",
+    "returnSecureToken": "true"
+  }
+    ```
+- For testing, you can use the following values:
+- ```json
+  "email": "test@columbia.edu",
+  "password": "testuser",
+  "returnSecureToken": "true"
+  ```
+- The POST request will return a payload containing a field called `idToken`
+- This idToken will have to be included in the header of each API request as
+- ```json
+  "Authorization": "Bearer {{idToken}"
+  ```
 
 ## Drug Endpoints
 
@@ -478,6 +507,9 @@ This section includes notes on tools and technologies used in building this proj
   * Generates code coverage reports
   * Integrated into Maven build lifecycle
   * Reports generated during prepare-package phase
+ 
+* **Newman**
+  * Runs Postman API tests automatically during Github CI 
 
 ### Deployment Tools
 * **Google Cloud App Engine Maven Plugin (v2.7.0)**
