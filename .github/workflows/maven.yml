@@ -89,6 +89,6 @@ jobs:
       - name: Run Postman Tests
         run: |
           cd postman
-          newman run postman_tests.json
+          newman run postman_tests.json --environment postman_env.json
 
       

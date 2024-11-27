@@ -1,16 +1,72 @@
 {
     "info": {
-        "_postman_id": "aafe3f0a-c6fc-4f60-a4b9-f8481c8483f5",
+        "_postman_id": "11d7054b-4678-4d35-b88d-2e4dcea57965",
         "name": "Drug Interaction",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "39822577"
     },
     "item": [
         {
+            "name": "Authenticate",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "const response = pm.response.json();",
+                            "const savedData = response.idToken;",
+                            "pm.environment.set(\"token\", savedData );"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {}
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "  {\n    \"email\": \"test@columbia.edu\",\n    \"password\": \"testuser\",\n    \"returnSecureToken\": \"true\"\n  }",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs",
+                    "protocol": "https",
+                    "host": [
+                        "identitytoolkit",
+                        "googleapis",
+                        "com"
+                    ],
+                    "path": [
+                        "v1",
+                        "accounts:signInWithPassword"
+                    ],
+                    "query": [
+                        {
+                            "key": "key",
+                            "value": "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
             "name": "Get All Drugs",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs",
                     "protocol": "https",
@@ -34,7 +90,13 @@
             "name": "Get All Drug Interactions",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/drugs/interactions?drugName=TestDrugA",
                     "protocol": "https",
@@ -65,7 +127,13 @@
             "name": "Get Drug Info",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/drug?name=alcohol",
                     "protocol": "https",
@@ -95,7 +163,13 @@
             "name": "Add New Drug",
             "request": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "body": {
                     "mode": "raw",
                     "raw": "{\n \"name\": \"Newman\",\n \"dosageForm\": \"Tablet\",\n \"indications\": \"None\",\n \"contraindications\": \"Also none\",\n \"sideEffects\": \"Maybe some\",\n \"createdBy\": \"admin\",\n \"updatedBy\": \"admin\",\n \"createdAt\": \"2024-10-24 04:02:00\",\n \"updatedAt\": \"2024-10-25 19:42:02\"\n}\n",
@@ -129,7 +203,13 @@
             "name": "Update Existing Drug",
             "request": {
                 "method": "PATCH",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "body": {
                     "mode": "raw",
                     "raw": "{\n \"dosageForm\": \"<any word>\",\n \"indications\": \"For pain when writing software\",\n \"contraindications\": \"None\"\n}",
@@ -164,7 +244,13 @@
             "name": "Delete Existing Drug",
             "request": {
                 "method": "DELETE",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/drug/remove?name=Newman",
                     "protocol": "https",
@@ -195,7 +281,13 @@
             "name": "Get Interaction Between Two Drugs",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions?drugA=Warfarin&drugB=Aspirin",
                     "protocol": "https",
@@ -229,7 +321,13 @@
             "name": "Interaction between Multiple Drugs",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/get_interactions?drugA=Warfarin&drugB=Aspirin&drugC=Not a Drug",
                     "protocol": "https",
@@ -267,7 +365,13 @@
             "name": "Add New Drug Interaction",
             "request": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/add?interactionEffect=Random interaction!&drugA=Throwaway1&drugB=Throwaway2",
                     "protocol": "https",
@@ -306,7 +410,13 @@
             "name": "Update Existing Drug Interaction",
             "request": {
                 "method": "PATCH",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/update/11Zyx?drugA=UpdateA&drugB=UpdateB&interactionEffect=This is a test update",
                     "protocol": "https",
@@ -346,7 +456,13 @@
             "name": "Delete Existing Drug Interaction",
             "request": {
                 "method": "DELETE",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
                 "url": {
                     "raw": "https://drug-interaction-api.uk.r.appspot.com/api/v1/interactions/delete?interactionEffect=Random interaction!&drugA=Throwaway1&drugB=Throwaway2",
                     "protocol": "https",
@@ -380,6 +496,38 @@
                 }
             },
             "response": []
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
         }
     ]
 }
