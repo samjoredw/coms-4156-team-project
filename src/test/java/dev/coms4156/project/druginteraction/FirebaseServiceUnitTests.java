@@ -59,10 +59,12 @@ public class FirebaseServiceUnitTests {
   @Test
   @Order(1)
   public void testAddDocument() {
-    CompletableFuture<Void> future = firebaseService.addDocument("interactions", "testDocument", testInteraction);
+    CompletableFuture<Void> future = firebaseService
+            .addDocument("interactions", "testDocument", testInteraction);
     future.join();
 
-    CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+    CompletableFuture<Map<String, Object>> futureGet
+            = firebaseService.getDocument("interactions", "testDocument");
     Map<String, Object> result = futureGet.join();
 
     assertEquals(testInteraction, result);
@@ -71,10 +73,12 @@ public class FirebaseServiceUnitTests {
   @Test
   @Order(2)
   public void testRemoveDocument() {
-    CompletableFuture<Void> future = firebaseService.removeDocument("interactions", "testDocument");
+    CompletableFuture<Void> future = firebaseService
+            .removeDocument("interactions", "testDocument");
     future.join();
 
-    CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+    CompletableFuture<Map<String, Object>> futureGet
+            = firebaseService.getDocument("interactions", "testDocument");
     Map<String, Object> result = futureGet.join();
 
     assertTrue(result == null || result.isEmpty());
@@ -85,11 +89,13 @@ public class FirebaseServiceUnitTests {
   public void testUpdateDocument() {
     testInteraction.put("interactionEffect", "Moderate risk of bleeding.");
 
-    CompletableFuture<Void> futureUpdate = firebaseService.addDocument("interactions", "testDocument",
+    CompletableFuture<Void> futureUpdate = firebaseService
+            .addDocument("interactions", "testDocument",
         testInteraction);
     futureUpdate.join();
 
-    CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+    CompletableFuture<Map<String, Object>> futureGet
+            = firebaseService.getDocument("interactions", "testDocument");
     Map<String, Object> updatedResult = futureGet.join();
 
     assertEquals(testInteraction, updatedResult);
@@ -98,15 +104,18 @@ public class FirebaseServiceUnitTests {
   @Test
   @Order(4)
   public void testDocumentExists() {
-    CompletableFuture<Map<String, Object>> futureGet = firebaseService.getDocument("interactions", "testDocument");
+    CompletableFuture<Map<String, Object>> futureGet =
+            firebaseService.getDocument("interactions", "testDocument");
     Map<String, Object> result = futureGet.join();
 
     assertFalse(result.isEmpty());
 
-    CompletableFuture<Void> futureRemove = firebaseService.removeDocument("interactions", "testDocument");
+    CompletableFuture<Void> futureRemove = firebaseService
+            .removeDocument("interactions", "testDocument");
     futureRemove.join();
 
-    CompletableFuture<Map<String, Object>> futureGetAfterRemove = firebaseService.getDocument("interactions",
+    CompletableFuture<Map<String, Object>> futureGetAfterRemove =
+            firebaseService.getDocument("interactions",
         "testDocument");
     Map<String, Object> resultAfterRemove = futureGetAfterRemove.join();
 
@@ -116,7 +125,8 @@ public class FirebaseServiceUnitTests {
   @Test
   @Order(5)
   public void testGetAllDocuments() {
-    CompletableFuture<List<Map<String, Object>>> future = firebaseService.getAllDocuments("interactions");
+    CompletableFuture<List<Map<String, Object>>> future = firebaseService
+            .getAllDocuments("interactions");
     List<Map<String, Object>> documents = future.join();
 
     assertFalse(documents.isEmpty() || documents.contains(testInteraction));
@@ -173,7 +183,8 @@ public class FirebaseServiceUnitTests {
 
     boolean isValid = firebaseService.authenticateToken(headers);
 
-    assertFalse(isValid, "Authentication should fail with empty Authorization header");
+    assertFalse(isValid,
+            "Authentication should fail with empty Authorization header");
   }
 
   @Test
@@ -184,6 +195,7 @@ public class FirebaseServiceUnitTests {
 
     boolean isValid = firebaseService.authenticateToken(headers);
 
-    assertFalse(isValid, "Authentication should fail with invalid Authorization header format");
+    assertFalse(isValid,
+            "Authentication should fail with invalid Authorization header format");
   }
 }

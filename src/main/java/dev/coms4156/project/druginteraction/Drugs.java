@@ -158,7 +158,8 @@ public class Drugs {
     List<String> drugs = new ArrayList<>();
 
     try {
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore.collection("drugs").get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query
+              = firestore.collection("drugs").get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
 
@@ -191,7 +192,8 @@ public class Drugs {
 
     try {
       // Query where drugA = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA = firestore.collection("interactions")
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA
+              = firestore.collection("interactions")
           .whereEqualTo("drugA", drugName).get();
       com.google.cloud.firestore.QuerySnapshot querySnapshotA = queryA.get();
 
@@ -203,7 +205,8 @@ public class Drugs {
       }
 
       // Query where drugB = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB = firestore.collection("interactions")
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB
+              = firestore.collection("interactions")
           .whereEqualTo("drugB", drugName).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshotB = queryB.get();

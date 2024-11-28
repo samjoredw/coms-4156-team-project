@@ -143,7 +143,8 @@ public class InteractionUnitTests {
     for (Map<String, String> interaction : interactionList) {
       Map<String, Object> interactionData = new HashMap<>(interaction);
       System.out.println(interactionData);
-      boolean hasInteraction = !interaction.get("interactionEffect").startsWith("No known interaction");
+      boolean hasInteraction = !interaction.get("interactionEffect")
+              .startsWith("No known interaction");
       interactionData.put("interactionBool", hasInteraction);
 
       if (hasInteraction) {
@@ -183,9 +184,11 @@ public class InteractionUnitTests {
   @Order(4)
   public void removeInteractionTest() {
 
-    testInteraction.addInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
+    testInteraction.addInteraction("Aspirin", "Warfarin",
+            "Increased risk of bleeding.");
     // Remove an existing interaction
-    boolean result = testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
+    boolean result = testInteraction.removeInteraction("Aspirin",
+            "Warfarin", "Increased risk of bleeding.");
     assertTrue(result, "Removing existing interaction should return true");
 
     // Check that the interaction was removed
@@ -193,29 +196,37 @@ public class InteractionUnitTests {
     // assertEqual(interactionEffect, "");
 
     // Attempt to remove a non-existent interaction
-    result = testInteraction.removeInteraction("Aspirin", "Ibuprofen", "Non-existent interaction");
+    result = testInteraction.removeInteraction("Aspirin",
+            "Ibuprofen", "Non-existent interaction");
     assertFalse(result, "Removing non-existent interaction should return false");
 
     // Null drug names
-    result = testInteraction.removeInteraction(null, "Warfarin", "Some interaction");
+    result = testInteraction.removeInteraction(null, "Warfarin",
+            "Some interaction");
     assertFalse(result, "Removing interaction with null drug name should return false");
 
-    result = testInteraction.removeInteraction("Aspirin", null, "Some interaction");
-    assertFalse(result, "Removing interaction with null drug name should return false");
+    result = testInteraction.removeInteraction("Aspirin", null,
+            "Some interaction");
+    assertFalse(result,
+            "Removing interaction with null drug name should return false");
 
     // Empty string drug names
-    result = testInteraction.removeInteraction("", "Warfarin", "Some interaction");
+    result = testInteraction.removeInteraction("", "Warfarin",
+            "Some interaction");
     assertFalse(result, "Removing interaction with empty drug name should return false");
 
-    result = testInteraction.removeInteraction("Aspirin", "", "Some interaction");
-    assertFalse(result, "Removing interaction with empty drug name should return false");
+    result = testInteraction.removeInteraction("Aspirin", "",
+            "Some interaction");
+    assertFalse(result,
+            "Removing interaction with empty drug name should return false");
   }
 
   @Test
   @Order(5)
   public void testAddInteraction_ExceptionHandling() {
     // Simulate invalid input to trigger exception handling
-    boolean result = testInteraction.addInteraction(null, null, null);
+    boolean result = testInteraction
+            .addInteraction(null, null, null);
     assertFalse(result, "Adding interaction with null values should return false");
 
     result = testInteraction.addInteraction("", "", "Invalid input");
