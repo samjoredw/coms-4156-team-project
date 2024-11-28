@@ -1,14 +1,9 @@
 package dev.coms4156.project.druginteraction;
 
-import com.google.cloud.firestore.Firestore;
-import dev.coms4156.project.druginteraction.Interaction;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,13 +66,15 @@ public class DrugsUnitTests {
     // Normal retrieval case
     Map<String, Object> drug = testDrugs.getDrug("Aspirin");
     assertNotNull(drug, "Aspirin should be retrieved");
-    assertEquals("Tablet", drug.get("dosageForm"), "Dosage form should match");
+    assertEquals("Tablet", drug.get("dosageForm"),
+        "Dosage form should match");
     assertEquals("Pain relief, fever reduction", drug.get("indications"),
         "Indications should match");
 
     // Non-existent drug retrieval
     Map<String, Object> nonExistentDrug = testDrugs.getDrug("NonExistentDrug");
-    assertEquals(nonExistentDrug, Collections.emptyMap(), "Non-existent drug should return null");
+    assertEquals(nonExistentDrug, Collections.emptyMap(),
+        "Non-existent drug should return null");
 
     // Null drug name case
     Map<String, Object> nullDrug = testDrugs.getDrug(null);
@@ -161,52 +158,52 @@ public class DrugsUnitTests {
   @Test
   @Order(7)
   public void testAddDrug_ExceptionHandling() {
-      // Force an invalid case where the method logic leads to an exception
-      Map<String, Object> invalidDrugInfo = new HashMap<>();
-      invalidDrugInfo.put("invalidKey", "invalidValue");
+    // Force an invalid case where the method logic leads to an exception
+    Map<String, Object> invalidDrugInfo = new HashMap<>();
+    invalidDrugInfo.put("invalidKey", "invalidValue");
 
-      boolean result = testDrugs.addDrug(invalidDrugInfo);
-      assertFalse(result, "Adding drug with invalid data should return false");
+    boolean result = testDrugs.addDrug(invalidDrugInfo);
+    assertFalse(result, "Adding drug with invalid data should return false");
   }
 
   @Test
   @Order(8)
   public void testGetAllDrugs_EmptyResult() {
-      // Simulate case where no drugs are in the collection
-      List<String> allDrugs = testDrugs.getAllDrugs();
-      assertTrue(allDrugs.isEmpty() || !allDrugs.contains("NonExistentDrug"),
-          "If no drugs are found, the list should be empty or not contain non-existent drugs");
+    // Simulate case where no drugs are in the collection
+    List<String> allDrugs = testDrugs.getAllDrugs();
+    assertTrue(allDrugs.isEmpty() || !allDrugs.contains("NonExistentDrug"),
+        "If no drugs are found, the list should be empty or not contain non-existent drugs");
   }
 
   @Test
   @Order(9)
   public void testGetAllDrugs_ExceptionHandling() {
-      // Force an invalid query logic scenario
-      List<String> allDrugs = testDrugs.getAllDrugs();
-      assertNotNull(allDrugs, "Even if an exception occurs, result should not be null");
+    // Force an invalid query logic scenario
+    List<String> allDrugs = testDrugs.getAllDrugs();
+    assertNotNull(allDrugs, "Even if an exception occurs, result should not be null");
   }
 
   @Test
   @Order(10)
   public void testGetInteraction_EmptyResult() {
-      // Simulate case where no interactions exist for a drug
-      List<String> interactions = testDrugs.getInteraction("NonExistentDrug");
-      assertTrue(interactions.isEmpty(), "Non-existent drug should have no interactions");
+    // Simulate case where no interactions exist for a drug
+    List<String> interactions = testDrugs.getInteraction("NonExistentDrug");
+    assertTrue(interactions.isEmpty(), "Non-existent drug should have no interactions");
   }
 
   @Test
   @Order(11)
   public void testGetInteraction_ExceptionHandling() {
-      // Simulate an invalid case leading to exception handling
-      List<String> interactions = testDrugs.getInteraction(null);
-      assertTrue(interactions.isEmpty(), "Null drug name should return an empty interactions list");
+    // Simulate an invalid case leading to exception handling
+    List<String> interactions = testDrugs.getInteraction(null);
+    assertTrue(interactions.isEmpty(), "Null drug name should return an empty interactions list");
   }
 
   @Test
   @Order(12)
   public void testRemoveDrug_ExceptionHandling() {
-      // Force an invalid scenario where the method logic leads to an exception
-      boolean result = testDrugs.removeDrug(null);
-      assertFalse(result, "Removing drug with null name should return false");
+    // Force an invalid scenario where the method logic leads to an exception
+    boolean result = testDrugs.removeDrug(null);
+    assertFalse(result, "Removing drug with null name should return false");
   }
 }

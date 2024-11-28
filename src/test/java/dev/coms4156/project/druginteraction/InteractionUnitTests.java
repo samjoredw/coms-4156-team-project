@@ -53,14 +53,12 @@ public class InteractionUnitTests {
         "Increased risk of gastrointestinal side effects.");
   }
 
-
   @Test
   @Order(1)
   public void getInteractionTest() {
     // Valid case: Retrieve known interaction
     String interactionEffect = testInteraction.getInteraction("Aspirin", "Warfarin");
     assertEquals("Increased risk of bleeding.", interactionEffect);
-
 
     // Non-existent interaction case
     // interactionEffect = testInteraction.getInteraction("Aspirin", "Ibuprofen");
@@ -145,8 +143,7 @@ public class InteractionUnitTests {
     for (Map<String, String> interaction : interactionList) {
       Map<String, Object> interactionData = new HashMap<>(interaction);
       System.out.println(interactionData);
-      boolean hasInteraction =
-          !interaction.get("interactionEffect").startsWith("No known interaction");
+      boolean hasInteraction = !interaction.get("interactionEffect").startsWith("No known interaction");
       interactionData.put("interactionBool", hasInteraction);
 
       if (hasInteraction) {
@@ -188,8 +185,7 @@ public class InteractionUnitTests {
 
     testInteraction.addInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
     // Remove an existing interaction
-    boolean result =
-        testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
+    boolean result = testInteraction.removeInteraction("Aspirin", "Warfarin", "Increased risk of bleeding.");
     assertTrue(result, "Removing existing interaction should return true");
 
     // Check that the interaction was removed
@@ -216,54 +212,55 @@ public class InteractionUnitTests {
   }
 
   @Test
-@Order(5)
+  @Order(5)
   public void testAddInteraction_ExceptionHandling() {
-      // Simulate invalid input to trigger exception handling
-      boolean result = testInteraction.addInteraction(null, null, null);
-      assertFalse(result, "Adding interaction with null values should return false");
+    // Simulate invalid input to trigger exception handling
+    boolean result = testInteraction.addInteraction(null, null, null);
+    assertFalse(result, "Adding interaction with null values should return false");
 
-      result = testInteraction.addInteraction("", "", "Invalid input");
-      assertFalse(result, "Adding interaction with empty values should return false");
+    result = testInteraction.addInteraction("", "", "Invalid input");
+    assertFalse(result, "Adding interaction with empty values should return false");
   }
 
   @Test
   @Order(6)
   public void testRemoveInteraction_ExceptionHandling() {
-      boolean result = testInteraction.removeInteraction(null, null, null);
-      assertFalse(result, "Removing interaction with null values should return false");
+    boolean result = testInteraction.removeInteraction(null, null, null);
+    assertFalse(result, "Removing interaction with null values should return false");
 
-      result = testInteraction.removeInteraction("", "", "Invalid input");
-      assertFalse(result, "Removing interaction with empty values should return false");
+    result = testInteraction.removeInteraction("", "", "Invalid input");
+    assertFalse(result, "Removing interaction with empty values should return false");
   }
 
   @Test
   @Order(7)
   public void testGetInteraction_ExceptionHandling() {
-      String result = testInteraction.getInteraction(null, null);
-      assertNull(result, "Retrieving interaction with null values should return null");
+    String result = testInteraction.getInteraction(null, null);
+    assertNull(result, "Retrieving interaction with null values should return null");
 
-      result = testInteraction.getInteraction("", "");
-      assertEquals("No known interaction between  and ", result, "Retrieving interaction with empty values should return default message");
+    result = testInteraction.getInteraction("", "");
+    assertEquals("No known interaction between  and ", result,
+        "Retrieving interaction with empty values should return default message");
   }
 
   @Test
   @Order(8)
   public void testGetInteractionList_ExceptionHandling() {
-      List<String> drugs = new ArrayList<>();
-      drugs.add(null);
-      drugs.add("DrugB");
+    List<String> drugs = new ArrayList<>();
+    drugs.add(null);
+    drugs.add("DrugB");
 
-      List<Map<String, String>> result = testInteraction.getInteraction(drugs);
-      assertTrue(result.isEmpty(), "Result should contain an error interaction");
+    List<Map<String, String>> result = testInteraction.getInteraction(drugs);
+    assertTrue(result.isEmpty(), "Result should contain an error interaction");
   }
 
   @Test
   @Order(9)
   public void testUpdateInteraction_ExceptionHandling() {
-      boolean result = testInteraction.updateInteraction(null, null, null, null);
-      assertFalse(result, "Updating interaction with null values should return false");
+    boolean result = testInteraction.updateInteraction(null, null, null, null);
+    assertFalse(result, "Updating interaction with null values should return false");
 
-      result = testInteraction.updateInteraction("", "", "", "Invalid input");
-      assertFalse(result, "Updating interaction with empty values should return false");
+    result = testInteraction.updateInteraction("", "", "", "Invalid input");
+    assertFalse(result, "Updating interaction with empty values should return false");
   }
 }

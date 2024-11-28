@@ -1,6 +1,9 @@
 package dev.coms4156.project.druginteraction;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -23,8 +26,7 @@ class DrugInteractionUnitTests {
 
     // Mock the SpringApplication.run method to return the mock context
     try (MockedStatic<SpringApplication> mockStaticSpringApplication = mockStatic(SpringApplication.class)) {
-      mockStaticSpringApplication
-          .when(() -> SpringApplication.run(DrugInteraction.class, new String[] {}))
+      mockStaticSpringApplication.when(() -> SpringApplication.run(DrugInteraction.class, new String[] {}))
           .thenReturn(mockContext);
 
       // Call the main method
