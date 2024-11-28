@@ -38,6 +38,9 @@ public class FirebaseConfig {
       try (FileInputStream serviceAccount = new FileInputStream("./firebase_config.json")) {
         options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+      } catch (IOException e) {
+        System.err.println("Error reading firebase_config.json: " + e.getMessage());
+        throw e; // Re-throwing the exception to ensure it's properly handled
       }
     }
 

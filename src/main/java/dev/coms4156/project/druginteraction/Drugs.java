@@ -16,7 +16,6 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 /**
  * This class represents drugs and their properties.
  */
@@ -40,8 +39,9 @@ public class Drugs {
    */
   public Map<String, Object> getDrug(String drugName) {
     try {
-      DocumentSnapshot document =
-          firestore.collection("drugs").document(drugName.toLowerCase(Locale.ENGLISH)).get().get();
+      DocumentSnapshot document = firestore.collection(
+          "drugs").document(drugName.toLowerCase(Locale.ENGLISH)).get()
+          .get();
       if (document.exists()) {
         return document.getData();
       } else {
@@ -92,7 +92,7 @@ public class Drugs {
    * Update an existing drug in the Firestore collection.
    *
    * @param drugName The name of the drug to update.
-   * @param updates A map containing the fields to update.
+   * @param updates  A map containing the fields to update.
    * @return A boolean indicating whether the update was successful.
    */
   public boolean updateDrug(String drugName, Map<String, Object> updates) {
@@ -112,8 +112,8 @@ public class Drugs {
       updates.put("updatedBy", "admin");
 
       // Update the document in Firestore
-      ApiFuture<WriteResult> writeResult =
-          firestore.collection("drugs").document(documentId).update(updates);
+      ApiFuture<WriteResult> writeResult = firestore.collection(
+          "drugs").document(documentId).update(updates);
       writeResult.get(); // Wait for the update to complete
 
       return true; // Successfully updated
@@ -139,8 +139,8 @@ public class Drugs {
       }
 
       // Proceed to delete if the document exists
-      ApiFuture<WriteResult> writeResult =
-          firestore.collection("drugs").document(documentId).delete();
+      ApiFuture<WriteResult> writeResult = firestore.collection(
+          "drugs").document(documentId).delete();
       writeResult.get(); // Wait for the deletion to complete
       return true;
     } catch (Exception e) {
@@ -158,8 +158,8 @@ public class Drugs {
     List<String> drugs = new ArrayList<>();
 
     try {
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query =
-          firestore.collection("drugs").get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> query
+              = firestore.collection("drugs").get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshot = query.get();
 
@@ -179,7 +179,8 @@ public class Drugs {
    * Get all interactions for a specific drug.
    *
    * @param drugName The name of the drug to check interactions for.
-   * @return A list of strings, each representing an interaction involving the drug.
+   * @return A list of strings, each representing an interaction involving the
+   *         drug.
    */
   public List<String> getInteraction(String drugName) {
     List<String> interactions = new ArrayList<>();
@@ -191,8 +192,9 @@ public class Drugs {
 
     try {
       // Query where drugA = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA =
-          firestore.collection("interactions").whereEqualTo("drugA", drugName).get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryA
+              = firestore.collection("interactions")
+          .whereEqualTo("drugA", drugName).get();
       com.google.cloud.firestore.QuerySnapshot querySnapshotA = queryA.get();
 
       for (DocumentSnapshot document : querySnapshotA.getDocuments()) {
@@ -203,8 +205,9 @@ public class Drugs {
       }
 
       // Query where drugB = drugName
-      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB =
-          firestore.collection("interactions").whereEqualTo("drugB", drugName).get();
+      ApiFuture<com.google.cloud.firestore.QuerySnapshot> queryB
+              = firestore.collection("interactions")
+          .whereEqualTo("drugB", drugName).get();
 
       com.google.cloud.firestore.QuerySnapshot querySnapshotB = queryB.get();
 
