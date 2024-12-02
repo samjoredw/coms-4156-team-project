@@ -18,11 +18,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -191,7 +188,7 @@ class RouteControllerUnitTests {
     newDrug.put("name", testDrugName);
     testDrugs.add(testDrugName); // Track this drug for cleanup
 
-    when(drugService.getDrug(testDrugName)).thenReturn(null);
+    when(drugService.getDrug(testDrugName)).thenReturn(Collections.emptyMap());
     when(drugService.addDrug(newDrug)).thenReturn(true);
 
     ResponseEntity<?> response = routeController.addDrug(newDrug,
@@ -209,7 +206,7 @@ class RouteControllerUnitTests {
     testDrugs.add("Test_ExistingDrug"); // Track this drug for cleanup
 
     when(drugService.getDrug("Test_ExistingDrug"))
-            .thenReturn(new HashMap<>());
+            .thenReturn(existingDrug);
     ResponseEntity<?> response = routeController.addDrug(existingDrug,
             AUTH_TOKEN);
 
@@ -245,7 +242,7 @@ class RouteControllerUnitTests {
     Map<String, Object> drugInfo = new HashMap<>();
     drugInfo.put("name", "TestDrug");
 
-    when(drugService.getDrug("TestDrug")).thenReturn(null);
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
     when(drugService.addDrug(drugInfo)).thenReturn(false); // Simulate failure to add
 
     ResponseEntity<?> response = routeController.addDrug(drugInfo, AUTH_TOKEN);
@@ -260,7 +257,7 @@ class RouteControllerUnitTests {
     Map<String, Object> drugInfo = new HashMap<>();
     drugInfo.put("name", "TestDrug");
 
-    when(drugService.getDrug("TestDrug")).thenReturn(null);
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
     when(drugService.addDrug(drugInfo)).thenThrow(new RuntimeException("Service error"));
 
     ResponseEntity<?> response = routeController.addDrug(drugInfo, AUTH_TOKEN);
