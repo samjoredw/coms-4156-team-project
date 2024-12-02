@@ -125,7 +125,7 @@ public class RouteController {
             HttpStatus.BAD_REQUEST);
       }
 
-      if (drugService.getDrug(name) != null) {
+      if (!drugService.getDrug(name).isEmpty()) {
         return new ResponseEntity<>("Drug already exists", HttpStatus.CONFLICT);
       }
 

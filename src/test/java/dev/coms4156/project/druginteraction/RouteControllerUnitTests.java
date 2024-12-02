@@ -1,17 +1,11 @@
 package dev.coms4156.project.druginteraction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import com.google.gson.Gson;
 import java.io.FileInputStream;
 import java.net.URI;
@@ -20,6 +14,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,7 +186,7 @@ class RouteControllerUnitTests {
     newDrug.put("name", testDrugName);
     testDrugs.add(testDrugName); // Track this drug for cleanup
 
-    when(drugService.getDrug(testDrugName)).thenReturn(null);
+    when(drugService.getDrug(testDrugName)).thenReturn(Collections.emptyMap());
     when(drugService.addDrug(newDrug)).thenReturn(true);
 
     ResponseEntity<?> response = routeController.addDrug(newDrug,
@@ -209,7 +204,7 @@ class RouteControllerUnitTests {
     testDrugs.add("Test_ExistingDrug"); // Track this drug for cleanup
 
     when(drugService.getDrug("Test_ExistingDrug"))
-            .thenReturn(new HashMap<>());
+            .thenReturn(existingDrug);
     ResponseEntity<?> response = routeController.addDrug(existingDrug,
             AUTH_TOKEN);
 
@@ -245,7 +240,7 @@ class RouteControllerUnitTests {
     Map<String, Object> drugInfo = new HashMap<>();
     drugInfo.put("name", "TestDrug");
 
-    when(drugService.getDrug("TestDrug")).thenReturn(null);
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
     when(drugService.addDrug(drugInfo)).thenReturn(false); // Simulate failure to add
 
     ResponseEntity<?> response = routeController.addDrug(drugInfo, AUTH_TOKEN);
@@ -260,7 +255,7 @@ class RouteControllerUnitTests {
     Map<String, Object> drugInfo = new HashMap<>();
     drugInfo.put("name", "TestDrug");
 
-    when(drugService.getDrug("TestDrug")).thenReturn(null);
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
     when(drugService.addDrug(drugInfo)).thenThrow(new RuntimeException("Service error"));
 
     ResponseEntity<?> response = routeController.addDrug(drugInfo, AUTH_TOKEN);
