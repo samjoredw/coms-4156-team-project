@@ -114,7 +114,7 @@ class RouteControllerUnitTests {
     testDrugs.add(drugName); // Track this drug for cleanup
 
     when(drugService.getDrug(drugName)).thenReturn(drugInfo);
-    ResponseEntity<?> response = routeController.getDrug(drugName, AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.getDrug(drugName);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(drugInfo, response.getBody());
@@ -122,11 +122,11 @@ class RouteControllerUnitTests {
 
   @Test
   void testGetDrug_InvalidName() {
-    ResponseEntity<?> response = routeController.getDrug("", AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.getDrug("");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug name cannot be empty", response.getBody());
 
-    response = routeController.getDrug(null, AUTH_TOKEN);
+    response = routeController.getDrug(null);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug name cannot be empty", response.getBody());
   }
@@ -136,7 +136,7 @@ class RouteControllerUnitTests {
     String drugName = "NonexistentDrug";
     when(drugService.getDrug(drugName)).thenReturn(null);
     ResponseEntity<?> response = routeController.getDrug(
-            drugName, AUTH_TOKEN);
+            drugName);
 
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertEquals("Drug not found", response.getBody());
@@ -269,7 +269,7 @@ class RouteControllerUnitTests {
     // Simulate an exception when calling getInteraction
     when(drugService.getInteraction(drugName)).thenThrow(new RuntimeException("Service error"));
 
-    ResponseEntity<?> response = routeController.getDrugInteractions(drugName, AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.getDrugInteractions(drugName);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertEquals("An error occurred: Service error", response.getBody());
@@ -568,7 +568,7 @@ class RouteControllerUnitTests {
     when(drugService.getInteraction(drugName)).thenReturn(interactions);
 
     ResponseEntity<?> response = routeController
-            .getDrugInteractions(drugName, AUTH_TOKEN);
+            .getDrugInteractions(drugName);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(interactions, response.getBody());
@@ -583,7 +583,7 @@ class RouteControllerUnitTests {
             .thenReturn(interactionEffect);
 
     ResponseEntity<?> response = routeController
-            .getInteraction(drugA, drugB, AUTH_TOKEN);
+            .getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     Map<String, Object> interactionData = new HashMap<>();
@@ -604,7 +604,7 @@ class RouteControllerUnitTests {
             .thenReturn(noInteraction);
 
     ResponseEntity<?> response = routeController
-            .getInteraction(drugA, drugB, AUTH_TOKEN);
+            .getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     Map<String, Object> interactionData = new HashMap<>();
@@ -718,28 +718,25 @@ class RouteControllerUnitTests {
   void testGetInteraction_InvalidInput() {
     // Case 1: drugA is null
     ResponseEntity<?> response = routeController
-            .getInteraction(null, "DrugB", AUTH_TOKEN);
+            .getInteraction(null, "DrugB");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
 
     // Case 2: drugB is null
-    response = routeController.getInteraction("DrugA", null,
-            AUTH_TOKEN);
+    response = routeController.getInteraction("DrugA", null);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
 
     // Case 3: drugA is empty
-    response = routeController.getInteraction("", "DrugB",
-            AUTH_TOKEN);
+    response = routeController.getInteraction("", "DrugB");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
 
     // Case 4: drugB is empty
-    response = routeController.getInteraction("DrugA", "",
-            AUTH_TOKEN);
+    response = routeController.getInteraction("DrugA", "");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
@@ -755,7 +752,7 @@ class RouteControllerUnitTests {
         .thenThrow(new RuntimeException("Service error"));
 
     ResponseEntity<?> response = routeController
-            .getInteraction(drugA, drugB, AUTH_TOKEN);
+            .getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
             response.getStatusCode());
@@ -785,7 +782,7 @@ class RouteControllerUnitTests {
 
     ResponseEntity<?> response = routeController
             .getMultipleInteractions(drugA, drugB,
-                    drugC, drugD, null, AUTH_TOKEN);
+                    drugC, drugD, null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // Adjusted expected response to separate `interactions` and `noInteractions`
@@ -839,7 +836,7 @@ class RouteControllerUnitTests {
         .thenReturn(interactions);
 
     ResponseEntity<?> response = routeController
-            .getMultipleInteractions(drugA, drugB, drugC, drugD, drugE, AUTH_TOKEN);
+            .getMultipleInteractions(drugA, drugB, drugC, drugD, drugE);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // Expected interaction with the ": " delimiter
@@ -878,8 +875,7 @@ class RouteControllerUnitTests {
         .thenThrow(new RuntimeException("Database error"));
     ResponseEntity<?> response = routeController
             .getMultipleInteractions("DrugA", "DrugB",
-                    null, null, null,
-        AUTH_TOKEN);
+                    null, null, null);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
             response.getStatusCode());

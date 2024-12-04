@@ -47,8 +47,7 @@ public class RouteController {
    * @return A ResponseEntity containing the drug information or an error message.
    */
   @GetMapping(value = "/drug", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getDrug(@RequestParam("name") String name,
-      @RequestHeader(value = "Authorization", required = false) String authorization) {
+  public ResponseEntity<?> getDrug(@RequestParam("name") String name) {
     try {
       if (name == null || name.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug name cannot be empty",
@@ -248,8 +247,7 @@ public class RouteController {
    * @return A ResponseEntity containing a list of interactions or an error message.
    */
   @GetMapping(value = "/drugs/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName,
-      @RequestHeader(value = "Authorization", required = false) String authorization) {
+  public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName) {
     try {
       List<String> interactions = drugService.getInteraction(drugName);
       return new ResponseEntity<>(interactions, HttpStatus.OK);
@@ -267,8 +265,7 @@ public class RouteController {
    */
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestHeader(value = "Authorization", required = false) String authorization) {
+      @RequestParam("drugB") String drugB) {
     try {
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty",
@@ -311,8 +308,7 @@ public class RouteController {
       @RequestParam("drugB") String drugB,
       @RequestParam(value = "drugC", required = false) String drugC,
       @RequestParam(value = "drugD", required = false) String drugD,
-      @RequestParam(value = "drugE", required = false) String drugE,
-      @RequestHeader(value = "Authorization", required = false) String authorization) {
+      @RequestParam(value = "drugE", required = false) String drugE) {
     try {
       List<String> drugs = new ArrayList<>();
       drugs.add(drugA);
