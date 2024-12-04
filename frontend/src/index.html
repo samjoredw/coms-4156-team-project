@@ -1,121 +1,163 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client</title>
-    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"></script>
-    <script type="module" src="./index.js"></script>
-    <script>
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs",
-            authDomain: "drug-interaction-api.firebaseapp.com",
-            databaseURL: "https://drug-interaction-api-default-rtdb.firebaseio.com",
-            projectId: "drug-interaction-api",
-            storageBucket: "drug-interaction-api.appspot.com",
-            messagingSenderId: "1063129233703",
-            appId: "1:1063129233703:web:3b10cb724f33e2d1535102",
-            measurementId: "G-ZB6S14BCRN"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.css" />
-    <script type="text/javascript">
-        const auth = firebase.auth();
-        // FirebaseUI config.
-        const uiConfig = {
-            signInSuccessUrl: '/interface.html',  // The URL to redirect after successful login
-            signInFlow: "popup",
-            signInOptions: [
-                // TODO: Remove the providers you don't need for your app.
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                // {
-                //     provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-                //     scopes :[
-                //         'public_profile',
-                //         'email',
-                //         'user_likes',
-                //         'user_friends'
-                //     ]
-                // },
-                // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-                // firebase.auth.GithubAuthProvider.PROVIDER_ID,
-
-                {
-                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                    requireDisplayName: true,
-                    signInMethod: "password",
-                    disableSignUp: {
-                        status: false
-                    }
-                },
-                firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-                // {
-                //     provider: 'microsoft.com',
-                //     loginHintKey: 'login_hint'
-                // },
-                // cannot work since the v9 has compatability issue, implemented manually below
-                firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID,
-            ],
-            callbacks: {
-                signInSuccessWithAuthResult: function (authResult, redirectUrl) {
-                    console.log('User signed in:', authResult.user);
-                    localStorage.clear();
-                    localStorage.setItem('user', authResult.user);
-
-                    // Obtain the auth token
-                    authResult.user.getIdToken().then((idToken) => {
-                        localStorage.setItem('userToken', idToken);
-                        console.log('JWT ID Token:', idToken);
-                    }).catch((error) => {
-                        console.error('Error getting ID token:', error);
-                    });
-                    // window.location.href = 'interface.html';
-                    return true;
-                },
-                signInFailure: function (error) {
-                    console.error('Sign-in failed:', error);
-                    return false;
-                }
-            },
-        };
-
-        // Initialize the FirebaseUI Widget using Firebase.
-        var ui = new firebaseui.auth.AuthUI(firebase.auth());
-        // The start method will wait until the DOM is loaded.
-        ui.start('#firebaseui-auth-container', uiConfig);
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in
-                user.getIdToken().then((idToken) => {
-                    localStorage.setItem('userToken', idToken);
-                    console.log('Token updated in localStorage:', idToken);
-                });
-                localStorage.setItem('user', user);
-            } else {
-                // User is signed out, clear the token
-                localStorage.clear();
-                console.log('User is signed out, token removed from localStorage');
-            }
-        });
-
-        window.onload = function () {
-            firebase.auth().signOut().then(() => {
-                console.log("User signed out on page load");
-                localStorage.clear(); // Clear stored tokens
-            });
-        };
-    </script>
+    <title>Drug Interaction Checker</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-auth-compat.min.js"></script>
 </head>
-
 <body>
-    <div id="firebaseui-auth-container"></div>
-</body>
+    <nav>
+        <div class="logo">DrugCheck</div>
+        <div class="nav-links">
+            <div class="user-info hidden">
+                <span id="userEmail"></span>
+            </div>
+            <div class="auth-section">
+                <button id="loginBtn" class="auth-btn"><i class="fas fa-sign-in-alt"></i> Login with Google</button>
+                <button id="logoutBtn" class="auth-btn hidden"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+    </nav>
 
+    <main>
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="interactions">Check Interactions</button>
+                <button class="tab-btn" data-tab="drugs">Drug List</button>
+                <button class="tab-btn admin-tab hidden" data-tab="manage">Manage Database</button>
+            </div>
+
+            <div id="interactions" class="tab-content active">
+                <section class="section">
+                    <h2>Drug Interaction Checker</h2>
+                    <div class="search-container">
+                        <div id="drugInputsContainer" class="drug-inputs">
+                            <div class="input-group">
+                                <input type="text" class="search-input drug-input" list="drugList" placeholder="Enter drug name">
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="search-input drug-input" list="drugList" placeholder="Enter drug name">
+                            </div>
+                        </div>
+                        <button class="add-drug-btn"><i class="fas fa-plus"></i> Add Drug</button>                        
+                        <button id="checkInteraction" class="primary-btn">Check Interactions</button>
+                    </div>
+                    <div id="interactionResult" class="result-container"></div>
+                </section>
+            </div>
+
+            <div id="drugs" class="tab-content">
+                <section class="section">
+                    <h2>Drug Database</h2>
+                    <div id="drugSearchContainer" class="drug-search-container">
+                        <h2>Search Drug Information</h2>
+                        <div class="search-box">
+                            <input type="text" id="drugSearch" placeholder="Enter drug name" class="search-input" list="drugList">
+                            <button id="searchDrugBtn" class="primary-btn">Search</button>
+                        </div>
+                        <datalist id="drugList"></datalist>
+                        <div id="drugInfoResult" class="result-container"></div>
+                    </div>
+                </section>
+            </div>            
+
+            <div id="manage" class="tab-content">
+                <section class="section">
+                    <h2>Database Management</h2>
+            
+                    <!-- Tabs for switching between drugs and interactions -->
+                    <div class="management-tabs">
+                        <button class="management-tab active" data-action="manageDrugs">Manage Drugs</button>
+                        <button class="management-tab" data-action="manageInteractions">Manage Interactions</button>
+                    </div>
+            
+                    <!-- Management Content -->
+                    <div class="management-content">
+                        <!-- Manage Drugs Panel -->
+                        <div class="management-panel active" data-panel="manageDrugs">
+                            <h3>Manage Drugs</h3>
+                            <div class="management-subtabs">
+                                <button class="subtab-btn active" data-action="addDrug">Add</button>
+                                <button class="subtab-btn" data-action="updateDrug">Update</button>
+                                <button class="subtab-btn" data-action="deleteDrug">Delete</button>
+                            </div>
+            
+                            <!-- Sub-content for managing drugs -->
+                            <div class="sub-management-content">
+                                <div class="sub-panel active" data-panel="addDrug">
+                                    <h4>Add New Drug</h4>
+                                    <input type="text" id="newDrugName" placeholder="Drug name" class="admin-input">
+                                    <textarea id="newDrugIndications" placeholder="Indications" class="admin-input"></textarea>
+                                    <textarea id="newDrugContraindications" placeholder="Contraindications" class="admin-input"></textarea>
+                                    <textarea id="newDrugDosageForm" placeholder="Dosage Form" class="admin-input"></textarea>
+                                    <textarea id="newDrugSideEffects" placeholder="Side Effects" class="admin-input"></textarea>
+                                    <button id="addDrug" class="admin-btn">Add Drug</button>
+                                </div>                                
+                                <div class="sub-panel" data-panel="updateDrug">
+                                    <h4>Update Drug</h4>
+                                    <select id="updateDrugSelect" class="admin-input"></select>
+                                    <textarea id="updateDrugIndications" placeholder="Updated Indications" class="admin-input"></textarea>
+                                    <textarea id="updateDrugContraindications" placeholder="Updated Contraindications" class="admin-input"></textarea>
+                                    <textarea id="updateDrugDosageForm" placeholder="Updated Dosage Form" class="admin-input"></textarea>
+                                    <textarea id="updateDrugSideEffects" placeholder="Updated Side Effects" class="admin-input"></textarea>
+                                    <button id="updateDrug" class="admin-btn">Update Drug</button>
+                                </div>                                
+                                <div class="sub-panel" data-panel="deleteDrug">
+                                    <h4>Delete Drug</h4>
+                                    <select id="deleteDrugSelect" class="admin-input"></select>
+                                    <button id="deleteDrug" class="admin-btn danger">Delete Drug</button>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Manage Interactions Panel -->
+                        <div class="management-panel" data-panel="manageInteractions">
+                            <h3>Manage Interactions</h3>
+                            <div class="management-subtabs">
+                                <button class="subtab-btn active" data-action="addInteraction">Add</button>
+                                <button class="subtab-btn" data-action="updateInteraction">Update</button>
+                                <button class="subtab-btn" data-action="deleteInteraction">Delete</button>
+                            </div>
+            
+                            <!-- Sub-content for managing interactions -->
+                            <div class="sub-management-content">
+                                <div class="sub-panel active" data-panel="addInteraction">
+                                    <h4>Add New Interaction</h4>
+                                    <input type="text" id="interactionDrugA" placeholder="Drug A" class="admin-input">
+                                    <input type="text" id="interactionDrugB" placeholder="Drug B" class="admin-input">
+                                    <textarea id="interactionEffect" placeholder="Interaction Effect" class="admin-input"></textarea>
+                                    <button id="addInteraction" class="admin-btn">Add Interaction</button>
+                                </div>
+                                <div class="sub-panel" data-panel="updateInteraction">
+                                    <h4>Update Interaction</h4>
+                                    <input type="text" id="updateInteractionDrugA" placeholder="Drug A" class="admin-input">
+                                    <input type="text" id="updateInteractionDrugB" placeholder="Drug B" class="admin-input">
+                                    <textarea id="updateInteractionEffect" placeholder="Updated Interaction Effect" class="admin-input"></textarea>
+                                    <button id="updateInteraction" class="admin-btn">Update Interaction</button>
+                                </div>
+                                <div class="sub-panel" data-panel="deleteInteraction">
+                                    <h4>Delete Interaction</h4>
+                                    <input type="text" id="deleteInteractionDrugA" placeholder="Drug A" class="admin-input">
+                                    <input type="text" id="deleteInteractionDrugB" placeholder="Drug B" class="admin-input">
+                                    <textarea id="deleteInteractionEffect" placeholder="Interaction Effect" class="admin-input"></textarea>
+                                    <button id="deleteInteraction" class="admin-btn danger">Delete Interaction</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>            
+        </div>
+    </main>
+
+    <datalist id="drugList"></datalist>
+    <div id="toast" class="toast"></div>
+    <script src="index.js" defer></script>
+</body>
 </html>
