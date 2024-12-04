@@ -263,6 +263,23 @@ class RouteControllerUnitTests {
   }
 
   @Test
+  void testServiceExceptionDuringGetDrug() {
+    when(drugService.getDrug("TestDrug")).thenThrow(new
+            RuntimeException("Service error"));
+    ResponseEntity<?> response = routeController.getDrug("TestDrug");
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertEquals("An error occurred: Service error", response.getBody());
+  }
+
+  @Test
+  void testGetMultipleInteractionsWithNullDrugs() {
+    ResponseEntity<?> response = routeController.getMultipleInteractions("DrugA",
+            null, null, null, null);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+
+  @Test
   void testGetDrugInteractions_ExceptionHandling() {
     String drugName = "TestDrug";
 
