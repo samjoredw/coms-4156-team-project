@@ -33,9 +33,7 @@ public class RouteController {
 
   private final Interaction interactionService;
   private final Drugs drugService;
-  // private final FirebaseService firebaseService;
 
-  // This one needs endpoints first b
   @Autowired
   public RouteController(Interaction interactionService, Drugs drugService) {
     this.interactionService = interactionService;
@@ -52,22 +50,6 @@ public class RouteController {
   public ResponseEntity<?> getDrug(@RequestParam("name") String name,
       @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       if (name == null || name.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug name cannot be empty",
             HttpStatus.BAD_REQUEST);
@@ -150,7 +132,7 @@ public class RouteController {
   @PatchMapping(value = "/drug/update/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> updateDrug(@PathVariable String name,
       @RequestBody Map<String, Object> updates,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -200,7 +182,7 @@ public class RouteController {
    */
   @DeleteMapping(value = "/drug/remove", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> removeDrug(@RequestParam("name") String name,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -250,24 +232,8 @@ public class RouteController {
    */
   @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getAllDrugs(
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       List<String> drugs = drugService.getAllDrugs();
       return new ResponseEntity<>(drugs, HttpStatus.OK);
     } catch (Exception e) {
@@ -283,24 +249,8 @@ public class RouteController {
    */
   @GetMapping(value = "/drugs/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       List<String> interactions = drugService.getInteraction(drugName);
       return new ResponseEntity<>(interactions, HttpStatus.OK);
     } catch (Exception e) {
@@ -318,28 +268,8 @@ public class RouteController {
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
-      // if (!firebaseService.authenticateToken(headers)) {
-      // return new ResponseEntity<>("Unauthorized: Missing or invalid token",
-      // HttpStatus.UNAUTHORIZED);
-      // }
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty",
             HttpStatus.BAD_REQUEST);
@@ -384,22 +314,6 @@ public class RouteController {
       @RequestParam(value = "drugE", required = false) String drugE,
       @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       List<String> drugs = new ArrayList<>();
       drugs.add(drugA);
       drugs.add(drugB);
@@ -460,7 +374,7 @@ public class RouteController {
   public ResponseEntity<?> addInteraction(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -517,7 +431,7 @@ public class RouteController {
   public ResponseEntity<?> updateInteraction(@PathVariable String documentId,
       @RequestParam("drugA") String drugA, @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -568,7 +482,7 @@ public class RouteController {
   public ResponseEntity<?> deleteInteraction(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
