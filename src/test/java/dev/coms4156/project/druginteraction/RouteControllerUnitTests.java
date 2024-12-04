@@ -374,11 +374,10 @@ class RouteControllerUnitTests {
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
-    when(interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect))
+    when(interactionService.updateInteraction(drugA, drugB, interactionEffect))
         .thenReturn(true);
 
-    ResponseEntity<?> response = routeController.updateInteraction(
-            documentId, drugA, drugB, interactionEffect,
+    ResponseEntity<?> response = routeController.updateInteraction(drugA, drugB, interactionEffect,
         AUTH_TOKEN);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -394,11 +393,11 @@ class RouteControllerUnitTests {
     String interactionEffect = "Updated interaction effect";
 
     when(interactionService.updateInteraction(
-            documentId, drugA, drugB, interactionEffect))
+            drugA, drugB, interactionEffect))
         .thenReturn(false);
 
     ResponseEntity<?> response = routeController.updateInteraction(
-            documentId, drugA, drugB, interactionEffect,
+            drugA, drugB, interactionEffect,
         AUTH_TOKEN);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -414,11 +413,11 @@ class RouteControllerUnitTests {
     String interactionEffect = "Updated interaction effect";
 
     when(interactionService.updateInteraction(
-            documentId, drugA, drugB, interactionEffect))
+            drugA, drugB, interactionEffect))
         .thenThrow(new RuntimeException("Database error"));
 
     ResponseEntity<?> response = routeController.updateInteraction(
-            documentId, drugA, drugB, interactionEffect,
+            drugA, drugB, interactionEffect,
         AUTH_TOKEN);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -430,7 +429,7 @@ class RouteControllerUnitTests {
   @Test
   void testUpdateInteraction_MissingAuthorizationHeader() {
     ResponseEntity<?> response = routeController.updateInteraction(
-        "document123", "DrugA", "DrugB",
+        "DrugA", "DrugB",
             "Effect", null);
 
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
@@ -440,8 +439,7 @@ class RouteControllerUnitTests {
 
   @Test
   void testUpdateInteraction_InvalidAuthorizationHeader() {
-    ResponseEntity<?> response = routeController.updateInteraction(
-        "document123", "DrugA", "DrugB",
+    ResponseEntity<?> response = routeController.updateInteraction("DrugA", "DrugB",
             "Effect", "InvalidToken");
 
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());

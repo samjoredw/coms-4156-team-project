@@ -268,10 +268,10 @@ public class InteractionUnitTests {
   @Test
   @Order(9)
   public void testUpdateInteraction_ExceptionHandling() {
-    boolean result = testInteraction.updateInteraction(null, null, null, null);
+    boolean result = testInteraction.updateInteraction(null, null, null);
     assertFalse(result, "Updating interaction with null values should return false");
 
-    result = testInteraction.updateInteraction("", "", "", "Invalid input");
+    result = testInteraction.updateInteraction("", "", "");
     assertFalse(result, "Updating interaction with empty values should return false");
   }
 }

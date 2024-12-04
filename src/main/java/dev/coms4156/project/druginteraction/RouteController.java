@@ -420,15 +420,14 @@ public class RouteController {
   /**
    * Updates an existing drug interaction in the database.
    *
-   * @param documentId The unique identifier of the interaction document.
    * @param drugA The updated name of the first drug.
    * @param drugB The updated name of the second drug.
    * @param interactionEffect The updated description of the interaction effect.
    * @return A ResponseEntity indicating success or failure of the update operation.
    */
-  @PatchMapping(value = "/interactions/update/{documentId}",
+  @PatchMapping(value = "/interactions/update/",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateInteraction(@PathVariable String documentId,
+  public ResponseEntity<?> updateInteraction(
       @RequestParam("drugA") String drugA, @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
       @RequestHeader(value = "Authorization", required = false) String authorization) {
@@ -459,7 +458,7 @@ public class RouteController {
       }
 
       boolean updated =
-          interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect);
+          interactionService.updateInteraction(drugA, drugB, interactionEffect);
       if (updated) {
         return new ResponseEntity<>("Interaction updated successfully", HttpStatus.OK);
       } else {

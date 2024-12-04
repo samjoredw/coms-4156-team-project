@@ -203,4 +203,42 @@ public class FirebaseService {
       return false;
     }
   }
+
+  /**
+   * Queries documents in the specified collection based on criteria.
+   *
+   * @param collection The name of the collection to query.
+   * @param criteria A map of field names to their corresponding values to filter the documents.
+   * @return A CompletableFuture that completes with a list of document data matching the criteria.
+   */
+  public CompletableFuture<List<Map<String, Object>>> queryDocuments(
+          String collection, Map<String, Object> criteria) {
+    CompletableFuture<List<Map<String, Object>>> future = new CompletableFuture<>();
+    com.google.cloud.firestore.CollectionReference collectionRef = firestore.collection(collection);
+
+    // Build the query based on the criteria
+    com.google.cloud.firestore.Query query = collectionRef;
+    for (Map.Entry<String, Object> entry : criteria.entrySet()) {
+      query = query.whereEqualTo(entry.getKey(), entry.getValue());
+    }
+
+    // Execute the query
+    ApiFuture<com.google.cloud.firestore.QuerySnapshot> result = query.get();
+    result.addListener(() -> {
+      try {
+        List<Map<String, Object>> documents = new ArrayList<>();
+        com.google.cloud.firestore.QuerySnapshot querySnapshot = result.get();
+        for (com.google.cloud.firestore.QueryDocumentSnapshot document :
+                querySnapshot.getDocuments()) {
+          Map<String, Object> documentData = document.getData();
+          documentData.put("id", document.getId()); // Add document ID for reference
+          documents.add(documentData);
+        }
+        future.complete(documents);
+      } catch (Exception e) {
+        future.completeExceptionally(e);
+      }
+    }, Runnable::run);
+    return future;
+  }
 }
