@@ -33,6 +33,8 @@ class RouteControllerUnitTests {
 
   private static String AUTH_TOKEN;
 
+  private static String INVALID_AUTH_TOKEN;
+
   @Mock
   private Interaction interactionService;
 
@@ -82,9 +84,40 @@ class RouteControllerUnitTests {
       // Handle the response
       if (response.statusCode() == 200) {
         Map<String, Object> responseBody = new Gson().fromJson(response.body(), HashMap.class);
-        ;
+
         AUTH_TOKEN = (String) responseBody.get("idToken");
         AUTH_TOKEN = "Bearer " + AUTH_TOKEN;
+      } else {
+        System.out.println("Sign-in failed! Status Code: " + response.statusCode());
+        System.out.println("Response: " + response.body());
+      }
+
+      apiKey = "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs";
+      email = "test@invalid.com";
+      password = "testuser";
+
+      // Prepare the request payload
+      payload = new HashMap<>();
+      payload.put("email", email);
+      payload.put("password", password);
+      payload.put("returnSecureToken", "true");
+
+      // Convert payload to JSON
+      jsonPayload = new Gson().toJson(payload);
+
+      HttpRequest invalidEmail = HttpRequest.newBuilder().uri(URI.create(
+                "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + apiKey))
+              .header("Content-Type", "application/json")
+              .POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
+
+      response = client.send(invalidEmail, HttpResponse.BodyHandlers.ofString());
+
+      // Handle the response
+      if (response.statusCode() == 200) {
+        Map<String, Object> responseBody = new Gson().fromJson(response.body(), HashMap.class);
+
+        INVALID_AUTH_TOKEN = (String) responseBody.get("idToken");
+        INVALID_AUTH_TOKEN = "Bearer " + INVALID_AUTH_TOKEN;
       } else {
         System.out.println("Sign-in failed! Status Code: " + response.statusCode());
         System.out.println("Response: " + response.body());
@@ -195,6 +228,35 @@ class RouteControllerUnitTests {
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug name cannot be empty", response.getBody());
+  }
+
+  @Test
+  void testAddDrug_InvalidToken() {
+    Map<String, Object> newDrug = new HashMap<>();
+    newDrug.put("name", "TestDrug");
+
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
+    when(drugService.addDrug(newDrug)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addDrug(newDrug, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token", response.getBody());
+  }
+
+  @Test
+  void testAddDrug_InvalidEmail() {
+    Map<String, Object> newDrug = new HashMap<>();
+    newDrug.put("name", "TestDrug");
+
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
+    when(drugService.addDrug(newDrug)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addDrug(newDrug, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the " +
+            "Columbia University", response.getBody());
   }
 
   @Test
@@ -386,7 +448,6 @@ class RouteControllerUnitTests {
 
   @Test
   void testUpdateInteraction_Success() {
-    String documentId = "doc123";
     String drugA = "DrugA";
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
@@ -404,7 +465,6 @@ class RouteControllerUnitTests {
 
   @Test
   void testUpdateInteraction_Failure() {
-    String documentId = "doc123";
     String drugA = "DrugA";
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
@@ -423,8 +483,43 @@ class RouteControllerUnitTests {
   }
 
   @Test
+  void testUpdateInteraction_InvalidToken() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Updated interaction effect";
+
+    when(interactionService.updateInteraction(
+            drugA, drugB, interactionEffect))
+            .thenReturn(false);
+
+    ResponseEntity<?> response = routeController.updateInteraction(
+            drugA, drugB, interactionEffect, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token",
+            response.getBody());
+  }
+
+  @Test
+  void testUpdateInteraction_InvalidEmail() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Updated interaction effect";
+
+    when(interactionService.updateInteraction(
+            drugA, drugB, interactionEffect))
+            .thenReturn(false);
+
+    ResponseEntity<?> response = routeController.updateInteraction(
+            drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the " +
+            "Columbia University", response.getBody());
+  }
+
+  @Test
   void testUpdateInteraction_Exception() {
-    String documentId = "doc123";
     String drugA = "DrugA";
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
@@ -523,6 +618,42 @@ class RouteControllerUnitTests {
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Failed to delete interaction",
             response.getBody());
+  }
+
+  @Test
+  void testDeleteInteraction_InvalidToken() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Interaction effect";
+
+    when(interactionService.removeInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(
+            false);
+
+    ResponseEntity<?> response = routeController.deleteInteraction(
+            drugA, drugB, interactionEffect, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token",
+            response.getBody());
+  }
+
+  @Test
+  void testDeleteInteraction_InvalidEmail() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Interaction effect";
+
+    when(interactionService.removeInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(
+            false);
+
+    ResponseEntity<?> response = routeController.deleteInteraction(
+            drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the " +
+            "Columbia University", response.getBody());
   }
 
   @Test
@@ -652,6 +783,49 @@ class RouteControllerUnitTests {
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Failed to add interaction", response.getBody());
+  }
+
+  @Test
+  void testAddInteraction_InvalidToken() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "New interaction effect";
+
+    // Mock an interaction check that returns "No known interaction"
+    when(interactionService.getInteraction(drugA, drugB)).thenReturn(
+            "No known interaction");
+    // Mock the addition to return false to simulate a failure in adding the
+    // interaction
+    when(interactionService.addInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addInteraction(
+            drugA, drugB, interactionEffect, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token", response.getBody());
+  }
+
+  @Test
+  void testAddInteraction_InvalidEmail() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "New interaction effect";
+
+    // Mock an interaction check that returns "No known interaction"
+    when(interactionService.getInteraction(drugA, drugB)).thenReturn(
+            "No known interaction");
+    // Mock the addition to return false to simulate a failure in adding the
+    // interaction
+    when(interactionService.addInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addInteraction(
+            drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the " +
+            "Columbia University", response.getBody());
   }
 
   @Test
@@ -912,12 +1086,20 @@ class RouteControllerUnitTests {
   @Test
   void testRemoveDrug_InvalidDrugName() {
     ResponseEntity<?> response = routeController
-            .removeDrug("", "Bearer validToken");
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+            .removeDrug("", AUTH_TOKEN);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("Invalid input: Drug name cannot be empty",
+            response.getBody());
+
+    response = routeController
+            .removeDrug(null, AUTH_TOKEN);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("Invalid input: Drug name cannot be empty",
+            response.getBody());
   }
 
   @Test
-  void testRemoveDrug_MissingDrugName() {
+  void testRemoveDrug_InvalidToken() {
     ResponseEntity<?> response = routeController
             .removeDrug("", "Bearer validToken");
 

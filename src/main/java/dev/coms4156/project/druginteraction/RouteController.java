@@ -93,11 +93,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+            "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       String name = (String) drugInfo.get("name");
@@ -151,11 +150,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+              "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       if (drugService.getDrug(name) == null) {
@@ -201,11 +199,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       if (name == null || name.isEmpty()) {
@@ -390,11 +387,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       String existingInteraction = interactionService.getInteraction(drugA, drugB);
@@ -446,11 +442,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       boolean updated =
@@ -497,11 +492,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       boolean deleted = interactionService.removeInteraction(drugA, drugB, interactionEffect);

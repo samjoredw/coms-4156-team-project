@@ -274,4 +274,50 @@ public class InteractionUnitTests {
     result = testInteraction.updateInteraction("", "", "");
     assertFalse(result, "Updating interaction with empty values should return false");
   }
+
+  @Test
+  @Order(10)
+  public void updateInteractionTest() {
+    // Add a sample interaction to update
+    testInteraction.addInteraction("Paracetamol", "Ibuprofen",
+            "Moderate risk of kidney damage.");
+
+    // Valid case: Update the existing interaction
+    boolean result = testInteraction.updateInteraction("Paracetamol", "Ibuprofen",
+            "Reduced risk of kidney damage under controlled dosage.");
+    assertTrue(result, "Updating an existing interaction should return true");
+
+    // Verify the updated interaction
+    String updatedInteractionEffect = testInteraction.getInteraction("Paracetamol",
+            "Ibuprofen");
+    assertEquals("Reduced risk of kidney damage under controlled dosage.",
+            updatedInteractionEffect,
+            "Updated interaction effect should match the new value");
+
+    // Non-existent interaction: Should return false
+    result = testInteraction.updateInteraction("DNE", "DNE",
+            "No change in interaction effect.");
+    assertFalse(result, "Updating a non-existent interaction should return false");
+
+    // Null drug names: Should return false
+    result = testInteraction.updateInteraction(null, "Ibuprofen",
+            "Invalid update");
+    assertFalse(result, "Updating interaction with null drug name should return false");
+
+    result = testInteraction.updateInteraction("Paracetamol", null,
+            "Invalid update");
+    assertFalse(result, "Updating interaction with null drug name should return false");
+
+    // Empty string drug names: Should return false
+    result = testInteraction.updateInteraction("", "Ibuprofen",
+            "Invalid update");
+    assertFalse(result, "Updating interaction with empty drug name should return false");
+
+    result = testInteraction.updateInteraction("Paracetamol", "",
+            "Invalid update");
+    assertFalse(result, "Updating interaction with empty drug name should return false");
+
+    testInteraction.removeInteraction("Paracetamol", "Ibuprofen",
+            "Moderate risk of kidney damage.");
+  }
 }
