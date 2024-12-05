@@ -65,6 +65,8 @@ mvn test
 # Our Client Application
 Our client application targets healthcare professionals, providing a user-friendly interface to access drug information and check potential interactions between medications. The app makes it easier than ever for healthcare workers to verify drug safety and access comprehensive medication information. 
 
+The client is currently hosted on Google Cloud at https://drug-interaction-client.uc.r.appspot.com/
+
 ## Client Application Features
 * Query drug interactions between multiple medications simultaneously (up to 5 drugs)
 * Access detailed drug information including dosage forms, indications, contraindications, and side effects
@@ -76,6 +78,8 @@ Our client application targets healthcare professionals, providing a user-friend
 When a user performs an action in the client app (like searching for drug interactions), a request is sent to our drug interaction API hosted on GCP. The API processes the request and returns relevant drug information or interaction data, which is then presented to the user in an easy-to-understand format.
 
 ## Building and Running the Client
+
+Here is how you run the client locally (vs. using the hosted version mentioned above).
 
 #### Prerequisites
 * python
