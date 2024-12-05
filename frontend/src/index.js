@@ -1,5 +1,5 @@
 // index.js
-// Firebase configuration - Replace with your Firebase config
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs",
     authDomain: "drug-interaction-api.firebaseapp.com",
@@ -16,7 +16,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 // API base URL
-const API_BASE_URL = "http://localhost:8080/api/v1";
+const API_BASE_URL = "https://drug-interaction-api.uk.r.appspot.com/api/v1";
 
 async function fetchAPIWithStatus(endpoint, options = {}) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
