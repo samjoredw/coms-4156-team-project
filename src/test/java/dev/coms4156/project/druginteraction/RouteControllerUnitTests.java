@@ -33,6 +33,8 @@ class RouteControllerUnitTests {
 
   private static String AUTH_TOKEN;
 
+  private static String INVALID_AUTH_TOKEN;
+
   @Mock
   private Interaction interactionService;
 
@@ -82,9 +84,40 @@ class RouteControllerUnitTests {
       // Handle the response
       if (response.statusCode() == 200) {
         Map<String, Object> responseBody = new Gson().fromJson(response.body(), HashMap.class);
-        ;
+
         AUTH_TOKEN = (String) responseBody.get("idToken");
         AUTH_TOKEN = "Bearer " + AUTH_TOKEN;
+      } else {
+        System.out.println("Sign-in failed! Status Code: " + response.statusCode());
+        System.out.println("Response: " + response.body());
+      }
+
+      apiKey = "AIzaSyAefK0EcsWyOiy7RCWaOT54rBxJr9HgqMs";
+      email = "test@invalid.com";
+      password = "testuser";
+
+      // Prepare the request payload
+      payload = new HashMap<>();
+      payload.put("email", email);
+      payload.put("password", password);
+      payload.put("returnSecureToken", "true");
+
+      // Convert payload to JSON
+      jsonPayload = new Gson().toJson(payload);
+
+      HttpRequest invalidEmail = HttpRequest.newBuilder().uri(URI.create(
+                "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + apiKey))
+              .header("Content-Type", "application/json")
+              .POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
+
+      response = client.send(invalidEmail, HttpResponse.BodyHandlers.ofString());
+
+      // Handle the response
+      if (response.statusCode() == 200) {
+        Map<String, Object> responseBody = new Gson().fromJson(response.body(), HashMap.class);
+
+        INVALID_AUTH_TOKEN = (String) responseBody.get("idToken");
+        INVALID_AUTH_TOKEN = "Bearer " + INVALID_AUTH_TOKEN;
       } else {
         System.out.println("Sign-in failed! Status Code: " + response.statusCode());
         System.out.println("Response: " + response.body());
@@ -114,7 +147,7 @@ class RouteControllerUnitTests {
     testDrugs.add(drugName); // Track this drug for cleanup
 
     when(drugService.getDrug(drugName)).thenReturn(drugInfo);
-    ResponseEntity<?> response = routeController.getDrug(drugName, AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.getDrug(drugName);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(drugInfo, response.getBody());
@@ -122,11 +155,11 @@ class RouteControllerUnitTests {
 
   @Test
   void testGetDrug_InvalidName() {
-    ResponseEntity<?> response = routeController.getDrug("", AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.getDrug("");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug name cannot be empty", response.getBody());
 
-    response = routeController.getDrug(null, AUTH_TOKEN);
+    response = routeController.getDrug(null);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug name cannot be empty", response.getBody());
   }
@@ -136,47 +169,10 @@ class RouteControllerUnitTests {
     String drugName = "NonexistentDrug";
     when(drugService.getDrug(drugName)).thenReturn(null);
     ResponseEntity<?> response = routeController.getDrug(
-            drugName, AUTH_TOKEN);
+            drugName);
 
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertEquals("Drug not found", response.getBody());
-  }
-
-  @Test
-  void testGetDrug_MissingAuthorizationHeader() {
-    // Test case for missing Authorization header
-    ResponseEntity<?> response = routeController.getDrug("Aspirin", null);
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header", response.getBody());
-  }
-
-  @Test
-  void testGetDrug_InvalidAuthorizationHeader() {
-    // Test case for invalid Authorization header
-    ResponseEntity<?> response = routeController.getDrug("Aspirin", "InvalidToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header", response.getBody());
-  }
-
-  @Test
-  void testGetDrug_ExpiredOrInvalidToken() {
-    // Test case for expired or invalid token
-    ResponseEntity<?> response = routeController.getDrug("Aspirin", "Bearer invalidToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Invalid or expired token", response.getBody());
-  }
-
-  @Test
-  void testGetDrug_ExceptionHandling() {
-    // Simulate an exception in the getDrug method to cover the handleException
-    // block
-    ResponseEntity<?> response = routeController.getDrug(null, "Bearer validToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Invalid or expired token", response.getBody());
   }
 
   @Test
@@ -232,6 +228,35 @@ class RouteControllerUnitTests {
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug name cannot be empty", response.getBody());
+  }
+
+  @Test
+  void testAddDrug_InvalidToken() {
+    Map<String, Object> newDrug = new HashMap<>();
+    newDrug.put("name", "TestDrug");
+
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
+    when(drugService.addDrug(newDrug)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addDrug(newDrug, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token", response.getBody());
+  }
+
+  @Test
+  void testAddDrug_InvalidEmail() {
+    Map<String, Object> newDrug = new HashMap<>();
+    newDrug.put("name", "TestDrug");
+
+    when(drugService.getDrug("TestDrug")).thenReturn(Collections.emptyMap());
+    when(drugService.addDrug(newDrug)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addDrug(newDrug, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
   }
 
   @Test
@@ -300,13 +325,30 @@ class RouteControllerUnitTests {
   }
 
   @Test
+  void testServiceExceptionDuringGetDrug() {
+    when(drugService.getDrug("TestDrug")).thenThrow(new
+            RuntimeException("Service error"));
+    ResponseEntity<?> response = routeController.getDrug("TestDrug");
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertEquals("An error occurred: Service error", response.getBody());
+  }
+
+  @Test
+  void testGetMultipleInteractionsWithNullDrugs() {
+    ResponseEntity<?> response = routeController.getMultipleInteractions("DrugA",
+            null, null, null, null);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+
+  @Test
   void testGetDrugInteractions_ExceptionHandling() {
     String drugName = "TestDrug";
 
     // Simulate an exception when calling getInteraction
     when(drugService.getInteraction(drugName)).thenThrow(new RuntimeException("Service error"));
 
-    ResponseEntity<?> response = routeController.getDrugInteractions(drugName, AUTH_TOKEN);
+    ResponseEntity<?> response = routeController.getDrugInteractions(drugName);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertEquals("An error occurred: Service error", response.getBody());
@@ -406,16 +448,14 @@ class RouteControllerUnitTests {
 
   @Test
   void testUpdateInteraction_Success() {
-    String documentId = "doc123";
     String drugA = "DrugA";
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
-    when(interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect))
+    when(interactionService.updateInteraction(drugA, drugB, interactionEffect))
         .thenReturn(true);
 
-    ResponseEntity<?> response = routeController.updateInteraction(
-            documentId, drugA, drugB, interactionEffect,
+    ResponseEntity<?> response = routeController.updateInteraction(drugA, drugB, interactionEffect,
         AUTH_TOKEN);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -425,17 +465,16 @@ class RouteControllerUnitTests {
 
   @Test
   void testUpdateInteraction_Failure() {
-    String documentId = "doc123";
     String drugA = "DrugA";
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
     when(interactionService.updateInteraction(
-            documentId, drugA, drugB, interactionEffect))
+            drugA, drugB, interactionEffect))
         .thenReturn(false);
 
     ResponseEntity<?> response = routeController.updateInteraction(
-            documentId, drugA, drugB, interactionEffect,
+            drugA, drugB, interactionEffect,
         AUTH_TOKEN);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -444,18 +483,53 @@ class RouteControllerUnitTests {
   }
 
   @Test
-  void testUpdateInteraction_Exception() {
-    String documentId = "doc123";
+  void testUpdateInteraction_InvalidToken() {
     String drugA = "DrugA";
     String drugB = "DrugB";
     String interactionEffect = "Updated interaction effect";
 
     when(interactionService.updateInteraction(
-            documentId, drugA, drugB, interactionEffect))
+            drugA, drugB, interactionEffect))
+            .thenReturn(false);
+
+    ResponseEntity<?> response = routeController.updateInteraction(
+            drugA, drugB, interactionEffect, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token",
+            response.getBody());
+  }
+
+  @Test
+  void testUpdateInteraction_InvalidEmail() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Updated interaction effect";
+
+    when(interactionService.updateInteraction(
+            drugA, drugB, interactionEffect))
+            .thenReturn(false);
+
+    ResponseEntity<?> response = routeController.updateInteraction(
+            drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
+  }
+
+  @Test
+  void testUpdateInteraction_Exception() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Updated interaction effect";
+
+    when(interactionService.updateInteraction(
+            drugA, drugB, interactionEffect))
         .thenThrow(new RuntimeException("Database error"));
 
     ResponseEntity<?> response = routeController.updateInteraction(
-            documentId, drugA, drugB, interactionEffect,
+            drugA, drugB, interactionEffect,
         AUTH_TOKEN);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -467,7 +541,7 @@ class RouteControllerUnitTests {
   @Test
   void testUpdateInteraction_MissingAuthorizationHeader() {
     ResponseEntity<?> response = routeController.updateInteraction(
-        "document123", "DrugA", "DrugB",
+        "DrugA", "DrugB",
             "Effect", null);
 
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
@@ -477,8 +551,7 @@ class RouteControllerUnitTests {
 
   @Test
   void testUpdateInteraction_InvalidAuthorizationHeader() {
-    ResponseEntity<?> response = routeController.updateInteraction(
-        "document123", "DrugA", "DrugB",
+    ResponseEntity<?> response = routeController.updateInteraction("DrugA", "DrugB",
             "Effect", "InvalidToken");
 
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
@@ -548,6 +621,42 @@ class RouteControllerUnitTests {
   }
 
   @Test
+  void testDeleteInteraction_InvalidToken() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Interaction effect";
+
+    when(interactionService.removeInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(
+            false);
+
+    ResponseEntity<?> response = routeController.deleteInteraction(
+            drugA, drugB, interactionEffect, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token",
+            response.getBody());
+  }
+
+  @Test
+  void testDeleteInteraction_InvalidEmail() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "Interaction effect";
+
+    when(interactionService.removeInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(
+            false);
+
+    ResponseEntity<?> response = routeController.deleteInteraction(
+            drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
+  }
+
+  @Test
   void testDeleteInteraction_Exception() {
     String drugA = "DrugA";
     String drugB = "DrugB";
@@ -600,26 +709,6 @@ class RouteControllerUnitTests {
   }
 
   @Test
-  void testGetAllDrugs_MissingAuthorization() {
-    ResponseEntity<?> response = routeController.getAllDrugs(
-            null);
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
-  }
-
-  @Test
-  void testGetAllDrugs_InvalidAuthorization() {
-    ResponseEntity<?> response = routeController.getAllDrugs(
-            "InvalidToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
-  }
-
-  @Test
   void testGetDrugInteractions() {
     String drugName = "Aspirin";
     List<String> interactions = Arrays.asList(
@@ -627,31 +716,10 @@ class RouteControllerUnitTests {
     when(drugService.getInteraction(drugName)).thenReturn(interactions);
 
     ResponseEntity<?> response = routeController
-            .getDrugInteractions(drugName, AUTH_TOKEN);
+            .getDrugInteractions(drugName);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(interactions, response.getBody());
-  }
-
-  @Test
-  void testGetDrugInteractions_MissingAuthorization() {
-    ResponseEntity<?> response = routeController
-            .getDrugInteractions("Aspirin", null);
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
-  }
-
-  @Test
-  void testGetDrugInteractions_InvalidAuthorization() {
-    ResponseEntity<?> response = routeController
-            .getDrugInteractions(
-                    "Aspirin", "InvalidToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
   }
 
   @Test
@@ -663,7 +731,7 @@ class RouteControllerUnitTests {
             .thenReturn(interactionEffect);
 
     ResponseEntity<?> response = routeController
-            .getInteraction(drugA, drugB, AUTH_TOKEN);
+            .getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     Map<String, Object> interactionData = new HashMap<>();
@@ -684,7 +752,7 @@ class RouteControllerUnitTests {
             .thenReturn(noInteraction);
 
     ResponseEntity<?> response = routeController
-            .getInteraction(drugA, drugB, AUTH_TOKEN);
+            .getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     Map<String, Object> interactionData = new HashMap<>();
@@ -694,28 +762,6 @@ class RouteControllerUnitTests {
     Map<String, Object> expectedResponse = new HashMap<>();
     expectedResponse.put("noInteractions", interactionData);
     assertEquals(expectedResponse, response.getBody());
-  }
-
-  @Test
-  void testGetInteraction_MissingAuthorization() {
-    ResponseEntity<?> response = routeController
-            .getInteraction(
-                    "DrugA", "DrugB", null);
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
-  }
-
-  @Test
-  void testGetInteraction_InvalidAuthorization() {
-    ResponseEntity<?> response = routeController
-            .getInteraction(
-                    "DrugA", "DrugB", "InvalidToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
   }
 
   @Test
@@ -737,6 +783,49 @@ class RouteControllerUnitTests {
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Failed to add interaction", response.getBody());
+  }
+
+  @Test
+  void testAddInteraction_InvalidToken() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "New interaction effect";
+
+    // Mock an interaction check that returns "No known interaction"
+    when(interactionService.getInteraction(drugA, drugB)).thenReturn(
+            "No known interaction");
+    // Mock the addition to return false to simulate a failure in adding the
+    // interaction
+    when(interactionService.addInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addInteraction(
+            drugA, drugB, interactionEffect, "Bearer INVALID");
+
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    assertEquals("Invalid or expired token", response.getBody());
+  }
+
+  @Test
+  void testAddInteraction_InvalidEmail() {
+    String drugA = "DrugA";
+    String drugB = "DrugB";
+    String interactionEffect = "New interaction effect";
+
+    // Mock an interaction check that returns "No known interaction"
+    when(interactionService.getInteraction(drugA, drugB)).thenReturn(
+            "No known interaction");
+    // Mock the addition to return false to simulate a failure in adding the
+    // interaction
+    when(interactionService.addInteraction(
+            drugA, drugB, interactionEffect)).thenReturn(false);
+
+    ResponseEntity<?> response = routeController.addInteraction(
+            drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
+
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
   }
 
   @Test
@@ -820,28 +909,25 @@ class RouteControllerUnitTests {
   void testGetInteraction_InvalidInput() {
     // Case 1: drugA is null
     ResponseEntity<?> response = routeController
-            .getInteraction(null, "DrugB", AUTH_TOKEN);
+            .getInteraction(null, "DrugB");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
 
     // Case 2: drugB is null
-    response = routeController.getInteraction("DrugA", null,
-            AUTH_TOKEN);
+    response = routeController.getInteraction("DrugA", null);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
 
     // Case 3: drugA is empty
-    response = routeController.getInteraction("", "DrugB",
-            AUTH_TOKEN);
+    response = routeController.getInteraction("", "DrugB");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
 
     // Case 4: drugB is empty
-    response = routeController.getInteraction("DrugA", "",
-            AUTH_TOKEN);
+    response = routeController.getInteraction("DrugA", "");
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("Invalid input: Drug names cannot be empty",
             response.getBody());
@@ -857,7 +943,7 @@ class RouteControllerUnitTests {
         .thenThrow(new RuntimeException("Service error"));
 
     ResponseEntity<?> response = routeController
-            .getInteraction(drugA, drugB, AUTH_TOKEN);
+            .getInteraction(drugA, drugB);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
             response.getStatusCode());
@@ -887,7 +973,7 @@ class RouteControllerUnitTests {
 
     ResponseEntity<?> response = routeController
             .getMultipleInteractions(drugA, drugB,
-                    drugC, drugD, null, AUTH_TOKEN);
+                    drugC, drugD, null);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // Adjusted expected response to separate `interactions` and `noInteractions`
@@ -941,7 +1027,7 @@ class RouteControllerUnitTests {
         .thenReturn(interactions);
 
     ResponseEntity<?> response = routeController
-            .getMultipleInteractions(drugA, drugB, drugC, drugD, drugE, AUTH_TOKEN);
+            .getMultipleInteractions(drugA, drugB, drugC, drugD, drugE);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
     // Expected interaction with the ": " delimiter
@@ -980,35 +1066,11 @@ class RouteControllerUnitTests {
         .thenThrow(new RuntimeException("Database error"));
     ResponseEntity<?> response = routeController
             .getMultipleInteractions("DrugA", "DrugB",
-                    null, null, null,
-        AUTH_TOKEN);
+                    null, null, null);
 
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
             response.getStatusCode());
     assertEquals("An error occurred: Database error",
-            response.getBody());
-  }
-
-  @Test
-  void testGetMultipleInteractions_MissingAuthorization() {
-    ResponseEntity<?> response = routeController
-            .getMultipleInteractions(
-        "DrugA", "DrugB", null,
-                    null, null, null);
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
-            response.getBody());
-  }
-
-  @Test
-  void testGetMultipleInteractions_InvalidAuthorization() {
-    ResponseEntity<?> response = routeController.getMultipleInteractions(
-        "DrugA", "DrugB", null, null, null,
-            "InvalidToken");
-
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    assertEquals("Missing or invalid Authorization header",
             response.getBody());
   }
 
@@ -1024,12 +1086,20 @@ class RouteControllerUnitTests {
   @Test
   void testRemoveDrug_InvalidDrugName() {
     ResponseEntity<?> response = routeController
-            .removeDrug("", "Bearer validToken");
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+            .removeDrug("", AUTH_TOKEN);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("Invalid input: Drug name cannot be empty",
+            response.getBody());
+
+    response = routeController
+            .removeDrug(null, AUTH_TOKEN);
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("Invalid input: Drug name cannot be empty",
+            response.getBody());
   }
 
   @Test
-  void testRemoveDrug_MissingDrugName() {
+  void testRemoveDrug_InvalidToken() {
     ResponseEntity<?> response = routeController
             .removeDrug("", "Bearer validToken");
 

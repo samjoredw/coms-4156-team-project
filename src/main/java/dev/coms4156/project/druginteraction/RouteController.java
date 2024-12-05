@@ -33,9 +33,7 @@ public class RouteController {
 
   private final Interaction interactionService;
   private final Drugs drugService;
-  // private final FirebaseService firebaseService;
 
-  // This one needs endpoints first b
   @Autowired
   public RouteController(Interaction interactionService, Drugs drugService) {
     this.interactionService = interactionService;
@@ -49,25 +47,8 @@ public class RouteController {
    * @return A ResponseEntity containing the drug information or an error message.
    */
   @GetMapping(value = "/drug", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getDrug(@RequestParam("name") String name,
-      @RequestHeader(value = "Authorization", required = false) String authorization) {
+  public ResponseEntity<?> getDrug(@RequestParam("name") String name) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       if (name == null || name.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug name cannot be empty",
             HttpStatus.BAD_REQUEST);
@@ -112,11 +93,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+            "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       String name = (String) drugInfo.get("name");
@@ -150,7 +130,7 @@ public class RouteController {
   @PatchMapping(value = "/drug/update/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> updateDrug(@PathVariable String name,
       @RequestBody Map<String, Object> updates,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -170,11 +150,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+              "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       if (drugService.getDrug(name) == null) {
@@ -200,7 +179,7 @@ public class RouteController {
    */
   @DeleteMapping(value = "/drug/remove", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> removeDrug(@RequestParam("name") String name,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -220,11 +199,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       if (name == null || name.isEmpty()) {
@@ -250,24 +228,8 @@ public class RouteController {
    */
   @GetMapping(value = "/drugs", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getAllDrugs(
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       List<String> drugs = drugService.getAllDrugs();
       return new ResponseEntity<>(drugs, HttpStatus.OK);
     } catch (Exception e) {
@@ -282,25 +244,8 @@ public class RouteController {
    * @return A ResponseEntity containing a list of interactions or an error message.
    */
   @GetMapping(value = "/drugs/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+  public ResponseEntity<?> getDrugInteractions(@RequestParam("drugName") String drugName) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       List<String> interactions = drugService.getInteraction(drugName);
       return new ResponseEntity<>(interactions, HttpStatus.OK);
     } catch (Exception e) {
@@ -317,29 +262,8 @@ public class RouteController {
    */
   @GetMapping(value = "/interactions", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getInteraction(@RequestParam("drugA") String drugA,
-      @RequestParam("drugB") String drugB,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestParam("drugB") String drugB) {
     try {
-      // if (!firebaseService.authenticateToken(headers)) {
-      // return new ResponseEntity<>("Unauthorized: Missing or invalid token",
-      // HttpStatus.UNAUTHORIZED);
-      // }
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       if (drugA == null || drugB == null || drugA.isEmpty() || drugB.isEmpty()) {
         return new ResponseEntity<>("Invalid input: Drug names cannot be empty",
             HttpStatus.BAD_REQUEST);
@@ -381,25 +305,8 @@ public class RouteController {
       @RequestParam("drugB") String drugB,
       @RequestParam(value = "drugC", required = false) String drugC,
       @RequestParam(value = "drugD", required = false) String drugD,
-      @RequestParam(value = "drugE", required = false) String drugE,
-      @RequestHeader(value = "Authorization", required = false) String authorization) {
+      @RequestParam(value = "drugE", required = false) String drugE) {
     try {
-      // Check if the Authorization header is present
-      if (authorization == null || !authorization.startsWith("Bearer ")) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body("Missing or invalid Authorization header");
-      }
-
-      // Extract the idToken from the Authorization header
-      String idToken = authorization.substring(7);
-
-      // Verify the token using Firebase Authentication
-      try {
-        FirebaseAuth.getInstance().verifyIdToken(idToken);
-      } catch (FirebaseAuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-      }
-
       List<String> drugs = new ArrayList<>();
       drugs.add(drugA);
       drugs.add(drugB);
@@ -460,7 +367,7 @@ public class RouteController {
   public ResponseEntity<?> addInteraction(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -480,11 +387,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       String existingInteraction = interactionService.getInteraction(drugA, drugB);
@@ -506,18 +412,17 @@ public class RouteController {
   /**
    * Updates an existing drug interaction in the database.
    *
-   * @param documentId The unique identifier of the interaction document.
    * @param drugA The updated name of the first drug.
    * @param drugB The updated name of the second drug.
    * @param interactionEffect The updated description of the interaction effect.
    * @return A ResponseEntity indicating success or failure of the update operation.
    */
-  @PatchMapping(value = "/interactions/update/{documentId}",
+  @PatchMapping(value = "/interactions/update/",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> updateInteraction(@PathVariable String documentId,
+  public ResponseEntity<?> updateInteraction(
       @RequestParam("drugA") String drugA, @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -537,15 +442,14 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       boolean updated =
-          interactionService.updateInteraction(documentId, drugA, drugB, interactionEffect);
+          interactionService.updateInteraction(drugA, drugB, interactionEffect);
       if (updated) {
         return new ResponseEntity<>("Interaction updated successfully", HttpStatus.OK);
       } else {
@@ -568,7 +472,7 @@ public class RouteController {
   public ResponseEntity<?> deleteInteraction(@RequestParam("drugA") String drugA,
       @RequestParam("drugB") String drugB,
       @RequestParam("interactionEffect") String interactionEffect,
-      @RequestHeader(value = "authorization", required = false) String authorization) {
+      @RequestHeader(value = "Authorization", required = false) String authorization) {
     try {
       // Check if the Authorization header is present
       if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -588,11 +492,10 @@ public class RouteController {
       }
 
       // Retrieve user information from the token
-      String uid = decodedToken.getUid();
       String email = decodedToken.getEmail();
       if (email == null || !email.endsWith("@columbia.edu")) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            "Access denied: User " + uid + " is not associated with the Columbia " + "University");
+                "Access denied: " + email + " is not associated with the Columbia University");
       }
 
       boolean deleted = interactionService.removeInteraction(drugA, drugB, interactionEffect);

@@ -63,13 +63,14 @@ mvn test
 ```
 
 # Our Client Application
-Our client application targets healthcare professionals, providing a user-friendly interface to access drug information and check potential interactions between medications. The app makes it easier than ever for healthcare workers to verify drug safety and access comprehensive medication information.
+Our client application targets healthcare professionals, providing a user-friendly interface to access drug information and check potential interactions between medications. The app makes it easier than ever for healthcare workers to verify drug safety and access comprehensive medication information. 
 
 ## Client Application Features
 * Query drug interactions between multiple medications simultaneously (up to 5 drugs)
 * Access detailed drug information including dosage forms, indications, contraindications, and side effects
 * Simple and intuitive interface requiring no specialized database knowledge
 * Free, open-source solution for healthcare professionals
+* Only users with an @columbia.edu email are able to make modifications to the database
 
 ## How it works with our Service
 When a user performs an action in the client app (like searching for drug interactions), a request is sent to our drug interaction API hosted on GCP. The API processes the request and returns relevant drug information or interaction data, which is then presented to the user in an easy-to-understand format.
@@ -457,7 +458,6 @@ Handles exceptions that occur during any endpoint execution.
 - Platform: Google Cloud Platform
 - Region: uk.r.appspot.com
 - Deployment URL: https://drug-interaction-api.uk.r.appspot.com/api/v1/
-- Deployment Instructions: [Add instructions for deploying to GCP]
 
 ## Configuration Files
 The following configuration files are required:

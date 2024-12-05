@@ -43,7 +43,8 @@ public class Interaction {
     try {
       // Query Firestore to see if an identical interaction already exists
       ApiFuture<com.google.cloud.firestore.QuerySnapshot> existingQuery = firestore
-          .collection("interactions").whereEqualTo("drugA", drugA).whereEqualTo("drugB", drugB)
+          .collection("interactions").whereEqualTo("drugA", drugA).whereEqualTo(
+                  "drugB", drugB)
           .whereEqualTo("interactionEffect", interactionEffect).get();
 
       if (!existingQuery.get().isEmpty()) {
@@ -108,7 +109,8 @@ public class Interaction {
     try {
       // Query for interaction in direct order
       ApiFuture<com.google.cloud.firestore.QuerySnapshot> query = firestore
-          .collection("interactions").whereEqualTo("drugA", drugA).whereEqualTo("drugB", drugB)
+          .collection("interactions").whereEqualTo("drugA", drugA).whereEqualTo(
+                  "drugB", drugB)
           .whereEqualTo("interactionEffect", interactionEffect).get();
 
       for (com.google.cloud.firestore.DocumentSnapshot document : query.get().getDocuments()) {
@@ -118,7 +120,8 @@ public class Interaction {
 
       // Query for interaction in reverse order
       ApiFuture<com.google.cloud.firestore.QuerySnapshot> reverseQuery = firestore
-          .collection("interactions").whereEqualTo("drugA", drugB).whereEqualTo("drugB", drugA)
+          .collection("interactions").whereEqualTo("drugA", drugB).whereEqualTo(
+                  "drugB", drugA)
           .whereEqualTo("interactionEffect", interactionEffect).get();
 
       for (com.google.cloud.firestore.DocumentSnapshot reverseDocument : reverseQuery.get()
@@ -209,33 +212,47 @@ public class Interaction {
   }
 
   /**
-   * Update a drug interaction document based on interaction ID.
+   * Update a drug interaction document based on criteria.
    *
-   * @param documentId The interaction id to update.
-   * @param drugA The new first drug used to update.
-   * @param drugB The new second drug used to update.
-   * @param interactionEffect The new interaction used to update.
-   * @return A CompletableFuture containing a list of document data.
+   * @param drugA The first drug used to identify and update the document.
+   * @param drugB The second drug used to identify and update the document.
+   * @param interactionEffect The new interaction effect to update.
+   * @return A boolean indicating the success of the operation.
    */
-  public boolean updateInteraction(String documentId, String drugA, String drugB,
-      String interactionEffect) {
+  public boolean updateInteraction(String drugA, String drugB, String interactionEffect) {
     try {
       // Prepare a timestamp for updatedAt field
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-      // Create a map for the updated fields
-      Map<String, Object> updatedInteraction = new HashMap<>();
-      updatedInteraction.put("drugA", drugA);
-      updatedInteraction.put("drugB", drugB);
-      updatedInteraction.put("interactionEffect", interactionEffect);
-      updatedInteraction.put("updatedBy", "Admin");
-      updatedInteraction.put("updatedAt", sdf.format(timestamp));
+      // Query the database for a document matching the criteria
+      CompletableFuture<List<Map<String, Object>>> queryFuture =
+              firebaseService.queryDocuments("interactions", Map.of(
+                      "drugA", drugA, "drugB", drugB));
+      List<Map<String, Object>> matchingDocuments = queryFuture.join();
 
-      // Use FirebaseService to update the document with the specified ID
-      CompletableFuture<Void> future =
-          firebaseService.updateDocument("interactions", documentId, updatedInteraction);
-      future.join();
+      if (matchingDocuments.isEmpty()) {
+        System.out.println("No matching document found to update.");
+        return false;
+      }
+
+      // Update each matching document
+      for (Map<String, Object> document : matchingDocuments) {
+        String documentId = (String) document.get("id"); // Assuming document contains its ID
+
+        // Create a map for the updated fields
+        Map<String, Object> updatedInteraction = new HashMap<>();
+        updatedInteraction.put("drugA", drugA);
+        updatedInteraction.put("drugB", drugB);
+        updatedInteraction.put("interactionEffect", interactionEffect);
+        updatedInteraction.put("updatedBy", "Admin");
+        updatedInteraction.put("updatedAt", sdf.format(timestamp));
+
+        // Use FirebaseService to update the document
+        CompletableFuture<Void> future = firebaseService.updateDocument(
+                "interactions", documentId, updatedInteraction);
+        future.join();
+      }
 
       return true;
     } catch (Exception e) {
