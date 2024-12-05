@@ -255,8 +255,8 @@ class RouteControllerUnitTests {
     ResponseEntity<?> response = routeController.addDrug(newDrug, INVALID_AUTH_TOKEN);
 
     assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertEquals("Access denied: test@invalid.com is not associated with the " +
-            "Columbia University", response.getBody());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
   }
 
   @Test
@@ -514,8 +514,8 @@ class RouteControllerUnitTests {
             drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
 
     assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertEquals("Access denied: test@invalid.com is not associated with the " +
-            "Columbia University", response.getBody());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
   }
 
   @Test
@@ -652,8 +652,8 @@ class RouteControllerUnitTests {
             drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
 
     assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertEquals("Access denied: test@invalid.com is not associated with the " +
-            "Columbia University", response.getBody());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
   }
 
   @Test
@@ -824,8 +824,8 @@ class RouteControllerUnitTests {
             drugA, drugB, interactionEffect, INVALID_AUTH_TOKEN);
 
     assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    assertEquals("Access denied: test@invalid.com is not associated with the " +
-            "Columbia University", response.getBody());
+    assertEquals("Access denied: test@invalid.com is not associated with the"
+            + " Columbia University", response.getBody());
   }
 
   @Test
