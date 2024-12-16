@@ -386,7 +386,7 @@ document
                     drugA
                 )}&drugB=${encodeURIComponent(
                     drugB
-                )}&interactionEffect=${encodeURIComponent(interactionEffect)}`,
+                )}&interactionEffect=${encodeURIComponent(effect)}`,
                 {
                     method: "POST",
                     headers: {
